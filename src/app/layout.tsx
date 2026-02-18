@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { LocalizationProvider } from "@/providers/LocalizationProvider";
 import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
+import StructuredData, { createWebSiteStructuredData } from "@/components/seo/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,6 +74,13 @@ export default function RootLayout({
     <html lang={DEFAULT_LANGUAGE}>
       <head>
         <GoogleAnalytics />
+        <StructuredData 
+          data={createWebSiteStructuredData(
+            APP_CONFIG.name,
+            APP_CONFIG.description,
+            "https://ddudl.com"
+          )} 
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}

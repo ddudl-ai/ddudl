@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { APP_CONFIG } from '@/lib/constants'
+import StructuredData, { createArticleStructuredData } from '@/components/seo/StructuredData'
 
 interface PostDetailPageProps {
   params: Promise<{
@@ -56,6 +57,9 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
         title: postTitle,
         description,
       },
+      alternates: {
+        canonical: url,
+      },
     }
   } catch (error) {
     console.error('Error generating metadata:', error)
@@ -68,9 +72,45 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const { channel, postId } = await params
+  const supabase = createAdminClient()
+  
+  // Get post data for structured data
+  let postStructuredData = null
+  try {
+    const { data: post } = await supabase
+      .from('posts')
+      .select('title, content, created_at, updated_at, users(username, display_name), channels(name)')
+      .eq('id', postId)
+      .single()
+
+    if (post) {
+      const author = (post.users as unknown as { username: string, display_name?: string } | null)
+      const channelName = (post.channels as unknown as { name: string } | null)?.name || channel
+      const authorName = author?.display_name || author?.username || 'Anonymous'
+      const postTitle = post.title || 'Untitled Post'
+      const url = `https://ddudl.com/c/${channelName}/posts/${postId}`
+      
+      postStructuredData = createArticleStructuredData(
+        postTitle,
+        post.content ? post.content.substring(0, 160) : 'Discussion post on ddudl.com',
+        authorName,
+        post.created_at,
+        url,
+        APP_CONFIG.name,
+        'https://ddudl.com',
+        post.updated_at
+      )
+    }
+  } catch (error) {
+    console.error('Error fetching post for structured data:', error)
+  }
   
   return (
     <div className="min-h-screen bg-slate-950">
+      {postStructuredData && (
+        <StructuredData data={postStructuredData} />
+      )}
+      
       <Header />
       
       <div className="max-w-4xl mx-auto px-4 py-6">
