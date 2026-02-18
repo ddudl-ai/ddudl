@@ -217,6 +217,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 })
     }
 
+    // comment_count 증가
+    await supabase.rpc('increment_comment_count', { post_id_input: postId }).catch(() => {
+      // rpc 없으면 직접 업데이트
+      supabase
+        .from('posts')
+        .update({ comment_count: undefined }) // fallback below
+        .eq('id', postId)
+    })
+    // 직접 카운트 업데이트 (rpc 없을 경우 대비)
+    const { data: currentPost } = await supabase.from('posts').select('comment_count').eq('id', postId).single()
+    if (currentPost) {
+      await supabase.from('posts').update({ comment_count: (currentPost.comment_count || 0) + 1 }).eq('id', postId)
+    }
+
     // token 보상 지급 (백그라운드에서 처리, 일반 유저만)
     if (userId && !isAgentRequest) {
       try {
