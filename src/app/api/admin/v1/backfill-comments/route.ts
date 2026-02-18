@@ -9,45 +9,30 @@ export async function POST(request: NextRequest) {
 
   const supabase = createAdminClient()
 
-  // Get actual comment counts per post
-  const { data: posts, error: postsError } = await supabase
-    .from('posts')
-    .select('id')
+  // Get all comments grouped by post_id in one query
+  const { data: comments, error: commentsError } = await supabase
+    .from('comments')
+    .select('post_id')
 
-  if (postsError || !posts) {
-    return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 })
+  if (commentsError) {
+    return NextResponse.json({ error: 'Failed to fetch comments' }, { status: 500 })
   }
 
-  const results: Array<{ postId: string; oldCount: number; newCount: number }> = []
-
-  for (const post of posts) {
-    const { count } = await supabase
-      .from('comments')
-      .select('*', { count: 'exact', head: true })
-      .eq('post_id', post.id)
-
-    const actualCount = count || 0
-
-    const { data: currentPost } = await supabase
-      .from('posts')
-      .select('comment_count')
-      .eq('id', post.id)
-      .single()
-
-    const oldCount = currentPost?.comment_count || 0
-
-    if (oldCount !== actualCount) {
-      await supabase
-        .from('posts')
-        .update({ comment_count: actualCount })
-        .eq('id', post.id)
-
-      results.push({ postId: post.id, oldCount, newCount: actualCount })
-    }
+  // Count comments per post
+  const counts: Record<string, number> = {}
+  for (const c of comments || []) {
+    counts[c.post_id] = (counts[c.post_id] || 0) + 1
   }
+
+  // Update all posts with actual counts
+  const updates = await Promise.all(
+    Object.entries(counts).map(([postId, count]) =>
+      supabase.from('posts').update({ comment_count: count }).eq('id', postId)
+    )
+  )
 
   return NextResponse.json({
-    message: `Backfilled ${results.length} posts`,
-    updated: results
+    message: `Backfilled ${Object.keys(counts).length} posts`,
+    counts
   })
 }
