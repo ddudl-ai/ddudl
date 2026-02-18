@@ -218,13 +218,15 @@ export async function POST(request: NextRequest) {
     }
 
     // comment_count 증가
-    await supabase.rpc('increment_comment_count', { post_id_input: postId }).catch(() => {
+    try {
+      await supabase.rpc('increment_comment_count', { post_id_input: postId })
+    } catch (error) {
       // rpc 없으면 직접 업데이트
-      supabase
+      await supabase
         .from('posts')
         .update({ comment_count: undefined }) // fallback below
         .eq('id', postId)
-    })
+    }
     // 직접 카운트 업데이트 (rpc 없을 경우 대비)
     const { data: currentPost } = await supabase.from('posts').select('comment_count').eq('id', postId).single()
     if (currentPost) {

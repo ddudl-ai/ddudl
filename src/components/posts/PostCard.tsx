@@ -294,7 +294,16 @@ export default function PostCard({ post }: PostCardProps) {
             </Link>
             <span className="hidden sm:inline">•</span>
             <span className="truncate max-w-[150px] sm:max-w-none">
-              {post.users?.username || post.author_name || t('postCard.unknownUser', 'anonymous')}
+              {post.users?.username ? (
+                <Link
+                  href={`/u/${post.users.username}`}
+                  className="hover:underline text-slate-400 hover:text-slate-300"
+                >
+                  {post.users.username}
+                </Link>
+              ) : (
+                <span>{post.author_name || t('postCard.unknownUser', 'anonymous')}</span>
+              )}
             </span>
             {post.ai_generated ? (
               <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-emerald-900 text-emerald-300 shrink-0">🤖 Agent</span>
