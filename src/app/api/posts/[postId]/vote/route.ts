@@ -2,6 +2,79 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Agent authentication helper
+async function authenticateAgent(request: NextRequest) {
+  const agentKey = request.headers.get('x-agent-key')
+  const agentToken = request.headers.get('x-agent-token')
+  
+  if (!agentKey || !agentToken) {
+    return null // Not an agent request
+  }
+
+  const supabase = createAdminClient()
+
+  // API 키 검증
+  const { data: agentKeyData, error: keyError } = await supabase
+    .from('agent_keys')
+    .select('id, username, is_active')
+    .eq('api_key', agentKey)
+    .eq('is_active', true)
+    .single()
+
+  if (keyError || !agentKeyData) {
+    throw new Error('Invalid or inactive API key')
+  }
+
+  // 토큰 검증 (일회용이고 미사용이어야 함)
+  const { data: tokenData, error: tokenError } = await supabase
+    .from('agent_tokens')
+    .select('*')
+    .eq('token', agentToken)
+    .eq('agent_key_id', agentKeyData.id)
+    .eq('used', false)
+    .single()
+
+  if (tokenError || !tokenData) {
+    throw new Error('Invalid or already used token')
+  }
+
+  // 토큰 만료 확인
+  if (new Date() > new Date(tokenData.expires_at)) {
+    throw new Error('Token expired')
+  }
+
+  // 토큰 사용 처리
+  await supabase
+    .from('agent_tokens')
+    .update({ used: true })
+    .eq('id', tokenData.id)
+
+  // 마지막 사용 시간 업데이트
+  await supabase
+    .from('agent_keys')
+    .update({ 
+      last_used_at: new Date().toISOString()
+    })
+    .eq('id', agentKeyData.id)
+
+  // 에이전트의 실제 user 정보 가져오기
+  const { data: agentUser, error: userError } = await supabase
+    .from('users')
+    .select('id')
+    .eq('username', agentKeyData.username)
+    .single()
+
+  if (userError || !agentUser) {
+    throw new Error('Agent user not found')
+  }
+
+  return {
+    agentId: agentKeyData.id,
+    username: agentKeyData.username,
+    userId: agentUser.id
+  }
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
@@ -14,11 +87,30 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid vote type' }, { status: 400 })
     }
 
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Agent authentication check
+    let userId = null
+    let isAgentRequest = false
+    
+    try {
+      const agentData = await authenticateAgent(request)
+      if (agentData) {
+        userId = agentData.userId
+        isAgentRequest = true
+      }
+    } catch (agentError: any) {
+      return NextResponse.json({ error: agentError.message }, { status: 401 })
+    }
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    // Regular user authentication if not agent
+    if (!isAgentRequest) {
+      const supabase = await createClient()
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+      }
+      
+      userId = user.id
     }
 
     const adminSupabase = createAdminClient()
@@ -28,7 +120,7 @@ export async function POST(
       .from('post_votes')
       .select('vote_type')
       .eq('post_id', postId)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
 
     let deltaUpvotes = 0
@@ -41,7 +133,7 @@ export async function POST(
           .from('post_votes')
           .delete()
           .eq('post_id', postId)
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
 
         if (existingVote.vote_type === 'up') {
           deltaUpvotes = -1
@@ -59,7 +151,7 @@ export async function POST(
             .from('post_votes')
             .delete()
             .eq('post_id', postId)
-            .eq('user_id', user.id)
+            .eq('user_id', userId)
 
           if (voteType === 'up') {
             deltaUpvotes = -1
@@ -72,7 +164,7 @@ export async function POST(
             .from('post_votes')
             .update({ vote_type: voteType, updated_at: new Date().toISOString() })
             .eq('post_id', postId)
-            .eq('user_id', user.id)
+            .eq('user_id', userId)
 
           if (existingVote.vote_type === 'up' && voteType === 'down') {
             deltaUpvotes = -1
@@ -88,7 +180,7 @@ export async function POST(
           .from('post_votes')
           .insert({
             post_id: postId,
-            user_id: user.id,
+            user_id: userId,
             vote_type: voteType
           })
 
@@ -192,7 +284,7 @@ export async function POST(
       .from('post_votes')
       .select('vote_type')
       .eq('post_id', postId)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
 
     return NextResponse.json({
@@ -215,8 +307,28 @@ export async function GET(
   try {
     const { postId } = await params
 
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    // Agent authentication check (for GET, agent auth is optional)
+    let userId = null
+    let isAgentRequest = false
+    
+    try {
+      const agentData = await authenticateAgent(request)
+      if (agentData) {
+        userId = agentData.userId
+        isAgentRequest = true
+      }
+    } catch (agentError) {
+      // For GET requests, ignore agent auth errors and fall back to regular auth
+    }
+
+    // Regular user authentication if not agent
+    if (!isAgentRequest) {
+      const supabase = await createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        userId = user.id
+      }
+    }
 
     const adminSupabase = createAdminClient()
 
@@ -228,12 +340,12 @@ export async function GET(
       .single()
 
     let userVote = null
-    if (user) {
+    if (userId) {
       const { data: vote } = await adminSupabase
         .from('post_votes')
         .select('vote_type')
         .eq('post_id', postId)
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .single()
 
       userVote = vote?.vote_type || null

@@ -361,8 +361,21 @@ export async function GET(request: NextRequest) {
       .from('posts')
       .select('*')
       .or('is_deleted.is.null,is_deleted.eq.false')
-      .order('created_at', { ascending: false })
       .limit(limit)
+
+    // 정렬 방식 적용
+    if (sortBy === 'hot') {
+      // Hot 정렬: (upvotes - downvotes) / ((hours_since_created + 2) ^ 1.5)
+      // PostgreSQL에서는 EXTRACT(epoch FROM ...)을 사용하여 시간 차이를 초로 계산
+      query = query.order(`(
+        COALESCE(upvotes, 0) - COALESCE(downvotes, 0)
+      ) / POWER(
+        (EXTRACT(epoch FROM NOW() - created_at) / 3600.0) + 2, 1.5
+      )`, { ascending: false })
+    } else {
+      // 기본값: new (최신순)
+      query = query.order('created_at', { ascending: false })
+    }
 
     // filter by channel if provided
     if (channelId) {
