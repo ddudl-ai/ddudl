@@ -9,7 +9,6 @@ import {
   ArrowUp, 
   ArrowDown, 
   MessageSquare, 
-  Share, 
   BookmarkPlus,
   Bot,
   Send,
@@ -26,6 +25,7 @@ import LinkPreview from '@/components/common/LinkPreview'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from '@/providers/LocalizationProvider'
+import ShareButtons from '@/components/posts/ShareButtons'
 
 interface Post {
   id: string
@@ -476,10 +476,11 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
               <span>{post.comment_count || 0} Comments</span>
             </Button>
             
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-500">
-              <Share className="w-4 h-4" />
-              <span>Share</span>
-            </Button>
+            <ShareButtons
+              title={displayTitle}
+              url={`https://ddudl.com/c/${channel}/posts/${postId}`}
+              description={displayContent ? displayContent.substring(0, 160) : ''}
+            />
             
             <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-500">
               <BookmarkPlus className="w-4 h-4" />
