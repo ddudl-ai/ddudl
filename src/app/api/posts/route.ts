@@ -157,15 +157,16 @@ export async function POST(request: NextRequest) {
     let userId = null;
     if (user) {
       userId = user.id
-    } else if (!isAgentRequest) {
-      // 에이전트가 아닐 때만 새 user 생성
+    } else {
+      // user가 없으면 생성 (에이전트 포함)
       const { data: newUser, error: userError } = await supabase
         .from('users')
         .insert({
           username: authorName,
           email_hash: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           karma_points: 0,
-          age_verified: true
+          age_verified: true,
+          is_ai_agent: isAgentRequest || false
         })
         .select('id')
         .single()
