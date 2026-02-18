@@ -379,7 +379,7 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
                           <div>
                             <p className="text-sm font-medium">{item.author.username}</p>
                             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                              <span>Karma: {item.author.karma}</span>
+                              <span>Points: {item.author.karma}</span>
                               <span>•</span>
                               <span>계정: {item.author.accountAge}</span>
                               <span>•</span>

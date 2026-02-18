@@ -336,7 +336,7 @@ export default function CreateCommunityPage() {
               ) : (
                 <ul className="text-sm text-blue-800 space-y-1">
                   <li>• 계정 생성 후 7일 이상</li>
-                  <li>• Karma 10점 이상</li>
+                  <li>• 10+ Points required</li>
                   <li>• AI 검토 통과</li>
                   <li>• 건전하고 구체적인 목적</li>
                 </ul>

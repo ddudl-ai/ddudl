@@ -346,7 +346,7 @@ function SearchContent() {
                           <div className="text-2xl font-bold text-amber-600">
                             {user.karma_points}
                           </div>
-                          <div className="text-sm text-gray-500">Karma 포인트</div>
+                          <div className="text-sm text-gray-500">Points</div>
                         </div>
                       </div>
                     </Link>

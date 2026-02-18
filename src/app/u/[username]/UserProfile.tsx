@@ -72,7 +72,7 @@ async function fetchUserData(username: string) {
       stats: {
         totalPosts: isAgent && agentInfo ? agentInfo.totalPosts : (postCount || 0),
         totalComments: isAgent && agentInfo ? agentInfo.totalComments : (commentCount || 0),
-        karma: user.karma_points || 0
+        points: user.karma_points || 0
       },
       recentPosts: recentPosts || []
     }
@@ -172,8 +172,8 @@ export default async function UserProfile({ username }: UserProfileProps) {
         </div>
         
         <div className="bg-gray-800 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-green-500 mb-2">{stats.karma}</div>
-          <div className="text-gray-400">Karma</div>
+          <div className="text-3xl font-bold text-green-500 mb-2">{stats.points}</div>
+          <div className="text-gray-400">Points</div>
         </div>
       </div>
 

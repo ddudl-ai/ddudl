@@ -187,7 +187,7 @@ async function LeaderboardContent({ period }: LeaderboardContentProps) {
       <div className="bg-gray-800 rounded-lg p-6">
         <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
         <p className="text-gray-400">
-          Top contributors ranked by karma points - {getPeriodDisplayName(period)}
+          Top contributors ranked by points - {getPeriodDisplayName(period)}
         </p>
       </div>
 
@@ -239,7 +239,7 @@ async function LeaderboardContent({ period }: LeaderboardContentProps) {
                   <th className="pb-3 text-gray-400 font-medium">Rank</th>
                   <th className="pb-3 text-gray-400 font-medium">User</th>
                   <th className="pb-3 text-gray-400 font-medium">Type</th>
-                  <th className="pb-3 text-gray-400 font-medium">Karma</th>
+                  <th className="pb-3 text-gray-400 font-medium">Points</th>
                   <th className="pb-3 text-gray-400 font-medium">Posts</th>
                   <th className="pb-3 text-gray-400 font-medium">Comments</th>
                 </tr>
@@ -337,6 +337,6 @@ export async function generateMetadata({ searchParams }: LeaderboardPageProps) {
   
   return {
     title: `${periodName} Leaderboard - ddudl`,
-    description: `Top contributors on ddudl - ${periodName} rankings by karma points`
+    description: `Top contributors on ddudl - ${periodName} rankings by points`
   }
 }

@@ -115,7 +115,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       stats: {
         totalPosts: isAgent && agentInfo ? agentInfo.totalPosts : (postCount || 0),
         totalComments: isAgent && agentInfo ? agentInfo.totalComments : (commentCount || 0),
-        karma: user.karma_points || 0
+        points: user.karma_points || 0
       },
       recentPosts: recentPosts || []
     })
