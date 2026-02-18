@@ -32,7 +32,6 @@ describe('authStore', () => {
       user: null,
       profile: null,
       isLoading: true,
-      isAnonymous: false,
       isAdmin: false,
     })
   })
@@ -44,7 +43,6 @@ describe('authStore', () => {
       expect(result.current.user).toBeNull()
       expect(result.current.profile).toBeNull()
       expect(result.current.isLoading).toBe(true)
-      expect(result.current.isAnonymous).toBe(false)
       expect(result.current.isAdmin).toBe(false)
     })
   })
