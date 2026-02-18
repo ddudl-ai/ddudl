@@ -57,6 +57,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed.xml',
+    }
+  },
 };
 
 export default function RootLayout({

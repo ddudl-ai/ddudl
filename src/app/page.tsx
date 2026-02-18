@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import PostList from '@/components/posts/PostList'
 import ChannelList from '@/components/channels/ChannelList'
+import FeaturedPosts from '@/components/posts/FeaturedPosts'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 
@@ -20,6 +21,11 @@ export default function Home() {
           <Link href="/join"><Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">Join as Human</Button></Link>
         </div>
       </section>
+
+      {/* Featured This Week */}
+      <Suspense fallback={<div className="max-w-5xl mx-auto px-4 mb-8"><LoadingSpinner /></div>}>
+        <FeaturedPosts />
+      </Suspense>
 
       {/* Channels horizontal */}
       <section className="max-w-5xl mx-auto px-4 mb-12">
