@@ -1,6 +1,6 @@
 import { POST, GET } from '../route'
 import { NextRequest } from 'next/server'
-import { mockSupabaseClient, mockPosts, mockChannels, mockUsers } from '@/lib/test/mocks'
+import { mockSupabaseClient, mockPosts, mockChannels, mockUsers } from '../../../../../test-utils/mocks'
 
 // Mock the admin client
 jest.mock('@/lib/supabase/admin', () => ({
@@ -497,6 +497,252 @@ describe('/api/posts', () => {
         expect(mockSupabaseClient.order).toHaveBeenCalledWith('upvotes', { ascending: false })
         expect(mockSupabaseClient.order).toHaveBeenCalledWith('created_at', { ascending: false })
       })
+    })
+  })
+
+  // Phase C: 엣지 케이스 테스트 추가
+  describe('Edge Cases - GET /api/posts', () => {
+    it('should handle empty channel name', async () => {
+      const request = new NextRequest('http://localhost:3000/api/posts?channel=')
+      const response = await GET(request)
+
+      expect(response.status).toBe(200) // Should not crash
+    })
+
+    it('should handle non-existent channel', async () => {
+      // Mock empty response for non-existent channel
+      mockSupabaseClient.limit.mockResolvedValueOnce({
+        data: [],
+        error: null,
+      })
+
+      const request = new NextRequest('http://localhost:3000/api/posts?channel=nonexistent')
+      const response = await GET(request)
+      const result = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(result.posts).toEqual([])
+    })
+
+    it('should filter out deleted posts (is_deleted = true)', async () => {
+      const postsWithDeleted = [
+        { ...mockPosts[0], is_deleted: false },
+        { ...mockPosts[1], is_deleted: true }, // Should be filtered out
+      ]
+
+      mockSupabaseClient.limit.mockResolvedValueOnce({
+        data: postsWithDeleted.filter(p => !p.is_deleted),
+        error: null,
+      })
+
+      const request = new NextRequest('http://localhost:3000/api/posts')
+      const response = await GET(request)
+      const result = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(result.posts).toHaveLength(1)
+      expect(result.posts[0].is_deleted).toBe(false)
+    })
+
+    it('should handle pagination boundary conditions', async () => {
+      // Test edge case: page=0
+      const request1 = new NextRequest('http://localhost:3000/api/posts?page=0')
+      const response1 = await GET(request1)
+      expect(response1.status).toBe(200)
+
+      // Test edge case: negative page
+      const request2 = new NextRequest('http://localhost:3000/api/posts?page=-1')
+      const response2 = await GET(request2)
+      expect(response2.status).toBe(200)
+
+      // Test edge case: very large page number
+      const request3 = new NextRequest('http://localhost:3000/api/posts?page=999999')
+      const response3 = await GET(request3)
+      expect(response3.status).toBe(200)
+    })
+
+    it('should handle invalid limit values', async () => {
+      // Test edge case: negative limit
+      const request1 = new NextRequest('http://localhost:3000/api/posts?limit=-10')
+      const response1 = await GET(request1)
+      expect(response1.status).toBe(200)
+
+      // Test edge case: limit = 0
+      const request2 = new NextRequest('http://localhost:3000/api/posts?limit=0')
+      const response2 = await GET(request2)
+      expect(response2.status).toBe(200)
+
+      // Test edge case: extremely large limit
+      const request3 = new NextRequest('http://localhost:3000/api/posts?limit=99999')
+      const response3 = await GET(request3)
+      expect(response3.status).toBe(200)
+    })
+
+    it('should handle malformed query parameters', async () => {
+      // Test with special characters
+      const request1 = new NextRequest('http://localhost:3000/api/posts?channel=<script>alert(1)</script>')
+      const response1 = await GET(request1)
+      expect(response1.status).toBe(200)
+
+      // Test with SQL injection attempt
+      const request2 = new NextRequest('http://localhost:3000/api/posts?flair=\&apos; OR 1=1 --')
+      const response2 = await GET(request2)
+      expect(response2.status).toBe(200)
+
+      // Test with very long query parameter
+      const longString = 'a'.repeat(10000)
+      const request3 = new NextRequest(`http://localhost:3000/api/posts?search=${longString}`)
+      const response3 = await GET(request3)
+      expect(response3.status).toBe(200)
+    })
+  })
+
+  describe('Edge Cases - POST /api/posts', () => {
+    it('should reject null/undefined inputs', async () => {
+      const request1 = createRequest({
+        title: null,
+        content: 'test content',
+        channelName: 'test',
+        authorName: 'testuser'
+      })
+
+      const response1 = await POST(request1 as NextRequest)
+      expect(response1.status).toBe(400)
+
+      const request2 = createRequest({
+        title: 'test title',
+        content: undefined,
+        channelName: 'test',
+        authorName: 'testuser'
+      })
+
+      const response2 = await POST(request2 as NextRequest)
+      expect(response2.status).toBe(400)
+    })
+
+    it('should reject empty strings', async () => {
+      const request = createRequest({
+        title: '',
+        content: 'test content',
+        channelName: 'test',
+        authorName: 'testuser',
+        captchaVerified: true
+      })
+
+      const response = await POST(request as NextRequest)
+      expect(response.status).toBe(400)
+    })
+
+    it('should handle extremely long content (>10000 chars)', async () => {
+      const longContent = 'a'.repeat(10001)
+      const request = createRequest({
+        title: 'test title',
+        content: longContent,
+        channelName: 'test',
+        authorName: 'testuser',
+        captchaVerified: true
+      })
+
+      const response = await POST(request as NextRequest)
+      expect(response.status).toBe(400)
+    })
+
+    it('should sanitize XSS attempts in content', async () => {
+      const request = createRequest({
+        title: 'test title',
+        content: '<script>alert(\"XSS\")</script><img src=x onerror=alert(1)>',
+        channelName: 'test',
+        authorName: 'testuser',
+        captchaVerified: true
+      })
+
+      // Mock successful DB insert
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: { id: '123', ...validPostData },
+        error: null,
+      })
+
+      const response = await POST(request as NextRequest)
+      expect(response.status).toBe(201)
+
+      // Verify that dangerous HTML is sanitized
+      expect(mockSupabaseClient.insert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: expect.not.stringContaining('<script>')
+        })
+      )
+    })
+
+    it('should handle SQL injection attempts in title/content', async () => {
+      const request = createRequest({
+        title: '\'; DROP TABLE posts; --',
+        content: '\'; DELETE FROM posts WHERE 1=1; --',
+        channelName: 'test',
+        authorName: 'testuser',
+        captchaVerified: true
+      })
+
+      // Mock successful DB insert (Supabase should handle SQL injection)
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: { id: '123' },
+        error: null,
+      })
+
+      const response = await POST(request as NextRequest)
+      // Should not crash and should be handled by Supabase's built-in protection
+      expect(response.status).toBeLessThan(500)
+    })
+
+    it('should reject posts without proper authentication for restricted channels', async () => {
+      const request = createRequest({
+        ...validPostData,
+        channelName: 'admin-only-channel'
+      }, {}) // No authentication headers
+
+      const response = await POST(request as NextRequest)
+      // Should handle authorization properly
+      expect([400, 401, 403]).toContain(response.status)
+    })
+
+    it('should handle invalid Content-Type headers', async () => {
+      const request = createRequest(validPostData, {
+        'content-type': 'text/plain' // Wrong content type
+      })
+
+      const response = await POST(request as NextRequest)
+      // Should handle or reject non-JSON content
+      expect(response.status).toBeLessThan(500)
+    })
+
+    it('should handle malformed JSON in request body', async () => {
+      const request = {
+        json: jest.fn().mockRejectedValue(new Error('Invalid JSON')),
+        headers: {
+          get: jest.fn().mockReturnValue('application/json'),
+        },
+      }
+
+      const response = await POST(request as NextRequest)
+      expect(response.status).toBe(400)
+    })
+
+    it('should handle database connection errors gracefully', async () => {
+      mockSupabaseClient.single.mockRejectedValueOnce(new Error('Connection failed'))
+
+      const request = createRequest(validPostData)
+      const response = await POST(request as NextRequest)
+
+      expect(response.status).toBe(500)
+    })
+
+    it('should handle invalid UUID formats in related fields', async () => {
+      const request = createRequest({
+        ...validPostData,
+        parentPostId: 'invalid-uuid-format'
+      })
+
+      const response = await POST(request as NextRequest)
+      expect(response.status).toBe(400)
     })
   })
 })

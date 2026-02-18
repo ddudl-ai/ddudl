@@ -1,7 +1,7 @@
-'use client'
+'use client&apos;
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { useState } from &apos;react&apos;
+import { Button } from &apos;@/components/ui/button&apos;
 import {
   Dialog,
   DialogContent,
@@ -10,12 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
-import { Rocket, Coins, Clock, TrendingUp } from 'lucide-react'
-import { useAuthStore } from '@/stores/authStore'
+} from &apos;@/components/ui/dialog&apos;
+import { RadioGroup, RadioGroupItem } from &apos;@/components/ui/radio-group&apos;
+import { Label } from &apos;@/components/ui/label&apos;
+import { useToast } from &apos;@/hooks/use-toast&apos;
+import { Rocket, Coins, Clock, TrendingUp } from &apos;lucide-react&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
 
 interface PostBoostButtonProps {
   postId: string
@@ -34,22 +34,22 @@ interface BoostOption {
 
 const boostOptions: BoostOption[] = [
   {
-    id: 'post_boost_1h',
-    duration: '1 hour',
+    id: &apos;post_boost_1h&apos;,
+    duration: &apos;1 hour&apos;,
     cost: 100,
-    description: 'Pin post to top for 1 hour'
+    description: &apos;Pin post to top for 1 hour&apos;
   },
   {
-    id: 'post_boost_6h',
-    duration: '6 hours',
+    id: &apos;post_boost_6h&apos;,
+    duration: &apos;6 hours&apos;,
     cost: 500,
-    description: 'Pin post to top for 6 hours'
+    description: &apos;Pin post to top for 6 hours&apos;
   },
   {
-    id: 'post_boost_24h',
-    duration: '24 hours',
+    id: &apos;post_boost_24h&apos;,
+    duration: &apos;24 hours&apos;,
     cost: 1500,
-    description: 'Pin post to top for 24 hours'
+    description: &apos;Pin post to top for 24 hours&apos;
   }
 ]
 
@@ -72,25 +72,25 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
         setUserBalance(data.balance)
       }
     } catch (error) {
-      console.error('Failed to fetch balance:', error)
+      console.error(&apos;Failed to fetch balance:&apos;, error)
     }
   }
 
   const handleBoost = async () => {
     if (!user?.id) {
       toast({
-        title: 'Login Required',
-        description: 'Please log in to use the boost feature.',
-        variant: 'destructive'
+        title: &apos;Login Required&apos;,
+        description: &apos;Please log in to use the boost feature.&apos;,
+        variant: &apos;destructive&apos;
       })
       return
     }
 
     setLoading(true)
     try {
-      const response = await fetch('/api/tokens/spend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(&apos;/api/tokens/spend&apos;, {
+        method: &apos;POST&apos;,
+        headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
         body: JSON.stringify({
           userId: user.id,
           action: selectedOption,
@@ -103,7 +103,7 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
 
       if (response.ok) {
         toast({
-          title: 'Boost Successful!',
+          title: &apos;Boost Successful!&apos;,
           description: `Post has been boosted. Remaining tokens: ${data.newBalance}`,
         })
         setOpen(false)
@@ -111,16 +111,16 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
         window.location.reload()
       } else {
         toast({
-          title: 'Boost Failed',
-          description: data.message || 'Insufficient tokens or an error occurred.',
-          variant: 'destructive'
+          title: &apos;Boost Failed&apos;,
+          description: data.message || &apos;Insufficient tokens or an error occurred.&apos;,
+          variant: &apos;destructive&apos;
         })
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'An error occurred while processing boost.',
-        variant: 'destructive'
+        title: &apos;Error&apos;,
+        description: &apos;An error occurred while processing boost.&apos;,
+        variant: &apos;destructive&apos;
       })
     } finally {
       setLoading(false)
@@ -133,8 +133,8 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
   if (currentBoost && new Date(currentBoost.expires_at) > new Date()) {
     const expiresIn = Math.ceil((new Date(currentBoost.expires_at).getTime() - Date.now()) / (1000 * 60 * 60))
     return (
-      <Button variant="outline" disabled size="sm">
-        <TrendingUp className="w-4 h-4 mr-2" />
+      <Button variant=&quot;outline&quot; disabled size=&quot;sm&quot;>
+        <TrendingUp className=&quot;w-4 h-4 mr-2&quot; />
         Boosted ({expiresIn}h left)
       </Button>
     )
@@ -146,8 +146,8 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
       if (isOpen) fetchBalance()
     }}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Rocket className="w-4 h-4 mr-2" />
+        <Button variant=&quot;outline&quot; size=&quot;sm&quot;>
+          <Rocket className=&quot;w-4 h-4 mr-2&quot; />
           Boost
         </Button>
       </DialogTrigger>
@@ -157,9 +157,9 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
           <DialogDescription>
             Use tokens to pin your post to the top.
             {userBalance !== null && (
-              <div className="mt-2 flex items-center gap-2">
-                <Coins className="w-4 h-4" />
-                <span className="font-semibold">Available tokens: {userBalance}</span>
+              <div className=&quot;mt-2 flex items-center gap-2&quot;>
+                <Coins className=&quot;w-4 h-4&quot; />
+                <span className=&quot;font-semibold&quot;>Available tokens: {userBalance}</span>
               </div>
             )}
           </DialogDescription>
@@ -167,21 +167,21 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
 
         <RadioGroup value={selectedOption} onValueChange={setSelectedOption}>
           {boostOptions.map((option) => (
-            <div key={option.id} className="flex items-start space-x-3 mb-4">
+            <div key={option.id} className=&quot;flex items-start space-x-3 mb-4&quot;>
               <RadioGroupItem value={option.id} id={option.id} />
-              <Label htmlFor={option.id} className="flex-1 cursor-pointer">
-                <div className="flex items-center justify-between">
+              <Label htmlFor={option.id} className=&quot;flex-1 cursor-pointer&quot;>
+                <div className=&quot;flex items-center justify-between&quot;>
                   <div>
-                    <div className="font-semibold flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
+                    <div className=&quot;font-semibold flex items-center gap-2&quot;>
+                      <Clock className=&quot;w-4 h-4&quot; />
                       {option.duration}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className=&quot;text-sm text-muted-foreground&quot;>
                       {option.description}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 font-bold">
-                    <Coins className="w-4 h-4" />
+                  <div className=&quot;flex items-center gap-1 font-bold&quot;>
+                    <Coins className=&quot;w-4 h-4&quot; />
                     {option.cost}
                   </div>
                 </div>
@@ -191,14 +191,14 @@ export function PostBoostButton({ postId, currentBoost }: PostBoostButtonProps) 
         </RadioGroup>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant=&quot;outline&quot; onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button
             onClick={handleBoost}
             disabled={loading || (userBalance !== null && userBalance < selectedCost)}
           >
-            {loading ? 'Processing...' : `Boost for ${selectedCost} tokens`}
+            {loading ? &apos;Processing...&apos; : `Boost for ${selectedCost} tokens`}
           </Button>
         </DialogFooter>
       </DialogContent>

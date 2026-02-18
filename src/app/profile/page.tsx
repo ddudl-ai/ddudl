@@ -1,15 +1,15 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useAuthStore } from '@/stores/authStore'
-import { stripHtmlTags } from '@/lib/utils/html'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useEffect, useState } from &apos;react&apos;
+import { useRouter } from &apos;next/navigation&apos;
+import Link from &apos;next/link&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
+import { stripHtmlTags } from &apos;@/lib/utils/html&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
+import { Button } from &apos;@/components/ui/button&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { Tabs, TabsContent, TabsList, TabsTrigger } from &apos;@/components/ui/tabs&apos;
+import { Avatar, AvatarFallback, AvatarImage } from &apos;@/components/ui/avatar&apos;
 import {
   User,
   Calendar,
@@ -23,10 +23,10 @@ import {
   Coins,
   TrendingUp,
   Award
-} from 'lucide-react'
-import Header from '@/components/layout/Header'
-import { formatTokens, calculateUserLevel, getLevelColor } from '@/lib/token/tokenUtils'
-import { LoadingSpinner } from '@/components/common/LoadingSpinner'
+} from &apos;lucide-react&apos;
+import Header from &apos;@/components/layout/Header&apos;
+import { formatTokens, calculateUserLevel, getLevelColor } from &apos;@/lib/token/tokenUtils&apos;
+import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
 
 interface UserProfile {
   id: string
@@ -78,7 +78,7 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('posts')
+  const [activeTab, setActiveTab] = useState(&apos;posts&apos;)
   const router = useRouter()
 
   useEffect(() => {
@@ -121,7 +121,7 @@ export default function ProfilePage() {
         }
       }
     } catch (error) {
-      console.error('Error fetching profile data:', error)
+      console.error(&apos;Error fetching profile data:&apos;, error)
     } finally {
       setLoading(false)
     }
@@ -129,14 +129,14 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className=&quot;min-h-screen bg-gray-50&quot;>
         <Header />
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className=&quot;max-w-4xl mx-auto px-4 py-8&quot;>
           <Card>
-            <CardContent className="pt-6 text-center">
-              <p className="text-gray-600 mb-4">Please sign in to view your profile.</p>
+            <CardContent className=&quot;pt-6 text-center&quot;>
+              <p className=&quot;text-gray-600 mb-4&quot;>Please sign in to view your profile.</p>
               <Button asChild>
-                <Link href="/auth/signin">Sign In</Link>
+                <Link href=&quot;/auth/signin&quot;>Sign In</Link>
               </Button>
             </CardContent>
           </Card>
@@ -147,11 +147,11 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className=&quot;min-h-screen bg-gray-50&quot;>
         <Header />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="flex justify-center">
-            <LoadingSpinner text="Loading profile..." />
+        <div className=&quot;max-w-4xl mx-auto px-4 py-8&quot;>
+          <div className=&quot;flex justify-center&quot;>
+            <LoadingSpinner text=&quot;Loading profile...&quot; />
           </div>
         </div>
       </div>
@@ -159,38 +159,38 @@ export default function ProfilePage() {
   }
 
   const userLevel = profile ? calculateUserLevel(profile.karma_points) : null
-  const joinDate = profile ? new Date(profile.created_at).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }) : ''
+  const joinDate = profile ? new Date(profile.created_at).toLocaleDateString(&apos;ko-KR&apos;, {
+    year: &apos;numeric&apos;,
+    month: &apos;long&apos;,
+    day: &apos;numeric&apos;
+  }) : &apos;'
 
   const totalUpvotes = posts.reduce((sum, post) => sum + post.upvotes, 0) +
     comments.reduce((sum, comment) => sum + comment.upvotes, 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className=&quot;min-h-screen bg-gray-50&quot;>
       <Header />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className=&quot;max-w-6xl mx-auto px-4 py-8&quot;>
         {/* 프로필 헤더 */}
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-4">
-                <Avatar className="w-20 h-20">
-                  <AvatarImage src={profile?.profile_image_url || ''} />
-                  <AvatarFallback className="text-2xl bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                    {profile?.username?.[0]?.toUpperCase() || 'U'}
+        <Card className=&quot;mb-8&quot;>
+          <CardContent className=&quot;pt-6&quot;>
+            <div className=&quot;flex items-start justify-between&quot;>
+              <div className=&quot;flex items-start space-x-4&quot;>
+                <Avatar className=&quot;w-20 h-20&quot;>
+                  <AvatarImage src={profile?.profile_image_url || &apos;'} />
+                  <AvatarFallback className=&quot;text-2xl bg-gradient-to-r from-orange-500 to-red-500 text-white&quot;>
+                    {profile?.username?.[0]?.toUpperCase() || &apos;U&apos;}
                   </AvatarFallback>
                 </Avatar>
 
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <h1 className="text-2xl font-bold">{profile?.username}</h1>
+                <div className=&quot;space-y-2&quot;>
+                  <div className=&quot;flex items-center space-x-2&quot;>
+                    <h1 className=&quot;text-2xl font-bold&quot;>{profile?.username}</h1>
                     {profile?.age_verified && (
-                      <Badge variant="secondary">
-                        <Shield className="w-3 h-3 mr-1" />
+                      <Badge variant=&quot;secondary&quot;>
+                        <Shield className=&quot;w-3 h-3 mr-1&quot; />
                         Verified
                       </Badge>
                     )}
@@ -198,7 +198,7 @@ export default function ProfilePage() {
                       <Badge
                         style={{
                           backgroundColor: getLevelColor(userLevel.level),
-                          color: 'white'
+                          color: &apos;white&apos;
                         }}
                       >
                         {userLevel.name}
@@ -206,33 +206,33 @@ export default function ProfilePage() {
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-4 text-sm text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4" />
+                  <div className=&quot;flex items-center space-x-4 text-sm text-gray-600&quot;>
+                    <div className=&quot;flex items-center space-x-1&quot;>
+                      <Calendar className=&quot;w-4 h-4&quot; />
                       <span>Joined {joinDate}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Coins className="w-4 h-4" />
+                    <div className=&quot;flex items-center space-x-1&quot;>
+                      <Coins className=&quot;w-4 h-4&quot; />
                       <span>{formatTokens(profile?.karma_points || 0)}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Trophy className="w-4 h-4" />
+                    <div className=&quot;flex items-center space-x-1&quot;>
+                      <Trophy className=&quot;w-4 h-4&quot; />
                       <span>{totalUpvotes} Upvotes</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/profile/edit">
-                    <Edit className="w-4 h-4 mr-2" />
+              <div className=&quot;flex space-x-2&quot;>
+                <Button variant=&quot;outline&quot; size=&quot;sm&quot; asChild>
+                  <Link href=&quot;/profile/edit&quot;>
+                    <Edit className=&quot;w-4 h-4 mr-2&quot; />
                     Edit Profile
                   </Link>
                 </Button>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/settings">
-                    <Settings className="w-4 h-4 mr-2" />
+                <Button variant=&quot;outline&quot; size=&quot;sm&quot; asChild>
+                  <Link href=&quot;/settings&quot;>
+                    <Settings className=&quot;w-4 h-4 mr-2&quot; />
                     Settings
                   </Link>
                 </Button>
@@ -242,44 +242,44 @@ export default function ProfilePage() {
         </Card>
 
         {/* 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className=&quot;grid grid-cols-1 md:grid-cols-4 gap-4 mb-8&quot;>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Posts</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+              <CardTitle className=&quot;text-sm font-medium&quot;>Posts</CardTitle>
+              <FileText className=&quot;h-4 w-4 text-muted-foreground&quot; />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{posts.length}</div>
+              <div className=&quot;text-2xl font-bold&quot;>{posts.length}</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Comments</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+              <CardTitle className=&quot;text-sm font-medium&quot;>Comments</CardTitle>
+              <MessageSquare className=&quot;h-4 w-4 text-muted-foreground&quot; />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{comments.length}</div>
+              <div className=&quot;text-2xl font-bold&quot;>{comments.length}</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Upvotes</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+              <CardTitle className=&quot;text-sm font-medium&quot;>Total Upvotes</CardTitle>
+              <TrendingUp className=&quot;h-4 w-4 text-muted-foreground&quot; />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalUpvotes}</div>
+              <div className=&quot;text-2xl font-bold&quot;>{totalUpvotes}</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Tokens</CardTitle>
-              <Coins className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+              <CardTitle className=&quot;text-sm font-medium&quot;>Tokens</CardTitle>
+              <Coins className=&quot;h-4 w-4 text-muted-foreground&quot; />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className=&quot;text-2xl font-bold&quot;>
                 {formatTokens(profile?.karma_points || 0)}
               </div>
             </CardContent>
@@ -296,40 +296,40 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="posts">
+              <TabsList className=&quot;grid w-full grid-cols-2&quot;>
+                <TabsTrigger value=&quot;posts&quot;>
                   Posts ({posts.length})
                 </TabsTrigger>
-                <TabsTrigger value="comments">
+                <TabsTrigger value=&quot;comments&quot;>
                   Comments ({comments.length})
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="posts" className="space-y-4">
+              <TabsContent value=&quot;posts&quot; className=&quot;space-y-4&quot;>
                 {posts.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className=&quot;text-center py-8 text-gray-500&quot;>
                     No posts yet.
                   </div>
                 ) : (
                   posts.map((post) => (
-                    <div key={post.id} className="border-b pb-4">
+                    <div key={post.id} className=&quot;border-b pb-4&quot;>
                       <Link
                         href={`/c/${post.channels.name}/posts/${post.id}`}
-                        className="hover:text-blue-600"
+                        className=&quot;hover:text-blue-600&quot;
                       >
-                        <h3 className="font-medium mb-1">{post.title}</h3>
+                        <h3 className=&quot;font-medium mb-1&quot;>{post.title}</h3>
                       </Link>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <div className=&quot;flex items-center space-x-4 text-sm text-gray-500&quot;>
                         <span>c/{post.channels.name}</span>
                         {post.flair && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant=&quot;outline&quot; className=&quot;text-xs&quot;>
                             {post.flair}
                           </Badge>
                         )}
                         <span>👍 {post.upvotes}</span>
                         <span>💬 {post.comment_count}</span>
                         <span>
-                          {new Date(post.created_at).toLocaleDateString('ko-KR')}
+                          {new Date(post.created_at).toLocaleDateString(&apos;ko-KR&apos;)}
                         </span>
                       </div>
                     </div>
@@ -337,26 +337,26 @@ export default function ProfilePage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="comments" className="space-y-4">
+              <TabsContent value=&quot;comments&quot; className=&quot;space-y-4&quot;>
                 {comments.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className=&quot;text-center py-8 text-gray-500&quot;>
                     No comments yet.
                   </div>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment.id} className="border-b pb-4">
+                    <div key={comment.id} className=&quot;border-b pb-4&quot;>
                       <Link
                         href={`/c/${comment.posts.channels.name}/posts/${comment.post_id}`}
-                        className="text-sm text-gray-600 hover:text-blue-600"
+                        className=&quot;text-sm text-gray-600 hover:text-blue-600&quot;
                       >
                         Post: {comment.posts.title}
                       </Link>
-                      <p className="mt-1 text-gray-800">{stripHtmlTags(comment.content)}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                      <p className=&quot;mt-1 text-gray-800&quot;>{stripHtmlTags(comment.content)}</p>
+                      <div className=&quot;flex items-center space-x-4 text-sm text-gray-500 mt-2&quot;>
                         <span>c/{comment.posts.channels.name}</span>
                         <span>👍 {comment.upvotes}</span>
                         <span>
-                          {new Date(comment.created_at).toLocaleDateString('ko-KR')}
+                          {new Date(comment.created_at).toLocaleDateString(&apos;ko-KR&apos;)}
                         </span>
                       </div>
                     </div>

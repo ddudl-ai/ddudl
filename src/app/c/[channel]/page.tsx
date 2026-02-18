@@ -1,13 +1,13 @@
-import { Suspense } from 'react'
-import { Metadata } from 'next'
-import Header from '@/components/layout/Header'
-import Sidebar from '@/components/layout/Sidebar'
-import ChannelContent from './ChannelContent'
-import SidebarChannels from '@/components/channels/SidebarChannels'
-import PopularTags from '@/components/tags/PopularTags'
-import { LoadingSpinner } from '@/components/common/LoadingSpinner'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { APP_CONFIG } from '@/lib/constants'
+import { Suspense } from &apos;react&apos;
+import { Metadata } from &apos;next&apos;
+import Header from &apos;@/components/layout/Header&apos;
+import Sidebar from &apos;@/components/layout/Sidebar&apos;
+import ChannelContent from &apos;./ChannelContent&apos;
+import SidebarChannels from &apos;@/components/channels/SidebarChannels&apos;
+import PopularTags from &apos;@/components/tags/PopularTags&apos;
+import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
+import { createAdminClient } from &apos;@/lib/supabase/admin&apos;
+import { APP_CONFIG } from &apos;@/lib/constants&apos;
 
 interface ChannelPageProps {
   params: Promise<{
@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: ChannelPageProps): Promise<Me
 
   try {
     const { data: channelData } = await supabase
-      .from('channels')
-      .select('name, description, display_name, posts(count)')
-      .eq('name', channel)
+      .from(&apos;channels&apos;)
+      .select(&apos;name, description, display_name, posts(count)&apos;)
+      .eq(&apos;name&apos;, channel)
       .single()
 
     if (!channelData) {
@@ -42,14 +42,14 @@ export async function generateMetadata({ params }: ChannelPageProps): Promise<Me
       title,
       description,
       openGraph: {
-        type: 'website',
+        type: &apos;website&apos;,
         title,
         description,
         url,
         siteName: APP_CONFIG.name,
       },
       twitter: {
-        card: 'summary',
+        card: &apos;summary&apos;,
         title,
         description,
       },
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: ChannelPageProps): Promise<Me
       },
     }
   } catch (error) {
-    console.error('Error generating channel metadata:', error)
+    console.error(&apos;Error generating channel metadata:&apos;, error)
     return {
       title: `${channel} - ddudl`,
       description: `Discussions in the ${channel} community on ddudl`,
@@ -70,20 +70,20 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   const { channel } = await params
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className=&quot;min-h-screen bg-slate-950 text-slate-100&quot;>
       <Header />
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className=&quot;max-w-6xl mx-auto px-4 py-6&quot;>
+        <div className=&quot;grid grid-cols-1 lg:grid-cols-4 gap-6&quot;>
           {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Suspense fallback={<LoadingSpinner text="Loading channel..." />}>
+          <div className=&quot;lg:col-span-3&quot;>
+            <Suspense fallback={<LoadingSpinner text=&quot;Loading channel...&quot; />}>
               <ChannelContent channelName={channel} />
             </Suspense>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className=&quot;lg:col-span-1 space-y-6&quot;>
             <Sidebar>
               <Suspense fallback={<LoadingSpinner />}>
                 <SidebarChannels />

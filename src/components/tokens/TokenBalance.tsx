@@ -1,33 +1,33 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Coins } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useAuthStore } from '@/stores/authStore'
+import { useEffect, useState } from &apos;react&apos;
+import { createClientComponentClient } from &apos;@supabase/auth-helpers-nextjs&apos;
+import { Coins } from &apos;lucide-react&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { Skeleton } from &apos;@/components/ui/skeleton&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
 
 interface TokenBalanceProps {
   className?: string
   showLabel?: boolean
 }
 
-export function TokenBalance({ className = '', showLabel = true }: TokenBalanceProps) {
+export function TokenBalance({ className = &apos;', showLabel = true }: TokenBalanceProps) {
   const [balance, setBalance] = useState<number | null>(null)
   const { user, isLoading: authLoading } = useAuthStore()
   // Use local loading state combined with auth loading
   const [loading, setLoading] = useState(true)
 
   const supabase = createClientComponentClient({
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co',
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key-for-build'
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || &apos;https://example.supabase.co&apos;,
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || &apos;dummy-key-for-build&apos;
   })
   const [profileId, setProfileId] = useState<string | null>(null)
 
   useEffect(() => {
     const init = async () => {
       if (!user) return
-      const username = user.user_metadata?.username || user.email?.split('@')[0]
+      const username = user.user_metadata?.username || user.email?.split(&apos;@&apos;)[0]
       if (!username) return
 
       try {
@@ -37,7 +37,7 @@ export function TokenBalance({ className = '', showLabel = true }: TokenBalanceP
           if (profile?.id) setProfileId(profile.id)
         }
       } catch (e) {
-        console.error('Failed to resolve profile id:', e)
+        console.error(&apos;Failed to resolve profile id:&apos;, e)
       }
     }
     init()
@@ -49,17 +49,17 @@ export function TokenBalance({ className = '', showLabel = true }: TokenBalanceP
     fetchBalance()
 
     const channel = supabase
-      .channel('token-balance')
+      .channel(&apos;token-balance&apos;)
       .on(
-        'postgres_changes',
+        &apos;postgres_changes&apos;,
         {
-          event: '*',
-          schema: 'public',
-          table: 'users',
+          event: &apos;*&apos;,
+          schema: &apos;public&apos;,
+          table: &apos;users&apos;,
           filter: `id=eq.${profileId}`
         },
         (payload: any) => {
-          if (payload.new && 'karma_points' in payload.new) {
+          if (payload.new && &apos;karma_points&apos; in payload.new) {
             setBalance(payload.new.karma_points as number)
           }
         }
@@ -76,16 +76,16 @@ export function TokenBalance({ className = '', showLabel = true }: TokenBalanceP
 
     try {
       const { data, error } = await supabase
-        .from('users')
-        .select('karma_points')
-        .eq('id', profileId)
+        .from(&apos;users&apos;)
+        .select(&apos;karma_points&apos;)
+        .eq(&apos;id&apos;, profileId)
         .single()
 
       if (!error && data) {
         setBalance(data.karma_points)
       }
     } catch (error) {
-      console.error('Failed to fetch token balance:', error)
+      console.error(&apos;Failed to fetch token balance:&apos;, error)
     } finally {
       setLoading(false)
     }
@@ -96,16 +96,16 @@ export function TokenBalance({ className = '', showLabel = true }: TokenBalanceP
   if (loading) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
-        <Skeleton className="h-6 w-20" />
+        <Skeleton className=&quot;h-6 w-20&quot; />
       </div>
     )
   }
 
   return (
-    <Badge variant="secondary" className={`flex items-center gap-1.5 ${className}`}>
-      <Coins className="w-4 h-4" />
-      {showLabel && <span className="text-xs">Token:</span>}
-      <span className="font-semibold">{balance ?? 0}</span>
+    <Badge variant=&quot;secondary&quot; className={`flex items-center gap-1.5 ${className}`}>
+      <Coins className=&quot;w-4 h-4&quot; />
+      {showLabel && <span className=&quot;text-xs&quot;>Token:</span>}
+      <span className=&quot;font-semibold&quot;>{balance ?? 0}</span>
     </Badge>
   )
 }

@@ -1,26 +1,26 @@
-import React from 'react'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { useRouter, useSearchParams } from 'next/navigation'
-import WritePostForm from '../WritePostForm'
+import React from &apos;react&apos;
+import { render, screen, fireEvent, waitFor, act } from &apos;@testing-library/react&apos;
+import userEvent from &apos;@testing-library/user-event&apos;
+import { useRouter, useSearchParams } from &apos;next/navigation&apos;
+import WritePostForm from &apos;../WritePostForm&apos;
 
 // Mock Next.js modules
-jest.mock('next/navigation', () => ({
+jest.mock(&apos;next/navigation&apos;, () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
 }))
 
-jest.mock('@/stores/authStore', () => ({
+jest.mock(&apos;@/stores/authStore&apos;, () => ({
   useAuthStore: jest.fn(),
 }))
 
-jest.mock('@/hooks/useWritePostForm', () => ({
+jest.mock(&apos;@/hooks/useWritePostForm&apos;, () => ({
   useWritePostForm: jest.fn(),
 }))
 
 // Mock dynamic imports
-jest.mock('@/components/editor/JoditEditor', () => {
-  return React.forwardRef<any, any>((props, ref) => {
+jest.mock(&apos;@/components/editor/JoditEditor&apos;, () => {
+  const MockJoditEditor = React.forwardRef<any, any>((props, ref) => {
     React.useImperativeHandle(ref, () => ({
       insertImage: jest.fn(),
       insertHTML: jest.fn(),
@@ -28,22 +28,24 @@ jest.mock('@/components/editor/JoditEditor', () => {
     
     return (
       <textarea
-        data-testid="jodit-editor"
-        value={props.value || ''}
+        data-testid=&quot;jodit-editor&quot;
+        value={props.value || &apos;'}
         onChange={(e) => props.onChange?.(e.target.value)}
         placeholder={props.placeholder}
         disabled={props.disabled}
       />
     )
   })
+  MockJoditEditor.displayName = 'MockJoditEditor'
+  return MockJoditEditor
 })
 
 // Mock components
-jest.mock('@/components/common/SimpleCaptcha', () => {
+jest.mock(&apos;@/components/common/SimpleCaptcha&apos;, () => {
   return function SimpleCaptcha({ onVerify }: { onVerify: (verified: boolean) => void }) {
     return (
       <button 
-        data-testid="captcha-verify"
+        data-testid=&quot;captcha-verify&quot;
         onClick={() => onVerify(true)}
       >
         CAPTCHA 인증
@@ -52,15 +54,15 @@ jest.mock('@/components/common/SimpleCaptcha', () => {
   }
 })
 
-jest.mock('@/hooks/useClipboardPaste', () => ({
+jest.mock(&apos;@/hooks/useClipboardPaste&apos;, () => ({
   useClipboardPaste: jest.fn(),
 }))
 
-jest.mock('@/hooks/useDragAndDrop', () => ({
+jest.mock(&apos;@/hooks/useDragAndDrop&apos;, () => ({
   useDragAndDrop: () => ({ isDragging: false }),
 }))
 
-jest.mock('@/lib/utils/imageProcessor', () => ({
+jest.mock(&apos;@/lib/utils/imageProcessor&apos;, () => ({
   formatFileSize: (size: number) => `${size}B`,
   isImageFile: () => true,
 }))
@@ -80,10 +82,10 @@ const mockSearchParams = {
 // Default mock for useWritePostForm hook
 const mockUseWritePostForm = {
   // Form state
-  title: '',
-  content: '',
-  authorName: 'ddudl이',
-  selectedFlair: '',
+  title: &apos;',
+  content: &apos;',
+  authorName: &apos;ddudl이&apos;,
+  selectedFlair: &apos;',
   
   // UI state
   submitting: false,
@@ -105,7 +107,7 @@ const mockUseWritePostForm = {
   isSubmitDisabled: true,
   user: null,
   postId: null,
-  validation: { isValid: false, errors: ['제목은 필수입니다.'] },
+  validation: { isValid: false, errors: [&apos;제목은 필수입니다.&apos;] },
   
   // Actions
   setTitle: jest.fn(),
@@ -125,54 +127,54 @@ beforeEach(() => {
   jest.clearAllMocks()
   ;(useRouter as jest.Mock).mockReturnValue(mockRouter)
   ;(useSearchParams as jest.Mock).mockReturnValue(mockSearchParams)
-  ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue(mockUseWritePostForm)
+  ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue(mockUseWritePostForm)
   ;(global.fetch as jest.Mock).mockResolvedValue({
     ok: true,
-    json: () => Promise.resolve({ post: { id: 'test-id' } }),
+    json: () => Promise.resolve({ post: { id: &apos;test-id&apos; } }),
   })
 })
 
-describe('WritePostForm Component', () => {
+describe(&apos;WritePostForm Component&apos;, () => {
   const defaultProps = {
-    channelName: 'test-channel',
+    channelName: &apos;test-channel&apos;,
   }
 
-  it('should render form fields correctly', () => {
+  it(&apos;should render form fields correctly&apos;, () => {
     render(<WritePostForm {...defaultProps} />)
 
-    expect(screen.getByPlaceholderText('닉네임')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('게시물 제목을 입력하세요...')).toBeInTheDocument()
-    expect(screen.getByTestId('jodit-editor')).toBeInTheDocument()
-    expect(screen.getByTestId('submit-button')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(&apos;닉네임&apos;)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(&apos;게시물 제목을 입력하세요...&apos;)).toBeInTheDocument()
+    expect(screen.getByTestId(&apos;jodit-editor&apos;)).toBeInTheDocument()
+    expect(screen.getByTestId(&apos;submit-button&apos;)).toBeInTheDocument()
   })
 
-  it('should show authenticated user info when logged in', () => {
-    ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+  it(&apos;should show authenticated user info when logged in&apos;, () => {
+    ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
       ...mockUseWritePostForm,
-      user: { user_metadata: { username: 'testuser' } },
-      authorName: 'testuser',
+      user: { user_metadata: { username: &apos;testuser&apos; } },
+      authorName: &apos;testuser&apos;,
       isAnonymous: false,
     })
 
     render(<WritePostForm {...defaultProps} />)
 
-    expect(screen.getByText('testuser')).toBeInTheDocument()
-    expect(screen.getByText('인증됨')).toBeInTheDocument()
-    expect(screen.queryByPlaceholderText('닉네임')).not.toBeInTheDocument()
+    expect(screen.getByText(&apos;testuser&apos;)).toBeInTheDocument()
+    expect(screen.getByText(&apos;인증됨&apos;)).toBeInTheDocument()
+    expect(screen.queryByPlaceholderText(&apos;닉네임&apos;)).not.toBeInTheDocument()
   })
 
-  describe('Submit Button States', () => {
-    it('should disable submit button when form is invalid', () => {
+  describe(&apos;Submit Button States&apos;, () => {
+    it(&apos;should disable submit button when form is invalid&apos;, () => {
       render(<WritePostForm {...defaultProps} />)
 
-      const submitButton = screen.getByTestId('submit-button')
+      const submitButton = screen.getByTestId(&apos;submit-button&apos;)
       expect(submitButton).toBeDisabled()
     })
 
-    it('should enable submit button when form is valid', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should enable submit button when form is valid&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
-        title: '유효한 제목입니다',
+        title: &apos;유효한 제목입니다&apos;,
         isSubmitDisabled: false,
         validation: { isValid: true, errors: [] },
         captchaVerified: true,
@@ -180,73 +182,73 @@ describe('WritePostForm Component', () => {
 
       render(<WritePostForm {...defaultProps} />)
 
-      const submitButton = screen.getByTestId('submit-button')
+      const submitButton = screen.getByTestId(&apos;submit-button&apos;)
       expect(submitButton).not.toBeDisabled()
     })
 
-    it('should show loading state when submitting', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should show loading state when submitting&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         submitting: true,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('게시 중...')).toBeInTheDocument()
+      expect(screen.getByText(&apos;게시 중...&apos;)).toBeInTheDocument()
     })
 
-    it('should show upload state when uploading', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should show upload state when uploading&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         uploading: true,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('이미지 업로드 중...')).toBeInTheDocument()
+      expect(screen.getByText(&apos;이미지 업로드 중...&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Form Interactions', () => {
-    it('should call setTitle when title input changes', async () => {
+  describe(&apos;Form Interactions&apos;, () => {
+    it(&apos;should call setTitle when title input changes&apos;, async () => {
       const user = userEvent.setup()
       const mockSetTitle = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         setTitle: mockSetTitle,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const titleInput = screen.getByPlaceholderText('게시물 제목을 입력하세요...')
-      await user.type(titleInput, '새 제목')
+      const titleInput = screen.getByPlaceholderText(&apos;게시물 제목을 입력하세요...&apos;)
+      await user.type(titleInput, &apos;새 제목&apos;)
 
-      expect(mockSetTitle).toHaveBeenCalledWith('새 제목')
+      expect(mockSetTitle).toHaveBeenCalledWith(&apos;새 제목&apos;)
     })
 
-    it('should call setContent when editor content changes', async () => {
+    it(&apos;should call setContent when editor content changes&apos;, async () => {
       const user = userEvent.setup()
       const mockSetContent = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         setContent: mockSetContent,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const editor = screen.getByTestId('jodit-editor')
-      await user.type(editor, '새 내용')
+      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      await user.type(editor, &apos;새 내용&apos;)
 
-      expect(mockSetContent).toHaveBeenCalledWith('새 내용')
+      expect(mockSetContent).toHaveBeenCalledWith(&apos;새 내용&apos;)
     })
 
-    it('should call handleSubmit when submit button is clicked', async () => {
+    it(&apos;should call handleSubmit when submit button is clicked&apos;, async () => {
       const user = userEvent.setup()
       const mockHandleSubmit = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         isSubmitDisabled: false,
         handleSubmit: mockHandleSubmit,
@@ -254,253 +256,253 @@ describe('WritePostForm Component', () => {
 
       render(<WritePostForm {...defaultProps} />)
 
-      const submitButton = screen.getByTestId('submit-button')
+      const submitButton = screen.getByTestId(&apos;submit-button&apos;)
       await user.click(submitButton)
 
       expect(mockHandleSubmit).toHaveBeenCalledTimes(1)
     })
 
-    it('should call handleCancel when cancel button is clicked', async () => {
+    it(&apos;should call handleCancel when cancel button is clicked&apos;, async () => {
       const user = userEvent.setup()
       const mockHandleCancel = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         handleCancel: mockHandleCancel,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const cancelButton = screen.getByText('취소')
+      const cancelButton = screen.getByText(&apos;취소&apos;)
       await user.click(cancelButton)
 
       expect(mockHandleCancel).toHaveBeenCalledTimes(1)
     })
   })
 
-  describe('Error Display', () => {
-    it('should display error message when error exists', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+  describe(&apos;Error Display&apos;, () => {
+    it(&apos;should display error message when error exists&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
-        error: '테스트 에러 메시지',
+        error: &apos;테스트 에러 메시지&apos;,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('테스트 에러 메시지')).toBeInTheDocument()
+      expect(screen.getByText(&apos;테스트 에러 메시지&apos;)).toBeInTheDocument()
     })
 
-    it('should not display error section when no error', () => {
+    it(&apos;should not display error section when no error&apos;, () => {
       render(<WritePostForm {...defaultProps} />)
 
       expect(screen.queryByText(/테스트 에러/)).not.toBeInTheDocument()
     })
   })
 
-  describe('Flair Selection', () => {
-    it('should allow selecting flair', async () => {
+  describe(&apos;Flair Selection&apos;, () => {
+    it(&apos;should allow selecting flair&apos;, async () => {
       const user = userEvent.setup()
       const mockSetSelectedFlair = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         setSelectedFlair: mockSetSelectedFlair,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const flairButton = screen.getByText('질문')
+      const flairButton = screen.getByText(&apos;질문&apos;)
       await user.click(flairButton)
 
-      expect(mockSetSelectedFlair).toHaveBeenCalledWith('질문')
+      expect(mockSetSelectedFlair).toHaveBeenCalledWith(&apos;질문&apos;)
     })
 
-    it('should show selected flair state', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should show selected flair state&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
-        selectedFlair: '질문',
+        selectedFlair: &apos;질문&apos;,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const flairButton = screen.getByText('질문')
+      const flairButton = screen.getByText(&apos;질문&apos;)
       // Check if the flair has the selected styling - this depends on your CSS classes
       expect(flairButton.className).toMatch(/bg-/) // Should have some background styling when selected
     })
   })
 
-  describe('Preview Mode', () => {
-    it('should show editor in edit mode', () => {
+  describe(&apos;Preview Mode&apos;, () => {
+    it(&apos;should show editor in edit mode&apos;, () => {
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByTestId('jodit-editor')).toBeInTheDocument()
-      expect(screen.getByText('편집')).toBeInTheDocument()
-      expect(screen.getByText('미리보기')).toBeInTheDocument()
+      expect(screen.getByTestId(&apos;jodit-editor&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;편집&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;미리보기&apos;)).toBeInTheDocument()
     })
 
-    it('should show preview content in preview mode', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should show preview content in preview mode&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         previewMode: true,
-        content: '미리보기 내용',
+        content: &apos;미리보기 내용&apos;,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.queryByTestId('jodit-editor')).not.toBeInTheDocument()
-      expect(screen.getByText('미리보기 내용')).toBeInTheDocument()
+      expect(screen.queryByTestId(&apos;jodit-editor&apos;)).not.toBeInTheDocument()
+      expect(screen.getByText(&apos;미리보기 내용&apos;)).toBeInTheDocument()
     })
 
-    it('should call setPreviewMode when mode buttons are clicked', async () => {
+    it(&apos;should call setPreviewMode when mode buttons are clicked&apos;, async () => {
       const user = userEvent.setup()
       const mockSetPreviewMode = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         setPreviewMode: mockSetPreviewMode,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const previewButton = screen.getByText('미리보기')
+      const previewButton = screen.getByText(&apos;미리보기&apos;)
       await user.click(previewButton)
 
       expect(mockSetPreviewMode).toHaveBeenCalledWith(true)
 
-      const editButton = screen.getByText('편집')
+      const editButton = screen.getByText(&apos;편집&apos;)
       await user.click(editButton)
 
       expect(mockSetPreviewMode).toHaveBeenCalledWith(false)
     })
   })
 
-  describe('Anonymous User Features', () => {
-    it('should show CAPTCHA for anonymous users', () => {
+  describe(&apos;Anonymous User Features&apos;, () => {
+    it(&apos;should show CAPTCHA for anonymous users&apos;, () => {
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('익명 User 인증')).toBeInTheDocument()
-      expect(screen.getByTestId('captcha-verify')).toBeInTheDocument()
+      expect(screen.getByText(&apos;익명 User 인증&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId(&apos;captcha-verify&apos;)).toBeInTheDocument()
     })
 
-    it('should not show CAPTCHA for authenticated users', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should not show CAPTCHA for authenticated users&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
-        user: { user_metadata: { username: 'testuser' } },
+        user: { user_metadata: { username: &apos;testuser&apos; } },
         isAnonymous: false,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.queryByText('익명 User 인증')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('captcha-verify')).not.toBeInTheDocument()
+      expect(screen.queryByText(&apos;익명 User 인증&apos;)).not.toBeInTheDocument()
+      expect(screen.queryByTestId(&apos;captcha-verify&apos;)).not.toBeInTheDocument()
     })
 
-    it('should call setCaptchaVerified when CAPTCHA is completed', async () => {
+    it(&apos;should call setCaptchaVerified when CAPTCHA is completed&apos;, async () => {
       const user = userEvent.setup()
       const mockSetCaptchaVerified = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         setCaptchaVerified: mockSetCaptchaVerified,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const captchaButton = screen.getByTestId('captcha-verify')
+      const captchaButton = screen.getByTestId(&apos;captcha-verify&apos;)
       await user.click(captchaButton)
 
       expect(mockSetCaptchaVerified).toHaveBeenCalledWith(true)
     })
   })
 
-  describe('Image Upload', () => {
-    it('should call handleFileSelection when files are selected', async () => {
+  describe(&apos;Image Upload&apos;, () => {
+    it(&apos;should call handleFileSelection when files are selected&apos;, async () => {
       const user = userEvent.setup()
       const mockHandleFileSelection = jest.fn()
       
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         handleFileSelection: mockHandleFileSelection,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      const fileInput = screen.getByRole('button', { name: /이미지 업로드/i }) || 
+      const fileInput = screen.getByRole(&apos;button&apos;, { name: /이미지 업로드/i }) || 
                        screen.getByLabelText(/이미지 업로드/i) ||
-                       document.querySelector('input[type="file"]')
+                       document.querySelector(&apos;input[type=&quot;file&quot;]&apos;)
       
       expect(fileInput).toBeInTheDocument()
 
-      const mockFile = new File(['image'], 'test.png', { type: 'image/png' })
+      const mockFile = new File([&apos;image&apos;], &apos;test.png&apos;, { type: &apos;image/png&apos; })
       
-      if (fileInput && fileInput.tagName === 'INPUT') {
+      if (fileInput && fileInput.tagName === &apos;INPUT&apos;) {
         await user.upload(fileInput as HTMLInputElement, mockFile)
         expect(mockHandleFileSelection).toHaveBeenCalled()
       }
     })
 
-    it('should display uploaded images', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should display uploaded images&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
-        images: ['https://example.com/image1.webp'],
-        pastedImages: [{ url: 'https://example.com/image1.webp', fileName: 'test.png', size: 1000 }],
+        images: [&apos;https://example.com/image1.webp&apos;],
+        pastedImages: [{ url: &apos;https://example.com/image1.webp&apos;, fileName: &apos;test.png&apos;, size: 1000 }],
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('업로드한 이미지 (클릭하여 본문에 삽입)')).toBeInTheDocument()
-      expect(screen.getByAltText('test.png')).toBeInTheDocument()
+      expect(screen.getByText(&apos;업로드한 이미지 (클릭하여 본문에 삽입)&apos;)).toBeInTheDocument()
+      expect(screen.getByAltText(&apos;test.png&apos;)).toBeInTheDocument()
     })
 
-    it('should show uploading state', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+    it(&apos;should show uploading state&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
-        uploadingFiles: ['uploading.png'],
+        uploadingFiles: [&apos;uploading.png&apos;],
         uploading: true,
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('이미지 업로드 중...')).toBeInTheDocument()
-      expect(screen.getByText('업로드 중...')).toBeInTheDocument()
+      expect(screen.getByText(&apos;이미지 업로드 중...&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;업로드 중...&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Link Previews', () => {
-    it('should display link previews when available', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+  describe(&apos;Link Previews&apos;, () => {
+    it(&apos;should display link previews when available&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         linkPreviews: [
           {
-            url: 'https://example.com',
-            title: 'Example Page',
-            description: 'Test description',
-            image: 'https://example.com/image.jpg',
+            url: &apos;https://example.com&apos;,
+            title: &apos;Example Page&apos;,
+            description: &apos;Test description&apos;,
+            image: &apos;https://example.com/image.jpg&apos;,
           },
         ],
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('📋 감지된 링크')).toBeInTheDocument()
-      expect(screen.getByText('✅ Example Page')).toBeInTheDocument()
+      expect(screen.getByText(&apos;📋 감지된 링크&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;✅ Example Page&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Clipboard Pasted Images', () => {
-    it('should display pasted images info', () => {
-      ;(require('@/hooks/useWritePostForm').useWritePostForm as jest.Mock).mockReturnValue({
+  describe(&apos;Clipboard Pasted Images&apos;, () => {
+    it(&apos;should display pasted images info&apos;, () => {
+      ;(require(&apos;@/hooks/useWritePostForm&apos;).useWritePostForm as jest.Mock).mockReturnValue({
         ...mockUseWritePostForm,
         pastedImages: [
-          { url: 'https://example.com/pasted.webp', fileName: 'pasted.png', size: 2000 },
+          { url: &apos;https://example.com/pasted.webp&apos;, fileName: &apos;pasted.png&apos;, size: 2000 },
         ],
       })
 
       render(<WritePostForm {...defaultProps} />)
 
-      expect(screen.getByText('클립보드에서 붙여넣기된 이미지')).toBeInTheDocument()
-      expect(screen.getByText('pasted.png')).toBeInTheDocument()
-      expect(screen.getByText('2000B')).toBeInTheDocument()
+      expect(screen.getByText(&apos;클립보드에서 붙여넣기된 이미지&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;pasted.png&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;2000B&apos;)).toBeInTheDocument()
     })
   })
 })

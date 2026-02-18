@@ -1,13 +1,13 @@
-'use client'
+'use client&apos;
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { CheckCircle, XCircle, Clock, MessageSquare, User, Calendar } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useState, useEffect } from &apos;react&apos;
+import { Button } from &apos;@/components/ui/button&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { Textarea } from &apos;@/components/ui/textarea&apos;
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from &apos;@/components/ui/dialog&apos;
+import { CheckCircle, XCircle, Clock, MessageSquare, User, Calendar } from &apos;lucide-react&apos;
+import { Alert, AlertDescription } from &apos;@/components/ui/alert&apos;
 
 interface ChannelRequest {
   id: string
@@ -16,7 +16,7 @@ interface ChannelRequest {
   description: string
   category: string
   reason: string
-  status: 'pending' | 'pending_review' | 'approved' | 'rejected'
+  status: &apos;pending&apos; | &apos;pending_review&apos; | &apos;approved&apos; | &apos;rejected&apos;
   ai_review_result?: {
     approved: boolean
     confidence: number
@@ -35,8 +35,8 @@ export default function ChannelRequests() {
   const [requests, setRequests] = useState<ChannelRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedRequest, setSelectedRequest] = useState<ChannelRequest | null>(null)
-  const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null)
-  const [adminNotes, setAdminNotes] = useState('')
+  const [actionType, setActionType] = useState<&apos;approve&apos; | &apos;reject&apos; | null>(null)
+  const [adminNotes, setAdminNotes] = useState(&apos;')
   const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
@@ -45,14 +45,14 @@ export default function ChannelRequests() {
 
   const fetchRequests = async () => {
     try {
-      const response = await fetch('/api/admin/channel-requests')
+      const response = await fetch(&apos;/api/admin/channel-requests&apos;)
       const data = await response.json()
       
       if (data.requests) {
         setRequests(data.requests)
       }
     } catch (error) {
-      console.error('Failed to fetch requests:', error)
+      console.error(&apos;Failed to fetch requests:&apos;, error)
     } finally {
       setLoading(false)
     }
@@ -63,10 +63,10 @@ export default function ChannelRequests() {
 
     setProcessing(true)
     try {
-      const response = await fetch('/api/admin/channel-requests', {
-        method: 'PUT',
+      const response = await fetch(&apos;/api/admin/channel-requests&apos;, {
+        method: &apos;PUT&apos;,
         headers: {
-          'Content-Type': 'application/json',
+          &apos;Content-Type&apos;: &apos;application/json&apos;,
         },
         body: JSON.stringify({
           requestId: selectedRequest.id,
@@ -79,10 +79,10 @@ export default function ChannelRequests() {
         await fetchRequests() // Refresh list
         setSelectedRequest(null)
         setActionType(null)
-        setAdminNotes('')
+        setAdminNotes(&apos;')
       }
     } catch (error) {
-      console.error('Action failed:', error)
+      console.error(&apos;Action failed:&apos;, error)
     } finally {
       setProcessing(false)
     }
@@ -90,16 +90,16 @@ export default function ChannelRequests() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending':
-        return <Badge variant="outline" className="text-blue-600 border-blue-600">Pending</Badge>
-      case 'pending_review':
-        return <Badge variant="outline" className="text-yellow-600 border-yellow-600">Needs Review</Badge>
-      case 'approved':
-        return <Badge variant="outline" className="text-green-600 border-green-600">Approved</Badge>
-      case 'rejected':
-        return <Badge variant="outline" className="text-red-600 border-red-600">Rejected</Badge>
+      case &apos;pending&apos;:
+        return <Badge variant=&quot;outline&quot; className=&quot;text-blue-600 border-blue-600&quot;>Pending</Badge>
+      case &apos;pending_review&apos;:
+        return <Badge variant=&quot;outline&quot; className=&quot;text-yellow-600 border-yellow-600&quot;>Needs Review</Badge>
+      case &apos;approved&apos;:
+        return <Badge variant=&quot;outline&quot; className=&quot;text-green-600 border-green-600&quot;>Approved</Badge>
+      case &apos;rejected&apos;:
+        return <Badge variant=&quot;outline&quot; className=&quot;text-red-600 border-red-600&quot;>Rejected</Badge>
       default:
-        return <Badge variant="outline">Unknown</Badge>
+        return <Badge variant=&quot;outline&quot;>Unknown</Badge>
     }
   }
 
@@ -110,27 +110,27 @@ export default function ChannelRequests() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <Clock className="w-8 h-8 animate-spin mx-auto mb-2" />
+      <div className=&quot;flex items-center justify-center p-8&quot;>
+        <div className=&quot;text-center&quot;>
+          <Clock className=&quot;w-8 h-8 animate-spin mx-auto mb-2&quot; />
           <p>Loading request list...</p>
         </div>
       </div>
     )
   }
 
-  const pendingRequests = requests.filter(r => r.status === 'pending' || r.status === 'pending_review')
-  const processedRequests = requests.filter(r => r.status === 'approved' || r.status === 'rejected')
+  const pendingRequests = requests.filter(r => r.status === &apos;pending&apos; || r.status === &apos;pending_review&apos;)
+  const processedRequests = requests.filter(r => r.status === &apos;approved&apos; || r.status === &apos;rejected&apos;)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className=&quot;space-y-6&quot;>
+      <div className=&quot;flex items-center justify-between&quot;>
         <div>
-          <h2 className="text-2xl font-bold">Channel Creation Requests</h2>
-          <p className="text-gray-600">Manage user requests for creating new community channels.</p>
+          <h2 className=&quot;text-2xl font-bold&quot;>Channel Creation Requests</h2>
+          <p className=&quot;text-gray-600&quot;>Manage user requests for creating new community channels.</p>
         </div>
-        <div className="flex gap-2">
-          <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+        <div className=&quot;flex gap-2&quot;>
+          <Badge variant=&quot;outline&quot; className=&quot;text-yellow-600 border-yellow-600&quot;>
             Pending: {pendingRequests.length}
           </Badge>
         </div>
@@ -138,81 +138,81 @@ export default function ChannelRequests() {
 
       {/* Pending requests */}
       {pendingRequests.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Needs Review</h3>
+        <div className=&quot;space-y-4&quot;>
+          <h3 className=&quot;text-lg font-semibold&quot;>Needs Review</h3>
           {pendingRequests.map((request) => (
-            <Card key={request.id} className="border-l-4 border-l-yellow-400">
+            <Card key={request.id} className=&quot;border-l-4 border-l-yellow-400&quot;>
               <CardHeader>
-                <div className="flex items-start justify-between">
+                <div className=&quot;flex items-start justify-between&quot;>
                   <div>
-                    <CardTitle className="text-lg">k/{request.name}</CardTitle>
-                    <CardDescription className="text-base font-medium">
+                    <CardTitle className=&quot;text-lg&quot;>k/{request.name}</CardTitle>
+                    <CardDescription className=&quot;text-base font-medium&quot;>
                       {request.display_name}
                     </CardDescription>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className=&quot;flex items-center gap-2&quot;>
                     {getStatusBadge(request.status)}
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className=&quot;space-y-4&quot;>
                 <div>
-                  <h4 className="font-medium mb-1">Description</h4>
-                  <p className="text-sm text-gray-600">{request.description}</p>
+                  <h4 className=&quot;font-medium mb-1&quot;>Description</h4>
+                  <p className=&quot;text-sm text-gray-600&quot;>{request.description}</p>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-1">Reason for Creation</h4>
-                  <p className="text-sm text-gray-600">{request.reason}</p>
+                  <h4 className=&quot;font-medium mb-1&quot;>Reason for Creation</h4>
+                  <p className=&quot;text-sm text-gray-600&quot;>{request.reason}</p>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <User className="w-4 h-4" />
+                <div className=&quot;flex items-center gap-4 text-sm text-gray-500&quot;>
+                  <div className=&quot;flex items-center gap-1&quot;>
+                    <User className=&quot;w-4 h-4&quot; />
                     {request.creator.username}
                   </div>
                   <div>Karma: {request.creator.karma_points}</div>
                   <div>Member for: {getAccountAge(request.creator.created_at)}</div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
+                  <div className=&quot;flex items-center gap-1&quot;>
+                    <Calendar className=&quot;w-4 h-4&quot; />
                     {new Date(request.created_at).toLocaleDateString()}
                   </div>
                 </div>
 
                 {request.ai_review_result && (
-                  <Alert className={request.ai_review_result.approved ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}>
-                    <MessageSquare className="w-4 h-4" />
+                  <Alert className={request.ai_review_result.approved ? &apos;border-green-500 bg-green-50&apos; : &apos;border-red-500 bg-red-50&apos;}>
+                    <MessageSquare className=&quot;w-4 h-4&quot; />
                     <AlertDescription>
                       <strong>AI Review:</strong> {request.ai_review_result.reason}
-                      <span className="text-xs ml-2">
+                      <span className=&quot;text-xs ml-2&quot;>
                         (Confidence: {Math.round(request.ai_review_result.confidence * 100)}%)
                       </span>
                     </AlertDescription>
                   </Alert>
                 )}
 
-                <div className="flex justify-end gap-2">
+                <div className=&quot;flex justify-end gap-2&quot;>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant=&quot;outline&quot;
+                    size=&quot;sm&quot;
                     onClick={() => {
                       setSelectedRequest(request)
-                      setActionType('reject')
+                      setActionType(&apos;reject&apos;)
                     }}
-                    className="text-red-600 hover:text-red-700"
+                    className=&quot;text-red-600 hover:text-red-700&quot;
                   >
-                    <XCircle className="w-4 h-4 mr-1" />
+                    <XCircle className=&quot;w-4 h-4 mr-1&quot; />
                     Reject
                   </Button>
                   <Button
-                    size="sm"
+                    size=&quot;sm&quot;
                     onClick={() => {
                       setSelectedRequest(request)
-                      setActionType('approve')
+                      setActionType(&apos;approve&apos;)
                     }}
-                    className="bg-green-600 hover:bg-green-700"
+                    className=&quot;bg-green-600 hover:bg-green-700&quot;
                   >
-                    <CheckCircle className="w-4 h-4 mr-1" />
+                    <CheckCircle className=&quot;w-4 h-4 mr-1&quot; />
                     Approve
                   </Button>
                 </div>
@@ -224,26 +224,26 @@ export default function ChannelRequests() {
 
       {/* Processed requests */}
       {processedRequests.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Processed</h3>
-          <div className="grid gap-4">
+        <div className=&quot;space-y-4&quot;>
+          <h3 className=&quot;text-lg font-semibold&quot;>Processed</h3>
+          <div className=&quot;grid gap-4&quot;>
             {processedRequests.slice(0, 5).map((request) => (
-              <Card key={request.id} className="border-l-4 border-l-gray-300">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
+              <Card key={request.id} className=&quot;border-l-4 border-l-gray-300&quot;>
+                <CardContent className=&quot;p-4&quot;>
+                  <div className=&quot;flex items-center justify-between&quot;>
                     <div>
-                      <h4 className="font-medium">k/{request.name}</h4>
-                      <p className="text-sm text-gray-600">{request.display_name}</p>
+                      <h4 className=&quot;font-medium&quot;>k/{request.name}</h4>
+                      <p className=&quot;text-sm text-gray-600&quot;>{request.display_name}</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className=&quot;flex items-center gap-2&quot;>
                       {getStatusBadge(request.status)}
-                      <span className="text-xs text-gray-500">
+                      <span className=&quot;text-xs text-gray-500&quot;>
                         {new Date(request.created_at).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
                   {request.admin_notes && (
-                    <p className="text-xs text-gray-500 mt-2">Admin Note: {request.admin_notes}</p>
+                    <p className=&quot;text-xs text-gray-500 mt-2&quot;>Admin Note: {request.admin_notes}</p>
                   )}
                 </CardContent>
               </Card>
@@ -256,28 +256,28 @@ export default function ChannelRequests() {
       <Dialog open={!!selectedRequest && !!actionType} onOpenChange={() => {
         setSelectedRequest(null)
         setActionType(null)
-        setAdminNotes('')
+        setAdminNotes(&apos;')
       }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionType === 'approve' ? 'Approve Channel Creation' : 'Reject Channel Creation'}
+              {actionType === &apos;approve&apos; ? &apos;Approve Channel Creation&apos; : &apos;Reject Channel Creation&apos;}
             </DialogTitle>
             <DialogDescription>
               k/{selectedRequest?.name} - {selectedRequest?.display_name}
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
+          <div className=&quot;space-y-4&quot;>
             <div>
-              <label className="text-sm font-medium">Admin Notes</label>
+              <label className=&quot;text-sm font-medium&quot;>Admin Notes</label>
               <Textarea
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
                 placeholder={
-                  actionType === 'approve' 
-                    ? 'Enter approval reason (optional)'
-                    : 'Enter rejection reason'
+                  actionType === &apos;approve&apos; 
+                    ? &apos;Enter approval reason (optional)&apos;
+                    : &apos;Enter rejection reason&apos;
                 }
                 rows={3}
               />
@@ -285,19 +285,19 @@ export default function ChannelRequests() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
+            <Button variant=&quot;outline&quot; onClick={() => {
               setSelectedRequest(null)
               setActionType(null)
-              setAdminNotes('')
+              setAdminNotes(&apos;')
             }}>
               Cancel
             </Button>
             <Button
               onClick={handleAction}
-              disabled={processing || (actionType === 'reject' && !adminNotes.trim())}
-              className={actionType === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+              disabled={processing || (actionType === &apos;reject&apos; && !adminNotes.trim())}
+              className={actionType === &apos;approve&apos; ? &apos;bg-green-600 hover:bg-green-700&apos; : &apos;bg-red-600 hover:bg-red-700&apos;}
             >
-              {processing ? 'Processing...' : (actionType === 'approve' ? 'Approve' : 'Reject')}
+              {processing ? &apos;Processing...&apos; : (actionType === &apos;approve&apos; ? &apos;Approve&apos; : &apos;Reject&apos;)}
             </Button>
           </DialogFooter>
         </DialogContent>

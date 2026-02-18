@@ -1,7 +1,7 @@
-'use client'
+'use client&apos;
 
-import { useState, useEffect } from 'react'
-import { Globe, Play } from 'lucide-react'
+import { useState, useEffect } from &apos;react&apos;
+import { Globe, Play } from &apos;lucide-react&apos;
 
 interface LinkPreview {
   url: string
@@ -45,7 +45,7 @@ export default function LinkPreview({ content }: LinkPreviewProps) {
   useEffect(() => {
     if (!content) return
 
-    const lines = content.split('\n')
+    const lines = content.split(&apos;\n&apos;)
     const urls: string[] = []
     
     lines.forEach(line => {
@@ -76,9 +76,9 @@ export default function LinkPreview({ content }: LinkPreviewProps) {
           // YouTube 링크 감지
           const youtubeId = getYouTubeVideoId(url)
           
-          const response = await fetch('/api/link-preview', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const response = await fetch(&apos;/api/link-preview&apos;, {
+            method: &apos;POST&apos;,
+            headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
             body: JSON.stringify({ url }),
           })
 
@@ -110,19 +110,19 @@ export default function LinkPreview({ content }: LinkPreviewProps) {
   }
 
   return (
-    <div className="space-y-3 mt-4">
+    <div className=&quot;space-y-3 mt-4&quot;>
       {linkPreviews.map((preview, index) => (
-        <div key={index} className="border rounded-lg overflow-hidden bg-gray-50 transition-colors">
+        <div key={index} className=&quot;border rounded-lg overflow-hidden bg-gray-50 transition-colors&quot;>
           {preview.error ? (
-            <div className="p-4 flex items-center space-x-3">
-              <Globe className="w-5 h-5 text-gray-400" />
-              <div className="flex-1">
-                <p className="text-sm text-gray-600">Unable to load link preview</p>
+            <div className=&quot;p-4 flex items-center space-x-3&quot;>
+              <Globe className=&quot;w-5 h-5 text-gray-400&quot; />
+              <div className=&quot;flex-1&quot;>
+                <p className=&quot;text-sm text-gray-600&quot;>Unable to load link preview</p>
                 <a 
                   href={preview.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm"
+                  target=&quot;_blank&quot; 
+                  rel=&quot;noopener noreferrer&quot;
+                  className=&quot;text-blue-600 hover:underline text-sm&quot;
                 >
                   {preview.url}
                 </a>
@@ -130,45 +130,45 @@ export default function LinkPreview({ content }: LinkPreviewProps) {
             </div>
           ) : preview.isYoutube && preview.youtubeId ? (
             // YouTube 임베드 플레이어
-            <div className="bg-white">
+            <div className=&quot;bg-white&quot;>
               {expandedVideos.has(preview.url) ? (
                 // 확장된 상태: 실제 YouTube 플레이어
-                <div className="space-y-2">
-                  <div className="aspect-video w-full">
+                <div className=&quot;space-y-2&quot;>
+                  <div className=&quot;aspect-video w-full&quot;>
                     <iframe
-                      width="100%"
-                      height="100%"
+                      width=&quot;100%&quot;
+                      height=&quot;100%&quot;
                       src={`https://www.youtube-nocookie.com/embed/${preview.youtubeId}?autoplay=0&modestbranding=1&rel=0`}
-                      title="YouTube video player"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      title=&quot;YouTube video player&quot;
+                      frameBorder=&quot;0&quot;
+                      allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot;
                       allowFullScreen
-                      className="rounded-t-lg"
+                      className=&quot;rounded-t-lg&quot;
                     />
                   </div>
-                  <div className="p-3">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-sm text-gray-900 line-clamp-2">
-                          {preview.title || 'No Title'}
+                  <div className=&quot;p-3&quot;>
+                    <div className=&quot;flex justify-between items-start&quot;>
+                      <div className=&quot;flex-1&quot;>
+                        <h4 className=&quot;font-medium text-sm text-gray-900 line-clamp-2&quot;>
+                          {preview.title || &apos;No Title&apos;}
                         </h4>
                         {preview.description && (
-                          <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                          <p className=&quot;text-xs text-gray-600 line-clamp-2 mt-1&quot;>
                             {preview.description}
                           </p>
                         )}
                         <a 
                           href={preview.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline mt-2 inline-block"
+                          target=&quot;_blank&quot; 
+                          rel=&quot;noopener noreferrer&quot;
+                          className=&quot;text-xs text-blue-600 hover:underline mt-2 inline-block&quot;
                         >
                           Watch on YouTube
                         </a>
                       </div>
                       <button
                         onClick={() => toggleVideoExpanded(preview.url)}
-                        className="ml-2 text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded border"
+                        className=&quot;ml-2 text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded border&quot;
                       >
                         Collapse
                       </button>
@@ -179,35 +179,35 @@ export default function LinkPreview({ content }: LinkPreviewProps) {
                 // 축소된 상태: 썸네일과 재생 버튼
                 <div 
                   onClick={() => toggleVideoExpanded(preview.url)}
-                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  className=&quot;cursor-pointer hover:bg-gray-100 transition-colors&quot;
                 >
-                  <div className="flex">
-                    <div className="w-32 h-20 flex-shrink-0 relative">
+                  <div className=&quot;flex&quot;>
+                    <div className=&quot;w-32 h-20 flex-shrink-0 relative&quot;>
                       {preview.image && (
                         <>
                           <img 
                             src={preview.image} 
-                            alt="YouTube thumbnail" 
-                            className="w-full h-full object-cover"
+                            alt=&quot;YouTube thumbnail&quot; 
+                            className=&quot;w-full h-full object-cover&quot;
                           />
-                          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                            <div className="bg-red-600 rounded-full p-2">
-                              <Play className="w-4 h-4 text-white fill-white" />
+                          <div className=&quot;absolute inset-0 flex items-center justify-center bg-black bg-opacity-30&quot;>
+                            <div className=&quot;bg-red-600 rounded-full p-2&quot;>
+                              <Play className=&quot;w-4 h-4 text-white fill-white&quot; />
                             </div>
                           </div>
                         </>
                       )}
                     </div>
-                    <div className="flex-1 p-3 min-w-0">
-                      <h4 className="font-medium text-sm line-clamp-2 text-gray-900">
-                        {preview.title || 'No Title'}
+                    <div className=&quot;flex-1 p-3 min-w-0&quot;>
+                      <h4 className=&quot;font-medium text-sm line-clamp-2 text-gray-900&quot;>
+                        {preview.title || &apos;No Title&apos;}
                       </h4>
                       {preview.description && (
-                        <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                        <p className=&quot;text-xs text-gray-600 line-clamp-2 mt-1&quot;>
                           {preview.description}
                         </p>
                       )}
-                      <p className="text-xs text-red-600 mt-2">
+                      <p className=&quot;text-xs text-red-600 mt-2&quot;>
                         YouTube • Click to play
                       </p>
                     </div>
@@ -219,33 +219,33 @@ export default function LinkPreview({ content }: LinkPreviewProps) {
             // 일반 링크 프리뷰
             <a 
               href={preview.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="block hover:bg-gray-100 transition-colors"
+              target=&quot;_blank&quot; 
+              rel=&quot;noopener noreferrer&quot;
+              className=&quot;block hover:bg-gray-100 transition-colors&quot;
             >
-              <div className="flex">
+              <div className=&quot;flex&quot;>
                 {preview.image && (
-                  <div className="w-24 h-16 flex-shrink-0">
+                  <div className=&quot;w-24 h-16 flex-shrink-0&quot;>
                     <img 
                       src={preview.image} 
-                      alt="preview" 
-                      className="w-full h-full object-cover"
+                      alt=&quot;preview&quot; 
+                      className=&quot;w-full h-full object-cover&quot;
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none'
+                        (e.target as HTMLImageElement).style.display = &apos;none&apos;
                       }}
                     />
                   </div>
                 )}
-                <div className="flex-1 p-3 min-w-0">
-                  <h4 className="font-medium text-sm line-clamp-1 text-gray-900">
-                    {preview.title || 'No Title'}
+                <div className=&quot;flex-1 p-3 min-w-0&quot;>
+                  <h4 className=&quot;font-medium text-sm line-clamp-1 text-gray-900&quot;>
+                    {preview.title || &apos;No Title&apos;}
                   </h4>
                   {preview.description && (
-                    <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                    <p className=&quot;text-xs text-gray-600 line-clamp-2 mt-1&quot;>
                       {preview.description}
                     </p>
                   )}
-                  <p className="text-xs text-blue-600 mt-2 truncate">
+                  <p className=&quot;text-xs text-blue-600 mt-2 truncate&quot;>
                     {preview.url}
                   </p>
                 </div>

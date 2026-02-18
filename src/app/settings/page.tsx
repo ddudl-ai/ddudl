@@ -1,19 +1,19 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useAuthStore } from '@/stores/authStore'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+import { useEffect, useState } from &apos;react&apos;
+import { useRouter } from &apos;next/navigation&apos;
+import Link from &apos;next/link&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
+import { Button } from &apos;@/components/ui/button&apos;
+import { Input } from &apos;@/components/ui/input&apos;
+import { Label } from &apos;@/components/ui/label&apos;
+import { Switch } from &apos;@/components/ui/switch&apos;
+import { Tabs, TabsContent, TabsList, TabsTrigger } from &apos;@/components/ui/tabs&apos;
+import { Alert, AlertDescription } from &apos;@/components/ui/alert&apos;
+import { Separator } from &apos;@/components/ui/separator&apos;
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from &apos;@/components/ui/select&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
 import { 
   User, 
   Lock, 
@@ -31,11 +31,11 @@ import {
   CreditCard,
   LogOut,
   Trash2
-} from 'lucide-react'
-import Header from '@/components/layout/Header'
-import { LoadingSpinner } from '@/components/common/LoadingSpinner'
-import { useTranslation } from '@/providers/LocalizationProvider'
-import type { SupportedLanguage } from '@/lib/i18n/config'
+} from &apos;lucide-react&apos;
+import Header from &apos;@/components/layout/Header&apos;
+import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
+import { useTranslation } from &apos;@/providers/LocalizationProvider&apos;
+import type { SupportedLanguage } from &apos;@/lib/i18n/config&apos;
 
 interface UserSettings {
   emailNotifications: boolean
@@ -69,11 +69,11 @@ export default function SettingsPage() {
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState('account')
+  const [activeTab, setActiveTab] = useState(&apos;account&apos;)
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: &apos;',
+    newPassword: &apos;',
+    confirmPassword: &apos;'
   })
   const router = useRouter()
 
@@ -113,56 +113,56 @@ export default function SettingsPage() {
     // API 호출로 설정 저장
     setTimeout(() => {
       setSaving(false)
-      alert(t('settings.saved', '설정이 저장되었습니다.'))
+      alert(t(&apos;settings.saved&apos;, &apos;설정이 저장되었습니다.&apos;))
     }, 1000)
   }
 
   const handlePasswordChange = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert('새 비밀번호가 일치하지 않습니다.')
+      alert(&apos;새 비밀번호가 일치하지 않습니다.&apos;)
       return
     }
     
     if (passwordData.newPassword.length < 6) {
-      alert('비밀번호는 최소 6자 이상이어야 합니다.')
+      alert(&apos;비밀번호는 최소 6자 이상이어야 합니다.&apos;)
       return
     }
 
     // API 호출로 비밀번호 변경
-    alert('비밀번호가 변경되었습니다.')
+    alert(&apos;비밀번호가 변경되었습니다.&apos;)
     setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
+      currentPassword: &apos;',
+      newPassword: &apos;',
+      confirmPassword: &apos;'
     })
   }
 
   const handleSignOut = async () => {
-    if (confirm('정말 로그아웃 하시겠습니까?')) {
+    if (confirm(&apos;정말 로그아웃 하시겠습니까?&apos;)) {
       await signOut()
-      router.push('/')
+      router.push(&apos;/&apos;)
     }
   }
 
   const handleDeleteAccount = async () => {
-    if (confirm('정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+    if (confirm(&apos;정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.&apos;)) {
       // API 호출로 계정 삭제
-      alert('계정이 삭제되었습니다.')
+      alert(&apos;계정이 삭제되었습니다.&apos;)
       await signOut()
-      router.push('/')
+      router.push(&apos;/&apos;)
     }
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className=&quot;min-h-screen bg-gray-50&quot;>
         <Header />
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className=&quot;max-w-4xl mx-auto px-4 py-8&quot;>
           <Card>
-            <CardContent className="pt-6 text-center">
-              <p className="text-gray-600 mb-4">설정을 관리하려면 로그인하세요.</p>
+            <CardContent className=&quot;pt-6 text-center&quot;>
+              <p className=&quot;text-gray-600 mb-4&quot;>설정을 관리하려면 로그인하세요.</p>
               <Button asChild>
-                <Link href="/auth/signin">로그인</Link>
+                <Link href=&quot;/auth/signin&quot;>로그인</Link>
               </Button>
             </CardContent>
           </Card>
@@ -173,11 +173,11 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className=&quot;min-h-screen bg-gray-50&quot;>
         <Header />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="flex justify-center">
-            <LoadingSpinner text={t('settings.loading', '설정 로딩 중...')} />
+        <div className=&quot;max-w-4xl mx-auto px-4 py-8&quot;>
+          <div className=&quot;flex justify-center&quot;>
+            <LoadingSpinner text={t(&apos;settings.loading&apos;, &apos;설정 로딩 중...&apos;)} />
           </div>
         </div>
       </div>
@@ -185,25 +185,25 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className=&quot;min-h-screen bg-gray-50&quot;>
       <Header />
       
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">{t('settings.title', '설정')}</h1>
-          <p className="text-gray-600">{t('settings.subtitle', '계정 및 앱 환경설정을 관리하세요')}</p>
+      <div className=&quot;max-w-4xl mx-auto px-4 py-8&quot;>
+        <div className=&quot;mb-8&quot;>
+          <h1 className=&quot;text-3xl font-bold mb-2&quot;>{t(&apos;settings.title&apos;, &apos;설정&apos;)}</h1>
+          <p className=&quot;text-gray-600&quot;>{t(&apos;settings.subtitle&apos;, &apos;계정 및 앱 환경설정을 관리하세요&apos;)}</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="account">계정</TabsTrigger>
-            <TabsTrigger value="notifications">알림</TabsTrigger>
-            <TabsTrigger value="privacy">개인정보</TabsTrigger>
-            <TabsTrigger value="preferences">환경설정</TabsTrigger>
+          <TabsList className=&quot;grid w-full grid-cols-4&quot;>
+            <TabsTrigger value=&quot;account&quot;>계정</TabsTrigger>
+            <TabsTrigger value=&quot;notifications&quot;>알림</TabsTrigger>
+            <TabsTrigger value=&quot;privacy&quot;>개인정보</TabsTrigger>
+            <TabsTrigger value=&quot;preferences&quot;>환경설정</TabsTrigger>
           </TabsList>
 
           {/* 계정 설정 */}
-          <TabsContent value="account" className="space-y-6">
+          <TabsContent value=&quot;account&quot; className=&quot;space-y-6&quot;>
             <Card>
               <CardHeader>
                 <CardTitle>계정 정보</CardTitle>
@@ -211,86 +211,86 @@ export default function SettingsPage() {
                   기본 계정 정보를 확인하고 관리하세요
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className=&quot;space-y-4&quot;>
                 {/* 프로필 이미지 */}
-                <div className="space-y-2">
+                <div className=&quot;space-y-2&quot;>
                   <Label>프로필 이미지</Label>
-                  <div className="flex items-center gap-4">
+                  <div className=&quot;flex items-center gap-4&quot;>
                     <img
-                      src={user.user_metadata?.avatar_url || ''}
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                      alt="avatar"
-                      className="w-16 h-16 rounded-full object-cover border"
+                      src={user.user_metadata?.avatar_url || &apos;'}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = &apos;none&apos; }}
+                      alt=&quot;avatar&quot;
+                      className=&quot;w-16 h-16 rounded-full object-cover border&quot;
                     />
                     <input
-                      type="file"
-                      accept="image/*"
+                      type=&quot;file&quot;
+                      accept=&quot;image/*&quot;
                       onChange={async (e) => {
                         const file = e.target.files?.[0]
                         if (!file) return
                         const form = new FormData()
-                        form.append('file', file)
-                        form.append('folder', 'avatars')
+                        form.append(&apos;file&apos;, file)
+                        form.append(&apos;folder&apos;, &apos;avatars&apos;)
                         try {
-                          const up = await fetch('/api/uploads/image', { method: 'POST', body: form })
-                          if (!up.ok) throw new Error('업로드 실패')
+                          const up = await fetch(&apos;/api/uploads/image&apos;, { method: &apos;POST&apos;, body: form })
+                          if (!up.ok) throw new Error(&apos;업로드 실패&apos;)
                           const data = await up.json()
                           // 서버에 프로필 이미지 URL 저장
-                          const res = await fetch('/api/users/profile-image', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                          const res = await fetch(&apos;/api/users/profile-image&apos;, {
+                            method: &apos;POST&apos;,
+                            headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
                             body: JSON.stringify({ userId: user.id, imageUrl: data.url })
                           })
-                          if (!res.ok) throw new Error('프로필 이미지 저장 실패')
-                          alert('프로필 이미지가 업데이트되었습니다.')
+                          if (!res.ok) throw new Error(&apos;프로필 이미지 저장 실패&apos;)
+                          alert(&apos;프로필 이미지가 업데이트되었습니다.&apos;)
                         } catch (err) {
                           console.error(err)
-                          alert('프로필 이미지 업데이트에 실패했습니다.')
+                          alert(&apos;프로필 이미지 업데이트에 실패했습니다.&apos;)
                         } finally {
-                          if (e.target) e.target.value = ''
+                          if (e.target) e.target.value = &apos;'
                         }
                       }}
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className=&quot;space-y-2&quot;>
                   <Label>이메일</Label>
-                  <div className="flex items-center space-x-2">
+                  <div className=&quot;flex items-center space-x-2&quot;>
                     <Input 
-                      value={user.email || ''} 
+                      value={user.email || &apos;'} 
                       disabled 
-                      className="flex-1"
+                      className=&quot;flex-1&quot;
                     />
-                    <Badge variant="secondary">
-                      <Check className="w-3 h-3 mr-1" />
+                    <Badge variant=&quot;secondary&quot;>
+                      <Check className=&quot;w-3 h-3 mr-1&quot; />
                       인증됨
                     </Badge>
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className=&quot;space-y-2&quot;>
                   <Label>User명</Label>
                   <Input 
-                    value={user.user_metadata?.username || ''} 
+                    value={user.user_metadata?.username || &apos;'} 
                     disabled 
                   />
                 </div>
 
                 <Separator />
 
-                <div className="space-y-2">
+                <div className=&quot;space-y-2&quot;>
                   <Label>연결된 계정</Label>
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Mail className="w-4 h-4 mr-2" />
+                  <div className=&quot;space-y-2&quot;>
+                    <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
+                      <Mail className=&quot;w-4 h-4 mr-2&quot; />
                       Google 계정 연결
-                      <ChevronRight className="w-4 h-4 ml-auto" />
+                      <ChevronRight className=&quot;w-4 h-4 ml-auto&quot; />
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Smartphone className="w-4 h-4 mr-2" />
+                    <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
+                      <Smartphone className=&quot;w-4 h-4 mr-2&quot; />
                       카카오 계정 연결
-                      <ChevronRight className="w-4 h-4 ml-auto" />
+                      <ChevronRight className=&quot;w-4 h-4 ml-auto&quot; />
                     </Button>
                   </div>
                 </div>
@@ -304,12 +304,12 @@ export default function SettingsPage() {
                   계정 보안을 위해 정기적으로 비밀번호를 변경하세요
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">현재 비밀번호</Label>
+              <CardContent className=&quot;space-y-4&quot;>
+                <div className=&quot;space-y-2&quot;>
+                  <Label htmlFor=&quot;current-password&quot;>현재 비밀번호</Label>
                   <Input 
-                    id="current-password"
-                    type="password" 
+                    id=&quot;current-password&quot;
+                    type=&quot;password&quot; 
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({
                       ...passwordData,
@@ -318,11 +318,11 @@ export default function SettingsPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">새 비밀번호</Label>
+                <div className=&quot;space-y-2&quot;>
+                  <Label htmlFor=&quot;new-password&quot;>새 비밀번호</Label>
                   <Input 
-                    id="new-password"
-                    type="password" 
+                    id=&quot;new-password&quot;
+                    type=&quot;password&quot; 
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({
                       ...passwordData,
@@ -331,11 +331,11 @@ export default function SettingsPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">새 비밀번호 확인</Label>
+                <div className=&quot;space-y-2&quot;>
+                  <Label htmlFor=&quot;confirm-password&quot;>새 비밀번호 확인</Label>
                   <Input 
-                    id="confirm-password"
-                    type="password" 
+                    id=&quot;confirm-password&quot;
+                    type=&quot;password&quot; 
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({
                       ...passwordData,
@@ -345,35 +345,35 @@ export default function SettingsPage() {
                 </div>
 
                 <Button onClick={handlePasswordChange}>
-                  <Lock className="w-4 h-4 mr-2" />
+                  <Lock className=&quot;w-4 h-4 mr-2&quot; />
                   비밀번호 변경
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200">
+            <Card className=&quot;border-red-200&quot;>
               <CardHeader>
-                <CardTitle className="text-red-600">위험 구역</CardTitle>
+                <CardTitle className=&quot;text-red-600&quot;>위험 구역</CardTitle>
                 <CardDescription>
                   이 작업들은 되돌릴 수 없습니다. 신중하게 진행하세요.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className=&quot;space-y-4&quot;>
                 <Button 
-                  variant="outline" 
-                  className="text-orange-600 border-orange-600 hover:bg-orange-50"
+                  variant=&quot;outline&quot; 
+                  className=&quot;text-orange-600 border-orange-600 hover:bg-orange-50&quot;
                   onClick={handleSignOut}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className=&quot;w-4 h-4 mr-2&quot; />
                   로그아웃
                 </Button>
 
                 <Button 
-                  variant="outline" 
-                  className="text-red-600 border-red-600 hover:bg-red-50"
+                  variant=&quot;outline&quot; 
+                  className=&quot;text-red-600 border-red-600 hover:bg-red-50&quot;
                   onClick={handleDeleteAccount}
                 >
-                  <Trash2 className="w-4 h-4 mr-2" />
+                  <Trash2 className=&quot;w-4 h-4 mr-2&quot; />
                   계정 삭제
                 </Button>
               </CardContent>
@@ -381,7 +381,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* 알림 설정 */}
-          <TabsContent value="notifications" className="space-y-6">
+          <TabsContent value=&quot;notifications&quot; className=&quot;space-y-6&quot;>
             <Card>
               <CardHeader>
                 <CardTitle>알림 설정</CardTitle>
@@ -389,11 +389,11 @@ export default function SettingsPage() {
                   어떤 알림을 받을지 선택하세요
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+              <CardContent className=&quot;space-y-6&quot;>
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>이메일 알림</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       중요한 업데이트를 이메일로 받습니다
                     </p>
                   </div>
@@ -408,10 +408,10 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>푸시 알림</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       브라우저 푸시 알림을 받습니다
                     </p>
                   </div>
@@ -426,10 +426,10 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>댓글 답글 알림</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       내 댓글에 답글이 달리면 알림을 받습니다
                     </p>
                   </div>
@@ -444,10 +444,10 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>추천 알림</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       내 게시물이 추천을 받으면 알림을 받습니다
                     </p>
                   </div>
@@ -464,7 +464,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* 개인정보 설정 */}
-          <TabsContent value="privacy" className="space-y-6">
+          <TabsContent value=&quot;privacy&quot; className=&quot;space-y-6&quot;>
             <Card>
               <CardHeader>
                 <CardTitle>개인정보 보호</CardTitle>
@@ -472,11 +472,11 @@ export default function SettingsPage() {
                   프로필 공개 범위와 개인정보 설정을 관리하세요
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+              <CardContent className=&quot;space-y-6&quot;>
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>비공개 프로필</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       로그인한 User만 내 프로필을 볼 수 있습니다
                     </p>
                   </div>
@@ -491,10 +491,10 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>온라인 상태 표시</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       다른 User에게 온라인 상태를 표시합니다
                     </p>
                   </div>
@@ -509,10 +509,10 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
                     <Label>성인 콘텐츠</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className=&quot;text-sm text-gray-500&quot;>
                       성인 콘텐츠를 볼 수 있습니다 (연령 인증 필요)
                     </p>
                   </div>
@@ -535,16 +535,16 @@ export default function SettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
-                    <User className="w-4 h-4 mr-2" />
+                <div className=&quot;space-y-2&quot;>
+                  <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
+                    <User className=&quot;w-4 h-4 mr-2&quot; />
                     차단한 User 관리
-                    <ChevronRight className="w-4 h-4 ml-auto" />
+                    <ChevronRight className=&quot;w-4 h-4 ml-auto&quot; />
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Shield className="w-4 h-4 mr-2" />
+                  <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
+                    <Shield className=&quot;w-4 h-4 mr-2&quot; />
                     차단한 커뮤니티 관리
-                    <ChevronRight className="w-4 h-4 ml-auto" />
+                    <ChevronRight className=&quot;w-4 h-4 ml-auto&quot; />
                   </Button>
                 </div>
               </CardContent>
@@ -552,20 +552,20 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* 환경설정 */}
-          <TabsContent value="preferences" className="space-y-6">
+          <TabsContent value=&quot;preferences&quot; className=&quot;space-y-6&quot;>
             <Card>
               <CardHeader>
-                <CardTitle>{t('settings.appPreferences', '앱 환경설정')}</CardTitle>
+                <CardTitle>{t(&apos;settings.appPreferences&apos;, &apos;앱 환경설정&apos;)}</CardTitle>
                 <CardDescription>
-                  {t('settings.appPreferencesDescription', '앱 사용 환경을 커스터마이즈하세요')}
+                  {t(&apos;settings.appPreferencesDescription&apos;, &apos;앱 사용 환경을 커스터마이즈하세요&apos;)}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>{t('settings.darkModeLabel', '다크 모드')}</Label>
-                    <p className="text-sm text-gray-500">
-                      {t('settings.darkModeDescription', '어두운 테마를 사용합니다')}
+              <CardContent className=&quot;space-y-6&quot;>
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
+                    <Label>{t(&apos;settings.darkModeLabel&apos;, &apos;다크 모드&apos;)}</Label>
+                    <p className=&quot;text-sm text-gray-500&quot;>
+                      {t(&apos;settings.darkModeDescription&apos;, &apos;어두운 테마를 사용합니다&apos;)}
                     </p>
                   </div>
                   <Switch
@@ -579,10 +579,10 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <Label>{t('settings.languageLabel', '언어')}</Label>
-                  <p className="text-sm text-gray-500">
-                    {t('settings.languageDescription', '앱 메뉴의 기본 표시 언어를 선택하세요')}
+                <div className=&quot;space-y-2&quot;>
+                  <Label>{t(&apos;settings.languageLabel&apos;, &apos;언어&apos;)}</Label>
+                  <p className=&quot;text-sm text-gray-500&quot;>
+                    {t(&apos;settings.languageDescription&apos;, &apos;앱 메뉴의 기본 표시 언어를 선택하세요&apos;)}
                   </p>
                   <Select
                     value={language}
@@ -609,11 +609,11 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>{t('settings.autoTranslateLabel', '자동 번역')}</Label>
-                    <p className="text-sm text-gray-500">
-                      {t('settings.autoTranslateDescription', '선택한 언어로 게시물과 댓글을 자동으로 번역합니다')}
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
+                    <Label>{t(&apos;settings.autoTranslateLabel&apos;, &apos;자동 번역&apos;)}</Label>
+                    <p className=&quot;text-sm text-gray-500&quot;>
+                      {t(&apos;settings.autoTranslateDescription&apos;, &apos;선택한 언어로 게시물과 댓글을 자동으로 번역합니다&apos;)}
                     </p>
                   </div>
                   <Switch
@@ -630,11 +630,11 @@ export default function SettingsPage() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>{t('settings.autoPlayLabel', '동영상 자동 재생')}</Label>
-                    <p className="text-sm text-gray-500">
-                      {t('settings.autoPlayDescription', '피드의 동영상을 자동으로 재생합니다')}
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;space-y-0.5&quot;>
+                    <Label>{t(&apos;settings.autoPlayLabel&apos;, &apos;동영상 자동 재생&apos;)}</Label>
+                    <p className=&quot;text-sm text-gray-500&quot;>
+                      {t(&apos;settings.autoPlayDescription&apos;, &apos;피드의 동영상을 자동으로 재생합니다&apos;)}
                     </p>
                   </div>
                   <Switch
@@ -650,20 +650,20 @@ export default function SettingsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t('settings.premiumTitle', '프리미엄 기능')}</CardTitle>
+                <CardTitle>{t(&apos;settings.premiumTitle&apos;, &apos;프리미엄 기능&apos;)}</CardTitle>
                 <CardDescription>
-                  {t('settings.premiumDescription', 'ddudl 프리미엄으로 더 많은 기능을 이용하세요')}
+                  {t(&apos;settings.premiumDescription&apos;, &apos;ddudl 프리미엄으로 더 많은 기능을 이용하세요&apos;)}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Alert className="border-amber-200 bg-amber-50">
-                  <CreditCard className="h-4 w-4 text-amber-600" />
-                  <AlertDescription className="text-amber-800">
-                    {t('settings.premiumBenefit', '프리미엄 멤버십으로 광고 제거, 특별 배지, 우선 지원 등의 혜택을 받으세요!')}
+                <Alert className=&quot;border-amber-200 bg-amber-50&quot;>
+                  <CreditCard className=&quot;h-4 w-4 text-amber-600&quot; />
+                  <AlertDescription className=&quot;text-amber-800&quot;>
+                    {t(&apos;settings.premiumBenefit&apos;, &apos;프리미엄 멤버십으로 광고 제거, 특별 배지, 우선 지원 등의 혜택을 받으세요!&apos;)}
                   </AlertDescription>
                 </Alert>
-                <Button className="w-full mt-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                  {t('settings.upgradeButton', '프리미엄 업그레이드')}
+                <Button className=&quot;w-full mt-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600&quot;>
+                  {t(&apos;settings.upgradeButton&apos;, &apos;프리미엄 업그레이드&apos;)}
                 </Button>
               </CardContent>
             </Card>
@@ -671,18 +671,18 @@ export default function SettingsPage() {
         </Tabs>
 
         {/* 저장 버튼 */}
-        <div className="mt-8 flex justify-end">
+        <div className=&quot;mt-8 flex justify-end&quot;>
           <Button 
             onClick={saveSettings}
             disabled={saving}
           >
             {saving ? (
               <>
-                <LoadingSpinner size="sm" />
-                <span className="ml-2">{t('settings.saving', '저장 중...')}</span>
+                <LoadingSpinner size=&quot;sm&quot; />
+                <span className=&quot;ml-2&quot;>{t(&apos;settings.saving&apos;, &apos;저장 중...&apos;)}</span>
               </>
             ) : (
-              t('settings.save', '설정 저장')
+              t(&apos;settings.save&apos;, &apos;설정 저장&apos;)
             )}
           </Button>
         </div>

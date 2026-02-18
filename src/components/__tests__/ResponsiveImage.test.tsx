@@ -1,8 +1,8 @@
 // Unit test for responsive image sizing behavior
 
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { ResponsiveImage } from '../common/ResponsiveImage'
+import React from &apos;react&apos;
+import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
+import { ResponsiveImage } from &apos;../common/ResponsiveImage&apos;
 
 // Mock global ResizeObserver
 global.ResizeObserver = class ResizeObserver {
@@ -26,24 +26,24 @@ global.IntersectionObserver = class IntersectionObserver {
   unobserve() {}
 }
 
-describe('ResponsiveImage Component', () => {
+describe(&apos;ResponsiveImage Component&apos;, () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
     // Mock getComputedStyle for CSS custom properties
-    Object.defineProperty(window, 'getComputedStyle', {
+    Object.defineProperty(window, &apos;getComputedStyle&apos;, {
       value: jest.fn(() => ({
         getPropertyValue: jest.fn((prop: string) => {
           const mockValues: Record<string, string> = {
-            '--writepost-max-image-width': 'min(100%, 800px)',
-            '--writepost-max-image-height': '600px'
+            &apos;--writepost-max-image-width&apos;: &apos;min(100%, 800px)&apos;,
+            &apos;--writepost-max-image-height&apos;: &apos;600px&apos;
           }
-          return mockValues[prop] || ''
+          return mockValues[prop] || &apos;'
         }),
-        maxWidth: 'min(100%, 800px)',
-        maxHeight: '600px',
-        width: '800px',
-        height: '600px'
+        maxWidth: &apos;min(100%, 800px)&apos;,
+        maxHeight: &apos;600px&apos;,
+        width: &apos;800px&apos;,
+        height: &apos;600px&apos;
       })),
       configurable: true
     })
@@ -53,46 +53,46 @@ describe('ResponsiveImage Component', () => {
     jest.restoreAllMocks()
   })
 
-  describe('Basic Rendering', () => {
-    test('should render image with provided src and alt', () => {
+  describe(&apos;Basic Rendering&apos;, () => {
+    test(&apos;should render image with provided src and alt&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/test-image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/test-image.jpg&quot;
+          alt=&quot;Test image&quot;
         />
       )
 
       // Assert
-      const image = screen.getByRole('img', { name: /test image/i })
+      const image = screen.getByRole(&apos;img&apos;, { name: /test image/i })
       expect(image).toBeInTheDocument()
-      expect(image).toHaveAttribute('src', 'https://example.com/test-image.jpg')
-      expect(image).toHaveAttribute('alt', 'Test image')
+      expect(image).toHaveAttribute(&apos;src&apos;, &apos;https://example.com/test-image.jpg&apos;)
+      expect(image).toHaveAttribute(&apos;alt&apos;, &apos;Test image&apos;)
     })
 
-    test('should apply responsive CSS classes', () => {
+    test(&apos;should apply responsive CSS classes&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/test-image.jpg"
-          alt="Test image"
-          className="custom-class"
+          src=&quot;https://example.com/test-image.jpg&quot;
+          alt=&quot;Test image&quot;
+          className=&quot;custom-class&quot;
         />
       )
 
       // Assert
-      const image = screen.getByRole('img')
-      expect(image).toHaveClass('responsive-image')
-      expect(image).toHaveClass('custom-class')
+      const image = screen.getByRole(&apos;img&apos;)
+      expect(image).toHaveClass(&apos;responsive-image&apos;)
+      expect(image).toHaveClass(&apos;custom-class&apos;)
     })
   })
 
-  describe('Small Image Handling (Original Size)', () => {
-    test('should display small images at original size', () => {
+  describe(&apos;Small Image Handling (Original Size)&apos;, () => {
+    test(&apos;should display small images at original size&apos;, () => {
       // Arrange
       const smallImageProps = {
-        src: 'https://example.com/small-image.jpg',
-        alt: 'Small image',
+        src: &apos;https://example.com/small-image.jpg&apos;,
+        alt: &apos;Small image&apos;,
         originalWidth: 400,
         originalHeight: 300
       }
@@ -101,19 +101,19 @@ describe('ResponsiveImage Component', () => {
       render(<ResponsiveImage {...smallImageProps} />)
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Should have CSS that allows original dimensions
       const computedStyle = window.getComputedStyle(image)
-      expect(image).toHaveAttribute('data-original-width', '400')
-      expect(image).toHaveAttribute('data-original-height', '300')
+      expect(image).toHaveAttribute(&apos;data-original-width&apos;, &apos;400&apos;)
+      expect(image).toHaveAttribute(&apos;data-original-height&apos;, &apos;300&apos;)
     })
 
-    test('should not constrain images smaller than max width', async () => {
+    test(&apos;should not constrain images smaller than max width&apos;, async () => {
       // Arrange
       const smallImageProps = {
-        src: 'https://example.com/small-image.jpg',
-        alt: 'Small image',
+        src: &apos;https://example.com/small-image.jpg&apos;,
+        alt: &apos;Small image&apos;,
         originalWidth: 300,
         originalHeight: 200,
         maxDisplayWidth: 800
@@ -123,22 +123,22 @@ describe('ResponsiveImage Component', () => {
       render(<ResponsiveImage {...smallImageProps} />)
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Mock image loading
       fireEvent.load(image)
 
       await waitFor(() => {
         // Image should maintain its original dimensions
-        expect(image.style.maxWidth).toBe('300px')
+        expect(image.style.maxWidth).toBe(&apos;300px&apos;)
       })
     })
 
-    test('should preserve aspect ratio for small images', () => {
+    test(&apos;should preserve aspect ratio for small images&apos;, () => {
       // Arrange
       const smallImageProps = {
-        src: 'https://example.com/small-image.jpg',
-        alt: 'Small image',
+        src: &apos;https://example.com/small-image.jpg&apos;,
+        alt: &apos;Small image&apos;,
         originalWidth: 400,
         originalHeight: 300 // 4:3 ratio
       }
@@ -147,19 +147,19 @@ describe('ResponsiveImage Component', () => {
       render(<ResponsiveImage {...smallImageProps} />)
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Should have aspect ratio CSS property set
-      expect(image.style.aspectRatio).toBe('400/300')
+      expect(image.style.aspectRatio).toBe(&apos;400/300&apos;)
     })
   })
 
-  describe('Large Image Handling (Auto-resize)', () => {
-    test('should constrain large images to max width', async () => {
+  describe(&apos;Large Image Handling (Auto-resize)&apos;, () => {
+    test(&apos;should constrain large images to max width&apos;, async () => {
       // Arrange
       const largeImageProps = {
-        src: 'https://example.com/large-image.jpg',
-        alt: 'Large image',
+        src: &apos;https://example.com/large-image.jpg&apos;,
+        alt: &apos;Large image&apos;,
         originalWidth: 1920,
         originalHeight: 1080,
         maxDisplayWidth: 800
@@ -169,23 +169,23 @@ describe('ResponsiveImage Component', () => {
       render(<ResponsiveImage {...largeImageProps} />)
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Mock image loading
       fireEvent.load(image)
 
       await waitFor(() => {
         // Image should be constrained to max width
-        expect(image.style.maxWidth).toBe('800px')
-        expect(image.style.width).toBe('100%') // Should be responsive within constraints
+        expect(image.style.maxWidth).toBe(&apos;800px&apos;)
+        expect(image.style.width).toBe(&apos;100%&apos;) // Should be responsive within constraints
       })
     })
 
-    test('should maintain aspect ratio when resizing large images', async () => {
+    test(&apos;should maintain aspect ratio when resizing large images&apos;, async () => {
       // Arrange
       const largeImageProps = {
-        src: 'https://example.com/large-image.jpg',
-        alt: 'Large image',
+        src: &apos;https://example.com/large-image.jpg&apos;,
+        alt: &apos;Large image&apos;,
         originalWidth: 1920,
         originalHeight: 1080, // 16:9 ratio
         maxDisplayWidth: 800
@@ -195,22 +195,22 @@ describe('ResponsiveImage Component', () => {
       render(<ResponsiveImage {...largeImageProps} />)
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       fireEvent.load(image)
 
       await waitFor(() => {
         // Should preserve aspect ratio
-        expect(image.style.aspectRatio).toBe('1920/1080')
-        expect(image.style.height).toBe('auto') // Height should be auto to maintain ratio
+        expect(image.style.aspectRatio).toBe(&apos;1920/1080&apos;)
+        expect(image.style.height).toBe(&apos;auto&apos;) // Height should be auto to maintain ratio
       })
     })
 
-    test('should apply CSS custom property constraints', async () => {
+    test(&apos;should apply CSS custom property constraints&apos;, async () => {
       // Arrange
       const largeImageProps = {
-        src: 'https://example.com/ultra-wide-image.jpg',
-        alt: 'Ultra wide image',
+        src: &apos;https://example.com/ultra-wide-image.jpg&apos;,
+        alt: &apos;Ultra wide image&apos;,
         originalWidth: 3840,
         originalHeight: 1080
       }
@@ -219,44 +219,44 @@ describe('ResponsiveImage Component', () => {
       render(<ResponsiveImage {...largeImageProps} />)
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       fireEvent.load(image)
 
       await waitFor(() => {
         // Should use CSS custom properties for max constraints
-        expect(image.style.maxWidth).toContain('min(100%, 800px)')
+        expect(image.style.maxWidth).toContain(&apos;min(100%, 800px)&apos;)
       })
     })
   })
 
-  describe('Responsive Behavior', () => {
-    test('should adapt to container width changes', async () => {
+  describe(&apos;Responsive Behavior&apos;, () => {
+    test(&apos;should adapt to container width changes&apos;, async () => {
       // Arrange
       const { rerender } = render(
-        <div style={{ width: '1200px' }}>
+        <div style={{ width: &apos;1200px&apos; }}>
           <ResponsiveImage
-            src="https://example.com/responsive-image.jpg"
-            alt="Responsive image"
+            src=&quot;https://example.com/responsive-image.jpg&quot;
+            alt=&quot;Responsive image&quot;
             originalWidth={1000}
             originalHeight={600}
           />
         </div>
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
       fireEvent.load(image)
 
       await waitFor(() => {
-        expect(image.style.maxWidth).toBe('min(100%, 800px)')
+        expect(image.style.maxWidth).toBe(&apos;min(100%, 800px)&apos;)
       })
 
       // Act - Change container width
       rerender(
-        <div style={{ width: '600px' }}>
+        <div style={{ width: &apos;600px&apos; }}>
           <ResponsiveImage
-            src="https://example.com/responsive-image.jpg"
-            alt="Responsive image"
+            src=&quot;https://example.com/responsive-image.jpg&quot;
+            alt=&quot;Responsive image&quot;
             originalWidth={1000}
             originalHeight={600}
           />
@@ -264,16 +264,16 @@ describe('ResponsiveImage Component', () => {
       )
 
       // Assert - Image should still be responsive
-      expect(image.style.width).toBe('100%')
-      expect(image.style.maxWidth).toBe('min(100%, 800px)')
+      expect(image.style.width).toBe(&apos;100%&apos;)
+      expect(image.style.maxWidth).toBe(&apos;min(100%, 800px)&apos;)
     })
 
-    test('should handle viewport size changes', async () => {
+    test(&apos;should handle viewport size changes&apos;, async () => {
       // Arrange
       const originalInnerWidth = window.innerWidth
 
       // Mock different viewport sizes
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, &apos;innerWidth&apos;, {
         writable: true,
         configurable: true,
         value: 375 // Mobile width
@@ -281,83 +281,83 @@ describe('ResponsiveImage Component', () => {
 
       render(
         <ResponsiveImage
-          src="https://example.com/mobile-image.jpg"
-          alt="Mobile image"
+          src=&quot;https://example.com/mobile-image.jpg&quot;
+          alt=&quot;Mobile image&quot;
           originalWidth={800}
           originalHeight={600}
         />
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
       fireEvent.load(image)
 
       // Trigger resize event
-      fireEvent(window, new Event('resize'))
+      fireEvent(window, new Event(&apos;resize&apos;))
 
       await waitFor(() => {
         // Should adapt to mobile viewport
         expect(image.style.maxWidth).toBeTruthy()
-        expect(image.style.width).toBe('100%')
+        expect(image.style.width).toBe(&apos;100%&apos;)
       })
 
       // Restore original window width
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, &apos;innerWidth&apos;, {
         value: originalInnerWidth,
         configurable: true
       })
     })
   })
 
-  describe('Loading States and Error Handling', () => {
-    test('should show loading state before image loads', () => {
+  describe(&apos;Loading States and Error Handling&apos;, () => {
+    test(&apos;should show loading state before image loads&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/slow-loading-image.jpg"
-          alt="Slow loading image"
+          src=&quot;https://example.com/slow-loading-image.jpg&quot;
+          alt=&quot;Slow loading image&quot;
         />
       )
 
       // Assert
-      const container = screen.getByTestId('responsive-image-container')
-      expect(container).toHaveClass('loading')
+      const container = screen.getByTestId(&apos;responsive-image-container&apos;)
+      expect(container).toHaveClass(&apos;loading&apos;)
     })
 
-    test('should remove loading state after image loads', async () => {
+    test(&apos;should remove loading state after image loads&apos;, async () => {
       // Arrange
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Test image&quot;
         />
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Act - Simulate image load
       fireEvent.load(image)
 
       // Assert
       await waitFor(() => {
-        const container = screen.getByTestId('responsive-image-container')
-        expect(container).not.toHaveClass('loading')
-        expect(container).toHaveClass('loaded')
+        const container = screen.getByTestId(&apos;responsive-image-container&apos;)
+        expect(container).not.toHaveClass(&apos;loading&apos;)
+        expect(container).toHaveClass(&apos;loaded&apos;)
       })
     })
 
-    test('should handle image load errors', async () => {
+    test(&apos;should handle image load errors&apos;, async () => {
       // Arrange
       const onErrorMock = jest.fn()
 
       render(
         <ResponsiveImage
-          src="https://example.com/broken-image.jpg"
-          alt="Broken image"
+          src=&quot;https://example.com/broken-image.jpg&quot;
+          alt=&quot;Broken image&quot;
           onError={onErrorMock}
         />
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Act - Simulate image error
       fireEvent.error(image)
@@ -366,24 +366,24 @@ describe('ResponsiveImage Component', () => {
       await waitFor(() => {
         expect(onErrorMock).toHaveBeenCalledWith(expect.any(Error))
 
-        const container = screen.getByTestId('responsive-image-container')
-        expect(container).toHaveClass('error')
+        const container = screen.getByTestId(&apos;responsive-image-container&apos;)
+        expect(container).toHaveClass(&apos;error&apos;)
       })
     })
 
-    test('should call onLoad callback when image loads', async () => {
+    test(&apos;should call onLoad callback when image loads&apos;, async () => {
       // Arrange
       const onLoadMock = jest.fn()
 
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Test image&quot;
           onLoad={onLoadMock}
         />
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
 
       // Act
       fireEvent.load(image)
@@ -395,195 +395,195 @@ describe('ResponsiveImage Component', () => {
     })
   })
 
-  describe('Lazy Loading', () => {
-    test('should implement lazy loading by default', () => {
+  describe(&apos;Lazy Loading&apos;, () => {
+    test(&apos;should implement lazy loading by default&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/lazy-image.jpg"
-          alt="Lazy loaded image"
+          src=&quot;https://example.com/lazy-image.jpg&quot;
+          alt=&quot;Lazy loaded image&quot;
         />
       )
 
       // Assert
-      const image = screen.getByRole('img')
-      expect(image).toHaveAttribute('loading', 'lazy')
+      const image = screen.getByRole(&apos;img&apos;)
+      expect(image).toHaveAttribute(&apos;loading&apos;, &apos;lazy&apos;)
     })
 
-    test('should allow disabling lazy loading', () => {
+    test(&apos;should allow disabling lazy loading&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/eager-image.jpg"
-          alt="Eager loaded image"
-          loading="eager"
+          src=&quot;https://example.com/eager-image.jpg&quot;
+          alt=&quot;Eager loaded image&quot;
+          loading=&quot;eager&quot;
         />
       )
 
       // Assert
-      const image = screen.getByRole('img')
-      expect(image).toHaveAttribute('loading', 'eager')
+      const image = screen.getByRole(&apos;img&apos;)
+      expect(image).toHaveAttribute(&apos;loading&apos;, &apos;eager&apos;)
     })
   })
 
-  describe('Accessibility', () => {
-    test('should provide proper alt text', () => {
+  describe(&apos;Accessibility&apos;, () => {
+    test(&apos;should provide proper alt text&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Descriptive alt text"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Descriptive alt text&quot;
         />
       )
 
       // Assert
-      const image = screen.getByRole('img')
-      expect(image).toHaveAttribute('alt', 'Descriptive alt text')
+      const image = screen.getByRole(&apos;img&apos;)
+      expect(image).toHaveAttribute(&apos;alt&apos;, &apos;Descriptive alt text&apos;)
     })
 
-    test('should handle empty alt text for decorative images', () => {
+    test(&apos;should handle empty alt text for decorative images&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/decorative.jpg"
-          alt=""
+          src=&quot;https://example.com/decorative.jpg&quot;
+          alt=&quot;"
         />
       )
 
       // Assert
-      const image = screen.getByRole('img', { hidden: true })
-      expect(image).toHaveAttribute('alt', '')
+      const image = screen.getByRole(&apos;img&apos;, { hidden: true })
+      expect(image).toHaveAttribute(&apos;alt&apos;, &apos;')
     })
 
-    test('should provide loading announcement for screen readers', async () => {
+    test(&apos;should provide loading announcement for screen readers&apos;, async () => {
       // Arrange
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Test image&quot;
         />
       )
 
       // Assert - Should have aria-busy during loading
-      const container = screen.getByTestId('responsive-image-container')
-      expect(container).toHaveAttribute('aria-busy', 'true')
+      const container = screen.getByTestId(&apos;responsive-image-container&apos;)
+      expect(container).toHaveAttribute(&apos;aria-busy&apos;, &apos;true&apos;)
 
       // Act - Complete loading
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
       fireEvent.load(image)
 
       // Assert - Should remove aria-busy after loading
       await waitFor(() => {
-        expect(container).toHaveAttribute('aria-busy', 'false')
+        expect(container).toHaveAttribute(&apos;aria-busy&apos;, &apos;false&apos;)
       })
     })
   })
 
-  describe('Performance Optimizations', () => {
-    test('should use WebP format when available', () => {
+  describe(&apos;Performance Optimizations&apos;, () => {
+    test(&apos;should use WebP format when available&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Test image&quot;
         />
       )
 
       // Assert
-      const picture = screen.getByTestId('responsive-picture')
-      const webpSource = picture.querySelector('source[type="image/webp"]')
+      const picture = screen.getByTestId(&apos;responsive-picture&apos;)
+      const webpSource = picture.querySelector(&apos;source[type=&quot;image/webp&quot;]&apos;)
       expect(webpSource).toBeInTheDocument()
     })
 
-    test('should provide fallback for browsers without WebP support', () => {
+    test(&apos;should provide fallback for browsers without WebP support&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Test image&quot;
         />
       )
 
       // Assert
-      const picture = screen.getByTestId('responsive-picture')
-      const fallbackImage = picture.querySelector('img')
-      expect(fallbackImage).toHaveAttribute('src', 'https://example.com/image.jpg')
+      const picture = screen.getByTestId(&apos;responsive-picture&apos;)
+      const fallbackImage = picture.querySelector(&apos;img&apos;)
+      expect(fallbackImage).toHaveAttribute(&apos;src&apos;, &apos;https://example.com/image.jpg&apos;)
     })
 
-    test('should implement proper image sizing attributes', () => {
+    test(&apos;should implement proper image sizing attributes&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/image.jpg"
-          alt="Test image"
+          src=&quot;https://example.com/image.jpg&quot;
+          alt=&quot;Test image&quot;
           originalWidth={800}
           originalHeight={600}
         />
       )
 
       // Assert
-      const image = screen.getByRole('img')
-      expect(image).toHaveAttribute('width', '800')
-      expect(image).toHaveAttribute('height', '600')
+      const image = screen.getByRole(&apos;img&apos;)
+      expect(image).toHaveAttribute(&apos;width&apos;, &apos;800&apos;)
+      expect(image).toHaveAttribute(&apos;height&apos;, &apos;600&apos;)
     })
   })
 
-  describe('Edge Cases', () => {
-    test('should handle missing dimensions gracefully', () => {
+  describe(&apos;Edge Cases&apos;, () => {
+    test(&apos;should handle missing dimensions gracefully&apos;, () => {
       // Arrange & Act
       render(
         <ResponsiveImage
-          src="https://example.com/unknown-size.jpg"
-          alt="Unknown size image"
+          src=&quot;https://example.com/unknown-size.jpg&quot;
+          alt=&quot;Unknown size image&quot;
         />
       )
 
       // Assert
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
       expect(image).toBeInTheDocument()
-      expect(image.style.maxWidth).toBe('min(100%, 800px)') // Should use default constraints
+      expect(image.style.maxWidth).toBe(&apos;min(100%, 800px)&apos;) // Should use default constraints
     })
 
-    test('should handle very wide images', async () => {
+    test(&apos;should handle very wide images&apos;, async () => {
       // Arrange
       render(
         <ResponsiveImage
-          src="https://example.com/ultra-wide.jpg"
-          alt="Ultra wide image"
+          src=&quot;https://example.com/ultra-wide.jpg&quot;
+          alt=&quot;Ultra wide image&quot;
           originalWidth={4000}
           originalHeight={500}
         />
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
       fireEvent.load(image)
 
       // Assert
       await waitFor(() => {
-        expect(image.style.maxWidth).toBe('min(100%, 800px)')
-        expect(image.style.aspectRatio).toBe('4000/500')
+        expect(image.style.maxWidth).toBe(&apos;min(100%, 800px)&apos;)
+        expect(image.style.aspectRatio).toBe(&apos;4000/500&apos;)
       })
     })
 
-    test('should handle very tall images', async () => {
+    test(&apos;should handle very tall images&apos;, async () => {
       // Arrange
       render(
         <ResponsiveImage
-          src="https://example.com/ultra-tall.jpg"
-          alt="Ultra tall image"
+          src=&quot;https://example.com/ultra-tall.jpg&quot;
+          alt=&quot;Ultra tall image&quot;
           originalWidth={500}
           originalHeight={4000}
           maxDisplayHeight={600}
         />
       )
 
-      const image = screen.getByRole('img')
+      const image = screen.getByRole(&apos;img&apos;)
       fireEvent.load(image)
 
       // Assert
       await waitFor(() => {
-        expect(image.style.maxHeight).toBe('600px')
-        expect(image.style.aspectRatio).toBe('500/4000')
+        expect(image.style.maxHeight).toBe(&apos;600px&apos;)
+        expect(image.style.aspectRatio).toBe(&apos;500/4000&apos;)
       })
     })
   })

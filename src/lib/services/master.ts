@@ -10,6 +10,22 @@ import type {
   ModerationActionRequest,
 } from '@/types';
 
+// Supabase query result types
+interface UserQueryResult {
+  author_id: string;
+}
+
+interface QueueQueryResult {
+  status: string;
+  ai_score: number | null;
+  reported_by: string | null;
+}
+
+interface ActionQueryResult {
+  action_type: string;
+  target_id: string | null;
+}
+
 export class MasterService {
   private async getSupabase() {
     return await createClient();
@@ -330,7 +346,7 @@ export class MasterService {
     ]);
 
     // Calculate statistics
-    const uniqueUsers = new Set(users.data?.map((u: any) => u.author_id) || []);
+    const uniqueUsers = new Set(users.data?.map((u: UserQueryResult) => u.author_id) || []);
     const queueData = queue.data || [];
     const actionsData = actions.data || [];
 
@@ -345,18 +361,18 @@ export class MasterService {
         growth: 0 // Would need historical data to calculate
       },
       moderation: {
-        queueSize: queueData.filter((q: any) => q.status === 'pending').length,
-        itemsReviewed: queueData.filter((q: any) => q.status !== 'pending').length,
-        aiDecisions: queueData.filter((q: any) => q.ai_score !== null).length,
-        manualOverrides: actionsData.filter((a: any) => a.action_type === 'override_ai').length,
+        queueSize: queueData.filter((q: QueueQueryResult) => q.status === 'pending').length,
+        itemsReviewed: queueData.filter((q: QueueQueryResult) => q.status !== 'pending').length,
+        aiDecisions: queueData.filter((q: QueueQueryResult) => q.ai_score !== null).length,
+        manualOverrides: actionsData.filter((a: ActionQueryResult) => a.action_type === 'override_ai').length,
         falsePositives: 0, // Would need additional tracking
         accuracy: 0 // Would need to calculate based on overrides
       },
       content: {
-        postsRemoved: actionsData.filter((a: any) => a.action_type === 'remove_content' && a.target_id).length,
+        postsRemoved: actionsData.filter((a: ActionQueryResult) => a.action_type === 'remove_content' && a.target_id).length,
         commentsRemoved: 0, // Would need additional tracking
-        usersBanned: actionsData.filter((a: any) => a.action_type === 'ban_user').length,
-        reportsReceived: queueData.filter((q: any) => q.reported_by !== null).length,
+        usersBanned: actionsData.filter((a: ActionQueryResult) => a.action_type === 'ban_user').length,
+        reportsReceived: queueData.filter((q: QueueQueryResult) => q.reported_by !== null).length,
         avgResponseTime: this.calculateAvgResponseTime(queueData as ModerationQueueItem[])
       },
       trends: {

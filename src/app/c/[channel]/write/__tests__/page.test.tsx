@@ -1,21 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
-import WritePage from '../page'
+import { describe, it, expect, beforeEach, afterEach, jest } from &apos;@jest/globals&apos;
+import { render, screen, waitFor } from &apos;@testing-library/react&apos;
+import userEvent from &apos;@testing-library/user-event&apos;
+import &apos;@testing-library/jest-dom&apos;
+import WritePage from &apos;../page&apos;
 
 // Mock Header component
-jest.mock('@/components/layout/Header', () => {
+jest.mock(&apos;@/components/layout/Header&apos;, () => {
   return function MockHeader() {
-    return <header data-testid="header">Header</header>
+    return <header data-testid=&quot;header&quot;>Header</header>
   }
 })
 
 // Mock WritePostForm component
-jest.mock('../WritePostForm', () => {
+jest.mock(&apos;../WritePostForm&apos;, () => {
   return function MockWritePostForm({ channelName }: { channelName: string }) {
     return (
-      <div data-testid="write-post-form">
+      <div data-testid=&quot;write-post-form&quot;>
         <p>WritePostForm for {channelName}</p>
       </div>
     )
@@ -23,15 +23,15 @@ jest.mock('../WritePostForm', () => {
 })
 
 // Mock LocalizationProvider
-jest.mock('@/providers/LocalizationProvider', () => ({
+jest.mock(&apos;@/providers/LocalizationProvider&apos;, () => ({
   useTranslation: () => ({ t: (key: string) => key }),
   LocalizationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }))
 
 // Mock LoadingSpinner
-jest.mock('@/components/common/LoadingSpinner', () => ({
+jest.mock(&apos;@/components/common/LoadingSpinner&apos;, () => ({
   LoadingSpinner: function MockLoadingSpinner({ text }: { text: string }) {
-    return <div data-testid="loading-spinner">{text}</div>
+    return <div data-testid=&quot;loading-spinner&quot;>{text}</div>
   }
 }))
 
@@ -39,7 +39,7 @@ jest.mock('@/components/common/LoadingSpinner', () => ({
 const mockParams = (channel: string) => Promise.resolve({ channel })
 const mockSearchParams = (params?: Record<string, string>) => Promise.resolve(params || {})
 
-describe('WritePage Integration Tests', () => {
+describe(&apos;WritePage Integration Tests&apos;, () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -48,260 +48,260 @@ describe('WritePage Integration Tests', () => {
     jest.clearAllMocks()
   })
 
-  describe('Basic Rendering', () => {
-    it('should render write page with basic elements', async () => {
+  describe(&apos;Basic Rendering&apos;, () => {
+    it(&apos;should render write page with basic elements&apos;, async () => {
       const props = {
-        params: mockParams('test-channel'),
+        params: mockParams(&apos;test-channel&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByTestId('header')).toBeInTheDocument()
-      expect(await screen.findByText('WritePostForm for test-channel')).toBeInTheDocument()
-      expect(screen.getByText('/test-channel Channel에 글쓰기')).toBeInTheDocument()
+      expect(screen.getByTestId(&apos;header&apos;)).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for test-channel&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;/test-channel Channel에 글쓰기&apos;)).toBeInTheDocument()
     })
 
-    it('should render with correct channel name in title', async () => {
+    it(&apos;should render with correct channel name in title&apos;, async () => {
       const props = {
-        params: mockParams('technology'),
+        params: mockParams(&apos;technology&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/technology Channel에 글쓰기')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/technology Channel에 글쓰기&apos;)).toBeInTheDocument()
     })
 
-    it('should render back link to channel', async () => {
+    it(&apos;should render back link to channel&apos;, async () => {
       const props = {
-        params: mockParams('gaming'),
+        params: mockParams(&apos;gaming&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      const backLink = screen.getByText('← /gaming Channel으로 돌아가기')
+      const backLink = screen.getByText(&apos;← /gaming Channel으로 돌아가기&apos;)
       expect(backLink).toBeInTheDocument()
-      expect(backLink.closest('a')).toHaveAttribute('href', '/gaming')
+      expect(backLink.closest(&apos;a&apos;)).toHaveAttribute(&apos;href&apos;, &apos;/gaming&apos;)
     })
 
-    it('should pass correct channelName to WritePostForm', async () => {
+    it(&apos;should pass correct channelName to WritePostForm&apos;, async () => {
       const props = {
-        params: mockParams('music'),
+        params: mockParams(&apos;music&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      expect(await screen.findByText('WritePostForm for music')).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for music&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Edit Mode', () => {
-    it('should show edit title when edit param is present', async () => {
+  describe(&apos;Edit Mode&apos;, () => {
+    it(&apos;should show edit title when edit param is present&apos;, async () => {
       const props = {
-        params: mockParams('art'),
-        searchParams: mockSearchParams({ edit: 'true' })
+        params: mockParams(&apos;art&apos;),
+        searchParams: mockSearchParams({ edit: &apos;true&apos; })
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/art Channel 글 수정')).toBeInTheDocument()
-      expect(screen.queryByText('/art Channel에 글쓰기')).not.toBeInTheDocument()
+      expect(screen.getByText(&apos;/art Channel 글 수정&apos;)).toBeInTheDocument()
+      expect(screen.queryByText(&apos;/art Channel에 글쓰기&apos;)).not.toBeInTheDocument()
     })
 
-    it('should show create title when edit param is not present', async () => {
+    it(&apos;should show create title when edit param is not present&apos;, async () => {
       const props = {
-        params: mockParams('books'),
+        params: mockParams(&apos;books&apos;),
         searchParams: mockSearchParams({})
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/books Channel에 글쓰기')).toBeInTheDocument()
-      expect(screen.queryByText('/books Channel 글 수정')).not.toBeInTheDocument()
+      expect(screen.getByText(&apos;/books Channel에 글쓰기&apos;)).toBeInTheDocument()
+      expect(screen.queryByText(&apos;/books Channel 글 수정&apos;)).not.toBeInTheDocument()
     })
 
-    it('should show create title when edit param is falsy', async () => {
+    it(&apos;should show create title when edit param is falsy&apos;, async () => {
       const props = {
-        params: mockParams('movies'),
-        searchParams: mockSearchParams({ edit: '' })
+        params: mockParams(&apos;movies&apos;),
+        searchParams: mockSearchParams({ edit: &apos;' })
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/movies Channel에 글쓰기')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/movies Channel에 글쓰기&apos;)).toBeInTheDocument()
     })
 
-    it('should show edit title when edit param has any truthy value', async () => {
+    it(&apos;should show edit title when edit param has any truthy value&apos;, async () => {
       const props = {
-        params: mockParams('science'),
-        searchParams: mockSearchParams({ edit: '1' })
+        params: mockParams(&apos;science&apos;),
+        searchParams: mockSearchParams({ edit: &apos;1&apos; })
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/science Channel 글 수정')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/science Channel 글 수정&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Layout and Styling', () => {
-    it('should apply correct CSS classes for layout', async () => {
+  describe(&apos;Layout and Styling&apos;, () => {
+    it(&apos;should apply correct CSS classes for layout&apos;, async () => {
       const props = {
-        params: mockParams('test'),
+        params: mockParams(&apos;test&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
       // Check main container classes
-      const mainContainer = screen.getByTestId('header').parentElement
-      expect(mainContainer).toHaveClass('min-h-screen', 'bg-gray-50')
+      const mainContainer = screen.getByTestId(&apos;header&apos;).parentElement
+      expect(mainContainer).toHaveClass(&apos;min-h-screen&apos;, &apos;bg-gray-50&apos;)
 
       // Check content container classes
-      const writePostForm = await screen.findByText('WritePostForm for test')
+      const writePostForm = await screen.findByText(&apos;WritePostForm for test&apos;)
       const contentContainer = writePostForm.parentElement?.parentElement
-      expect(contentContainer).toHaveClass('max-w-4xl', 'mx-auto', 'px-4', 'py-6')
+      expect(contentContainer).toHaveClass(&apos;max-w-4xl&apos;, &apos;mx-auto&apos;, &apos;px-4&apos;, &apos;py-6&apos;)
     })
 
-    it('should apply correct styling to back link', async () => {
+    it(&apos;should apply correct styling to back link&apos;, async () => {
       const props = {
-        params: mockParams('food'),
+        params: mockParams(&apos;food&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      const backLink = screen.getByText('← /food Channel으로 돌아가기')
-      expect(backLink).toHaveClass('text-blue-600', 'hover:underline')
+      const backLink = screen.getByText(&apos;← /food Channel으로 돌아가기&apos;)
+      expect(backLink).toHaveClass(&apos;text-blue-600&apos;, &apos;hover:underline&apos;)
     })
 
-    it('should apply correct styling to form container', async () => {
+    it(&apos;should apply correct styling to form container&apos;, async () => {
       const props = {
-        params: mockParams('travel'),
+        params: mockParams(&apos;travel&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      const writePostForm = await screen.findByText('WritePostForm for travel')
+      const writePostForm = await screen.findByText(&apos;WritePostForm for travel&apos;)
       const formContainer = writePostForm.parentElement?.parentElement
-      expect(formContainer).toHaveClass('bg-white', 'rounded-lg', 'border', 'p-6')
+      expect(formContainer).toHaveClass(&apos;bg-white&apos;, &apos;rounded-lg&apos;, &apos;border&apos;, &apos;p-6&apos;)
     })
 
-    it('should apply correct styling to page title', async () => {
+    it(&apos;should apply correct styling to page title&apos;, async () => {
       const props = {
-        params: mockParams('fitness'),
+        params: mockParams(&apos;fitness&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      const title = screen.getByText('/fitness Channel에 글쓰기')
-      expect(title).toHaveClass('text-2xl', 'font-bold', 'mb-6')
+      const title = screen.getByText(&apos;/fitness Channel에 글쓰기&apos;)
+      expect(title).toHaveClass(&apos;text-2xl&apos;, &apos;font-bold&apos;, &apos;mb-6&apos;)
     })
   })
 
-  describe('Suspense and Loading', () => {
-    it('should wrap WritePostForm in Suspense', async () => {
+  describe(&apos;Suspense and Loading&apos;, () => {
+    it(&apos;should wrap WritePostForm in Suspense&apos;, async () => {
       const props = {
-        params: mockParams('photography'),
+        params: mockParams(&apos;photography&apos;),
         searchParams: mockSearchParams()
       }
 
       // The component should render without throwing
       render(await WritePage(props))
 
-      expect(await screen.findByText('WritePostForm for photography')).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for photography&apos;)).toBeInTheDocument()
     })
 
-    it('should show loading spinner as fallback', async () => {
+    it(&apos;should show loading spinner as fallback&apos;, async () => {
       // This test would require more complex mocking to actually trigger the loading state
-      // For now, we'll just verify that the Suspense wrapper exists by checking the component renders
+      // For now, we&apos;ll just verify that the Suspense wrapper exists by checking the component renders
       const props = {
-        params: mockParams('design'),
+        params: mockParams(&apos;design&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
       // If Suspense is working correctly, the form should eventually render
-      expect(await screen.findByText('WritePostForm for design')).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for design&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('URL Parameters Handling', () => {
-    it('should handle special characters in channel name', async () => {
+  describe(&apos;URL Parameters Handling&apos;, () => {
+    it(&apos;should handle special characters in channel name&apos;, async () => {
       const props = {
-        params: mockParams('한국어-channel'),
+        params: mockParams(&apos;한국어-channel&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/한국어-channel Channel에 글쓰기')).toBeInTheDocument()
-      expect(screen.getByText('← /한국어-channel Channel으로 돌아가기')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/한국어-channel Channel에 글쓰기&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;← /한국어-channel Channel으로 돌아가기&apos;)).toBeInTheDocument()
     })
 
-    it('should handle numeric channel names', async () => {
+    it(&apos;should handle numeric channel names&apos;, async () => {
       const props = {
-        params: mockParams('12345'),
+        params: mockParams(&apos;12345&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      expect(screen.getByText('/12345 Channel에 글쓰기')).toBeInTheDocument()
-      expect(await screen.findByText('WritePostForm for 12345')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/12345 Channel에 글쓰기&apos;)).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for 12345&apos;)).toBeInTheDocument()
     })
 
-    it('should handle multiple search parameters', async () => {
+    it(&apos;should handle multiple search parameters&apos;, async () => {
       const props = {
-        params: mockParams('test'),
+        params: mockParams(&apos;test&apos;),
         searchParams: mockSearchParams({
-          edit: 'true',
-          postId: '123',
-          other: 'param'
+          edit: &apos;true&apos;,
+          postId: &apos;123&apos;,
+          other: &apos;param&apos;
         })
       }
 
       render(await WritePage(props))
 
       // Should show edit mode based on edit parameter
-      expect(screen.getByText('/test Channel 글 수정')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/test Channel 글 수정&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Accessibility', () => {
-    it('should have proper heading hierarchy', async () => {
+  describe(&apos;Accessibility&apos;, () => {
+    it(&apos;should have proper heading hierarchy&apos;, async () => {
       const props = {
-        params: mockParams('accessibility'),
+        params: mockParams(&apos;accessibility&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      const heading = screen.getByRole('heading', { level: 1 })
-      expect(heading).toHaveTextContent('/accessibility Channel에 글쓰기')
+      const heading = screen.getByRole(&apos;heading&apos;, { level: 1 })
+      expect(heading).toHaveTextContent(&apos;/accessibility Channel에 글쓰기&apos;)
     })
 
-    it('should have accessible back link', async () => {
+    it(&apos;should have accessible back link&apos;, async () => {
       const props = {
-        params: mockParams('ux'),
+        params: mockParams(&apos;ux&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
-      const backLink = screen.getByRole('link', { name: '← /ux Channel으로 돌아가기' })
-      expect(backLink).toHaveAttribute('href', '/ux')
+      const backLink = screen.getByRole(&apos;link&apos;, { name: &apos;← /ux Channel으로 돌아가기&apos; })
+      expect(backLink).toHaveAttribute(&apos;href&apos;, &apos;/ux&apos;)
     })
 
-    it('should be keyboard navigable', async () => {
+    it(&apos;should be keyboard navigable&apos;, async () => {
       const user = userEvent.setup()
       const props = {
-        params: mockParams('keyboard'),
+        params: mockParams(&apos;keyboard&apos;),
         searchParams: mockSearchParams()
       }
 
@@ -310,55 +310,55 @@ describe('WritePage Integration Tests', () => {
       // Tab through interactive elements
       await user.tab()
 
-      const backLink = screen.getByRole('link')
+      const backLink = screen.getByRole(&apos;link&apos;)
       expect(backLink).toHaveFocus()
     })
   })
 
-  describe('Component Integration', () => {
-    it('should pass correct props to Header component', async () => {
+  describe(&apos;Component Integration&apos;, () => {
+    it(&apos;should pass correct props to Header component&apos;, async () => {
       const props = {
-        params: mockParams('integration'),
+        params: mockParams(&apos;integration&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
       // Header should be rendered
-      expect(screen.getByTestId('header')).toBeInTheDocument()
+      expect(screen.getByTestId(&apos;header&apos;)).toBeInTheDocument()
     })
 
-    it('should render WritePostForm with correct channel name', async () => {
+    it(&apos;should render WritePostForm with correct channel name&apos;, async () => {
       const props = {
-        params: mockParams('test-integration'),
+        params: mockParams(&apos;test-integration&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
       // WritePostForm should receive the correct channelName prop
-      expect(await screen.findByText('WritePostForm for test-integration')).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for test-integration&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Error Handling', () => {
-    it('should handle missing channel parameter gracefully', async () => {
+  describe(&apos;Error Handling&apos;, () => {
+    it(&apos;should handle missing channel parameter gracefully&apos;, async () => {
       const props = {
-        params: mockParams(''),
+        params: mockParams(&apos;'),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
       // Should still render the page structure
-      expect(screen.getByTestId('header')).toBeInTheDocument()
-      expect(await screen.findByText('WritePostForm for ')).toBeInTheDocument()
+      expect(screen.getByTestId(&apos;header&apos;)).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for &apos;)).toBeInTheDocument()
     })
 
-    it('should handle malformed search parameters', async () => {
+    it(&apos;should handle malformed search parameters&apos;, async () => {
       const props = {
-        params: mockParams('test'),
-        searchParams: Promise.resolve({ edit: ['array', 'value'] as any })
+        params: mockParams(&apos;test&apos;),
+        searchParams: Promise.resolve({ edit: [&apos;array&apos;, &apos;value&apos;] as any })
       }
 
       // Should not throw an error
@@ -366,9 +366,9 @@ describe('WritePage Integration Tests', () => {
     })
   })
 
-  describe('Performance', () => {
-    it('should render efficiently with complex channel names', async () => {
-      const longChannelName = 'a'.repeat(100)
+  describe(&apos;Performance&apos;, () => {
+    it(&apos;should render efficiently with complex channel names&apos;, async () => {
+      const longChannelName = &apos;a&apos;.repeat(100)
       const props = {
         params: mockParams(longChannelName),
         searchParams: mockSearchParams()
@@ -384,9 +384,9 @@ describe('WritePage Integration Tests', () => {
       expect(await screen.findByText(`WritePostForm for ${longChannelName}`)).toBeInTheDocument()
     })
 
-    it('should handle multiple renders efficiently', async () => {
+    it(&apos;should handle multiple renders efficiently&apos;, async () => {
       const props = {
-        params: mockParams('performance'),
+        params: mockParams(&apos;performance&apos;),
         searchParams: mockSearchParams()
       }
 
@@ -394,48 +394,48 @@ describe('WritePage Integration Tests', () => {
 
       // Re-render with same props
       const newProps = {
-        params: mockParams('performance'),
+        params: mockParams(&apos;performance&apos;),
         searchParams: mockSearchParams()
       }
 
       rerender(await WritePage(newProps))
 
-      expect(await screen.findByText('WritePostForm for performance')).toBeInTheDocument()
+      expect(await screen.findByText(&apos;WritePostForm for performance&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Mobile Responsiveness', () => {
-    it('should render mobile-friendly layout', async () => {
+  describe(&apos;Mobile Responsiveness&apos;, () => {
+    it(&apos;should render mobile-friendly layout&apos;, async () => {
       const props = {
-        params: mockParams('mobile'),
+        params: mockParams(&apos;mobile&apos;),
         searchParams: mockSearchParams()
       }
 
       render(await WritePage(props))
 
       // Check responsive classes are applied
-      const writePostForm = await screen.findByText('WritePostForm for mobile')
+      const writePostForm = await screen.findByText(&apos;WritePostForm for mobile&apos;)
       const contentContainer = writePostForm.parentElement?.parentElement
-      expect(contentContainer).toHaveClass('px-4') // Mobile padding
+      expect(contentContainer).toHaveClass(&apos;px-4&apos;) // Mobile padding
     })
 
-    it('should maintain functionality on mobile viewports', async () => {
+    it(&apos;should maintain functionality on mobile viewports&apos;, async () => {
       // Mock mobile viewport
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, &apos;innerWidth&apos;, {
         writable: true,
         configurable: true,
         value: 375,
       })
 
       const props = {
-        params: mockParams('mobile-test'),
-        searchParams: mockSearchParams({ edit: 'true' })
+        params: mockParams(&apos;mobile-test&apos;),
+        searchParams: mockSearchParams({ edit: &apos;true&apos; })
       }
 
       render(await WritePage(props))
 
       // Should still show edit mode correctly
-      expect(screen.getByText('/mobile-test Channel 글 수정')).toBeInTheDocument()
+      expect(screen.getByText(&apos;/mobile-test Channel 글 수정&apos;)).toBeInTheDocument()
     })
   })
 })

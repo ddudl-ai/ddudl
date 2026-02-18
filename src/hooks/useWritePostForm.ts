@@ -54,7 +54,7 @@ export interface UseWritePostFormReturn {
   linkPreviewLoading: boolean
 
   // Actions
-  handleSubmit: () => Promise<{ success: boolean; data?: any; error?: string }>
+  handleSubmit: () => Promise<{ success: boolean; data?: { id: string; slug?: string }; error?: string }>
   handleSaveDraft: () => Promise<void>
   handleReset: () => void
 
@@ -76,11 +76,11 @@ export interface UseWritePostFormReturn {
   allowGuestComments: boolean
   error: string | null
   previewMode: boolean
-  linkPreviews: any[]
-  pastedImages: any[]
-  uploadingFiles: any[]
+  linkPreviews: Array<{ url: string; title?: string; description?: string; image?: string }>
+  pastedImages: Array<{ url: string; name: string; size: number }>
+  uploadingFiles: Array<{ name: string; progress: number; status: 'uploading' | 'completed' | 'error' }>
   isSubmitDisabled: boolean
-  user: any
+  user: { id: string; email?: string; username?: string } | null
   postId: string | null
   setTitle: (title: string) => void
   setContent: (content: string) => void
@@ -192,7 +192,7 @@ export const useWritePostForm = (options: UseWritePostFormOptions & { channelNam
             allowGuestComments: post.allow_guest_comments ?? true
           }))
           setStatus('EDITING')
-        } catch (err: any) {
+        } catch (err: unknown) {
           setError(err.message)
           setStatus('ERROR')
         }

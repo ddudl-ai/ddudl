@@ -1,6 +1,6 @@
-'use client'
+'use client&apos;
 
-import { ReactNode } from 'react'
+import { ReactNode } from &apos;react&apos;
 
 interface SidebarProps {
   children: ReactNode
@@ -8,7 +8,7 @@ interface SidebarProps {
 
 export default function Sidebar({ children }: SidebarProps) {
   return (
-    <aside className="space-y-4">
+    <aside className=&quot;space-y-4&quot;>
       {children}
     </aside>
   )

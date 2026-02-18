@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { APP_CONFIG } from "@/lib/constants";
-import Footer from "@/components/layout/Footer";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import { LocalizationProvider } from "@/providers/LocalizationProvider";
-import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
-import StructuredData, { createWebSiteStructuredData } from "@/components/seo/StructuredData";
+import type { Metadata } from &quot;next&quot;;
+import { Geist, Geist_Mono } from &quot;next/font/google&quot;;
+import &quot;./globals.css&quot;;
+import { APP_CONFIG } from &quot;@/lib/constants&quot;;
+import Footer from &quot;@/components/layout/Footer&quot;;
+import GoogleAnalytics from &quot;@/components/analytics/GoogleAnalytics&quot;;
+import { LocalizationProvider } from &quot;@/providers/LocalizationProvider&quot;;
+import { DEFAULT_LANGUAGE } from &quot;@/lib/i18n/config&quot;;
+import StructuredData, { createWebSiteStructuredData } from &quot;@/components/seo/StructuredData&quot;;
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: &quot;--font-geist-sans&quot;,
+  subsets: [&quot;latin&quot;],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: &quot;--font-geist-mono&quot;,
+  subsets: [&quot;latin&quot;],
 });
 
 export const metadata: Metadata = {
@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     template: `%s | ${APP_CONFIG.name}`,
   },
   description: APP_CONFIG.description,
-  keywords: ["community", "reddit", "AI", "discussion", "forum", "social"],
-  authors: [{ name: "AI Community Platform" }],
-  creator: "AI Community Platform",
-  publisher: "AI Community Platform",
+  keywords: [&quot;community&quot;, &quot;reddit&quot;, &quot;AI&quot;, &quot;discussion&quot;, &quot;forum&quot;, &quot;social&quot;],
+  authors: [{ name: &quot;AI Community Platform&quot; }],
+  creator: &quot;AI Community Platform&quot;,
+  publisher: &quot;AI Community Platform&quot;,
   formatDetection: {
     email: false,
     address: false,
@@ -35,15 +35,15 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(APP_CONFIG.url),
   openGraph: {
-    type: "website",
-    locale: "en_US",
+    type: &quot;website&quot;,
+    locale: &quot;en_US&quot;,
     url: APP_CONFIG.url,
     title: APP_CONFIG.name,
     description: APP_CONFIG.description,
     siteName: APP_CONFIG.name,
   },
   twitter: {
-    card: "summary_large_image",
+    card: &quot;summary_large_image&quot;,
     title: APP_CONFIG.name,
     description: APP_CONFIG.description,
   },
@@ -53,14 +53,14 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      &quot;max-video-preview&quot;: -1,
+      &quot;max-image-preview&quot;: &quot;large&quot;,
+      &quot;max-snippet&quot;: -1,
     },
   },
   alternates: {
     types: {
-      'application/rss+xml': '/feed.xml',
+      &apos;application/rss+xml&apos;: &apos;/feed.xml&apos;,
     }
   },
 };
@@ -78,7 +78,7 @@ export default function RootLayout({
           data={createWebSiteStructuredData(
             APP_CONFIG.name,
             APP_CONFIG.description,
-            "https://ddudl.com"
+            &quot;https://ddudl.com&quot;
           )} 
         />
       </head>
@@ -86,7 +86,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <LocalizationProvider>
-          <div className="flex-1">
+          <div className=&quot;flex-1&quot;>
             {children}
           </div>
           <Footer />

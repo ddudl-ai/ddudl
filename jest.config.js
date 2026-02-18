@@ -54,6 +54,7 @@ const config = {
     '<rootDir>/supabase/',
     '<rootDir>/e2e/',
   ],
+  maxWorkers: 1, // OOM 방지
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },

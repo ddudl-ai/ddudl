@@ -1,45 +1,45 @@
 interface WebSiteStructuredData {
-  "@context": "https://schema.org"
-  "@type": "WebSite"
+  &quot;@context&quot;: &quot;https://schema.org&quot;
+  &quot;@type&quot;: &quot;WebSite&quot;
   name: string
   description: string
   url: string
   potentialAction: {
-    "@type": "SearchAction"
+    &quot;@type&quot;: &quot;SearchAction&quot;
     target: {
-      "@type": "EntryPoint"
+      &quot;@type&quot;: &quot;EntryPoint&quot;
       urlTemplate: string
     }
-    "query-input": string
+    &quot;query-input&quot;: string
   }
 }
 
 interface ArticleStructuredData {
-  "@context": "https://schema.org"
-  "@type": "Article"
+  &quot;@context&quot;: &quot;https://schema.org&quot;
+  &quot;@type&quot;: &quot;Article&quot;
   headline: string
   description: string
   author: {
-    "@type": "Person"
+    &quot;@type&quot;: &quot;Person&quot;
     name: string
   }
   datePublished: string
   dateModified?: string
   publisher: {
-    "@type": "Organization"
+    &quot;@type&quot;: &quot;Organization&quot;
     name: string
     url: string
   }
   mainEntityOfPage: {
-    "@type": "WebPage"
-    "@id": string
+    &quot;@type&quot;: &quot;WebPage&quot;
+    &quot;@id&quot;: string
   }
   url: string
 }
 
 interface PersonStructuredData {
-  "@context": "https://schema.org"
-  "@type": "Person"
+  &quot;@context&quot;: &quot;https://schema.org&quot;
+  &quot;@type&quot;: &quot;Person&quot;
   name: string
   description?: string
   url: string
@@ -47,8 +47,8 @@ interface PersonStructuredData {
 }
 
 interface OrganizationStructuredData {
-  "@context": "https://schema.org"
-  "@type": "Organization"
+  &quot;@context&quot;: &quot;https://schema.org&quot;
+  &quot;@type&quot;: &quot;Organization&quot;
   name: string
   description: string
   url: string
@@ -67,7 +67,7 @@ interface StructuredDataProps {
 export default function StructuredData({ data }: StructuredDataProps) {
   return (
     <script
-      type="application/ld+json"
+      type=&quot;application/ld+json&quot;
       dangerouslySetInnerHTML={{
         __html: JSON.stringify(data)
       }}
@@ -82,18 +82,18 @@ export function createWebSiteStructuredData(
   url: string
 ): WebSiteStructuredData {
   return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
+    &quot;@context&quot;: &quot;https://schema.org&quot;,
+    &quot;@type&quot;: &quot;WebSite&quot;,
     name,
     description,
     url,
     potentialAction: {
-      "@type": "SearchAction",
+      &quot;@type&quot;: &quot;SearchAction&quot;,
       target: {
-        "@type": "EntryPoint",
+        &quot;@type&quot;: &quot;EntryPoint&quot;,
         urlTemplate: `${url}/search?q={search_term_string}`
       },
-      "query-input": "required name=search_term_string"
+      &quot;query-input&quot;: &quot;required name=search_term_string&quot;
     }
   }
 }
@@ -109,24 +109,24 @@ export function createArticleStructuredData(
   dateModified?: string
 ): ArticleStructuredData {
   return {
-    "@context": "https://schema.org",
-    "@type": "Article",
+    &quot;@context&quot;: &quot;https://schema.org&quot;,
+    &quot;@type&quot;: &quot;Article&quot;,
     headline: title,
     description,
     author: {
-      "@type": "Person",
+      &quot;@type&quot;: &quot;Person&quot;,
       name: author
     },
     datePublished,
     dateModified: dateModified || datePublished,
     publisher: {
-      "@type": "Organization",
+      &quot;@type&quot;: &quot;Organization&quot;,
       name: publisherName,
       url: publisherUrl
     },
     mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": url
+      &quot;@type&quot;: &quot;WebPage&quot;,
+      &quot;@id&quot;: url
     },
     url
   }
@@ -139,8 +139,8 @@ export function createPersonStructuredData(
   sameAs?: string[]
 ): PersonStructuredData {
   return {
-    "@context": "https://schema.org",
-    "@type": "Person",
+    &quot;@context&quot;: &quot;https://schema.org&quot;,
+    &quot;@type&quot;: &quot;Person&quot;,
     name,
     description,
     url,
@@ -154,8 +154,8 @@ export function createOrganizationStructuredData(
   url: string
 ): OrganizationStructuredData {
   return {
-    "@context": "https://schema.org",
-    "@type": "Organization",
+    &quot;@context&quot;: &quot;https://schema.org&quot;,
+    &quot;@type&quot;: &quot;Organization&quot;,
     name,
     description,
     url

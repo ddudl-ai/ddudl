@@ -1,26 +1,26 @@
 // Component test for CSS z-index hierarchy in WritePostForm
 
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { WritePostForm } from '../WritePostForm'
+import React from &apos;react&apos;
+import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
+import userEvent from &apos;@testing-library/user-event&apos;
+import { WritePostForm } from &apos;../WritePostForm&apos;
 
 // Mock the useImageUpload hook
-jest.mock('@/hooks/useImageUpload', () => ({
+jest.mock(&apos;@/hooks/useImageUpload&apos;, () => ({
   useImageUpload: jest.fn()
 }))
 
 // Mock Jodit Editor component
-jest.mock('@/components/editor/JoditEditor', () => {
+jest.mock(&apos;@/components/editor/JoditEditor&apos;, () => {
   return function MockJoditEditor({ value, onChange, onBlur }: any) {
     return (
-      <div data-testid="jodit-editor-container" className="jodit-container">
+      <div data-testid=&quot;jodit-editor-container&quot; className=&quot;jodit-container&quot;>
         <textarea
-          data-testid="jodit-editor"
+          data-testid=&quot;jodit-editor&quot;
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           onBlur={() => onBlur?.()}
-          placeholder="Write your post content..."
+          placeholder=&quot;Write your post content...&quot;
         />
       </div>
     )
@@ -28,13 +28,13 @@ jest.mock('@/components/editor/JoditEditor', () => {
 })
 
 // Mock next/navigation
-jest.mock('next/navigation', () => ({
+jest.mock(&apos;next/navigation&apos;, () => ({
   useRouter: () => ({
     push: jest.fn(),
     back: jest.fn()
   }),
   useParams: () => ({
-    channel: 'ai'
+    channel: &apos;ai&apos;
   })
 }))
 
@@ -48,31 +48,31 @@ const mockUseImageUpload = {
   clearError: jest.fn()
 }
 
-describe('WritePostForm - CSS Z-Index Hierarchy', () => {
+describe(&apos;WritePostForm - CSS Z-Index Hierarchy&apos;, () => {
   const user = userEvent.setup()
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     // Reset mock implementation
-    const { useImageUpload } = require('@/hooks/useImageUpload')
+    const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
     useImageUpload.mockReturnValue(mockUseImageUpload)
 
     // Mock global getComputedStyle
-    Object.defineProperty(window, 'getComputedStyle', {
+    Object.defineProperty(window, &apos;getComputedStyle&apos;, {
       value: jest.fn(() => ({
         getPropertyValue: jest.fn((prop: string) => {
           // Mock CSS custom properties
           const mockValues: Record<string, string> = {
-            '--writepost-header-z-index': '40',
-            '--writepost-preview-z-index': '25',
-            '--writepost-editor-z-index': '20',
-            '--writepost-modal-z-index': '50',
-            'z-index': '20'
+            &apos;--writepost-header-z-index&apos;: &apos;40&apos;,
+            &apos;--writepost-preview-z-index&apos;: &apos;25&apos;,
+            &apos;--writepost-editor-z-index&apos;: &apos;20&apos;,
+            &apos;--writepost-modal-z-index&apos;: &apos;50&apos;,
+            &apos;z-index&apos;: &apos;20&apos;
           }
-          return mockValues[prop] || 'auto'
+          return mockValues[prop] || &apos;auto&apos;
         }),
-        zIndex: '20'
+        zIndex: &apos;20&apos;
       })),
       configurable: true
     })
@@ -82,8 +82,8 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     jest.restoreAllMocks()
   })
 
-  describe('CSS Custom Properties for Z-Index', () => {
-    test('should define CSS custom properties for z-index hierarchy', () => {
+  describe(&apos;CSS Custom Properties for Z-Index&apos;, () => {
+    test(&apos;should define CSS custom properties for z-index hierarchy&apos;, () => {
       // Arrange
       render(<WritePostForm />)
 
@@ -92,21 +92,21 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
       const computedStyle = window.getComputedStyle(documentElement)
 
       // Assert - These should be defined in the CSS
-      expect(computedStyle.getPropertyValue('--writepost-header-z-index')).toBe('40')
-      expect(computedStyle.getPropertyValue('--writepost-preview-z-index')).toBe('25')
-      expect(computedStyle.getPropertyValue('--writepost-editor-z-index')).toBe('20')
+      expect(computedStyle.getPropertyValue(&apos;--writepost-header-z-index&apos;)).toBe(&apos;40&apos;)
+      expect(computedStyle.getPropertyValue(&apos;--writepost-preview-z-index&apos;)).toBe(&apos;25&apos;)
+      expect(computedStyle.getPropertyValue(&apos;--writepost-editor-z-index&apos;)).toBe(&apos;20&apos;)
     })
 
-    test('should maintain proper z-index hierarchy order', () => {
+    test(&apos;should maintain proper z-index hierarchy order&apos;, () => {
       // Arrange
       render(<WritePostForm />)
 
       const computedStyle = window.getComputedStyle(document.documentElement)
 
       // Act - Get z-index values
-      const headerZIndex = parseInt(computedStyle.getPropertyValue('--writepost-header-z-index'))
-      const previewZIndex = parseInt(computedStyle.getPropertyValue('--writepost-preview-z-index'))
-      const editorZIndex = parseInt(computedStyle.getPropertyValue('--writepost-editor-z-index'))
+      const headerZIndex = parseInt(computedStyle.getPropertyValue(&apos;--writepost-header-z-index&apos;))
+      const previewZIndex = parseInt(computedStyle.getPropertyValue(&apos;--writepost-preview-z-index&apos;))
+      const editorZIndex = parseInt(computedStyle.getPropertyValue(&apos;--writepost-editor-z-index&apos;))
 
       // Assert - Header should be above preview, preview above editor
       expect(headerZIndex).toBeGreaterThan(previewZIndex)
@@ -114,35 +114,35 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     })
   })
 
-  describe('Editor Z-Index Behavior', () => {
-    test('should apply correct z-index to editor container', () => {
+  describe(&apos;Editor Z-Index Behavior&apos;, () => {
+    test(&apos;should apply correct z-index to editor container&apos;, () => {
       // Arrange
       render(<WritePostForm />)
 
       // Act
-      const editorContainer = screen.getByTestId('jodit-editor-container')
+      const editorContainer = screen.getByTestId(&apos;jodit-editor-container&apos;)
 
       // Assert
       const computedStyle = window.getComputedStyle(editorContainer)
-      expect(computedStyle.zIndex).toBe('20')
+      expect(computedStyle.zIndex).toBe(&apos;20&apos;)
     })
 
-    test('should not overlap with header during normal editing', () => {
+    test(&apos;should not overlap with header during normal editing&apos;, () => {
       // Arrange
       render(<WritePostForm />)
 
       // Act
-      const editorContainer = screen.getByTestId('jodit-editor-container')
+      const editorContainer = screen.getByTestId(&apos;jodit-editor-container&apos;)
       const editorBounds = editorContainer.getBoundingClientRect()
 
       // Mock header element (would be in layout)
-      const mockHeader = document.createElement('header')
-      mockHeader.style.position = 'fixed'
-      mockHeader.style.top = '0'
-      mockHeader.style.left = '0'
-      mockHeader.style.width = '100%'
-      mockHeader.style.height = '64px'
-      mockHeader.style.zIndex = '40'
+      const mockHeader = document.createElement(&apos;header&apos;)
+      mockHeader.style.position = &apos;fixed&apos;
+      mockHeader.style.top = &apos;0&apos;
+      mockHeader.style.left = &apos;0&apos;
+      mockHeader.style.width = &apos;100%&apos;
+      mockHeader.style.height = &apos;64px&apos;
+      mockHeader.style.zIndex = &apos;40&apos;
       document.body.appendChild(mockHeader)
 
       const headerBounds = mockHeader.getBoundingClientRect()
@@ -154,52 +154,52 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     })
   })
 
-  describe('Preview Mode Z-Index', () => {
-    test('should apply correct z-index to preview container', async () => {
+  describe(&apos;Preview Mode Z-Index&apos;, () => {
+    test(&apos;should apply correct z-index to preview container&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Mock preview mode toggle
-      const previewToggle = screen.queryByTestId('preview-toggle')
+      const previewToggle = screen.queryByTestId(&apos;preview-toggle&apos;)
 
       if (previewToggle) {
         // Act - Enable preview mode
         await user.click(previewToggle)
 
         await waitFor(() => {
-          const previewContainer = screen.getByTestId('preview-container')
+          const previewContainer = screen.getByTestId(&apos;preview-container&apos;)
           const computedStyle = window.getComputedStyle(previewContainer)
 
           // Assert
-          expect(computedStyle.zIndex).toBe('25')
+          expect(computedStyle.zIndex).toBe(&apos;25&apos;)
         })
       }
     })
 
-    test('should maintain proper layering in preview mode', async () => {
+    test(&apos;should maintain proper layering in preview mode&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Fill some content first
       const titleInput = screen.getByLabelText(/title|제목/i)
-      const editor = screen.getByTestId('jodit-editor')
+      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
 
-      await user.type(titleInput, 'Test Post')
-      await user.type(editor, 'Test content with some text')
+      await user.type(titleInput, &apos;Test Post&apos;)
+      await user.type(editor, &apos;Test content with some text&apos;)
 
       // Act - Toggle to preview mode
-      const previewToggle = screen.queryByTestId('preview-toggle')
+      const previewToggle = screen.queryByTestId(&apos;preview-toggle&apos;)
 
       if (previewToggle) {
         await user.click(previewToggle)
 
         await waitFor(() => {
           // Get preview container
-          const previewContainer = screen.getByTestId('preview-container')
+          const previewContainer = screen.getByTestId(&apos;preview-container&apos;)
           const previewStyle = window.getComputedStyle(previewContainer)
 
           // Get editor container
-          const editorContainer = screen.getByTestId('jodit-editor-container')
+          const editorContainer = screen.getByTestId(&apos;jodit-editor-container&apos;)
           const editorStyle = window.getComputedStyle(editorContainer)
 
           // Assert - Preview should be above editor
@@ -211,37 +211,37 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
       }
     })
 
-    test('should prevent preview content from overlapping header', async () => {
+    test(&apos;should prevent preview content from overlapping header&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Create mock header with fixed positioning
-      const mockHeader = document.createElement('header')
-      mockHeader.setAttribute('data-testid', 'site-header')
-      mockHeader.style.position = 'fixed'
-      mockHeader.style.top = '0'
-      mockHeader.style.left = '0'
-      mockHeader.style.width = '100%'
-      mockHeader.style.height = '64px'
-      mockHeader.style.zIndex = '40'
-      mockHeader.style.backgroundColor = 'white'
+      const mockHeader = document.createElement(&apos;header&apos;)
+      mockHeader.setAttribute(&apos;data-testid&apos;, &apos;site-header&apos;)
+      mockHeader.style.position = &apos;fixed&apos;
+      mockHeader.style.top = &apos;0&apos;
+      mockHeader.style.left = &apos;0&apos;
+      mockHeader.style.width = &apos;100%&apos;
+      mockHeader.style.height = &apos;64px&apos;
+      mockHeader.style.zIndex = &apos;40&apos;
+      mockHeader.style.backgroundColor = &apos;white&apos;
       document.body.appendChild(mockHeader)
 
       // Fill content
       const titleInput = screen.getByLabelText(/title|제목/i)
-      const editor = screen.getByTestId('jodit-editor')
+      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
 
-      await user.type(titleInput, 'Test Post')
-      await user.type(editor, 'Test content')
+      await user.type(titleInput, &apos;Test Post&apos;)
+      await user.type(editor, &apos;Test content&apos;)
 
       // Act - Enable preview mode
-      const previewToggle = screen.queryByTestId('preview-toggle')
+      const previewToggle = screen.queryByTestId(&apos;preview-toggle&apos;)
 
       if (previewToggle) {
         await user.click(previewToggle)
 
         await waitFor(() => {
-          const previewContainer = screen.getByTestId('preview-container')
+          const previewContainer = screen.getByTestId(&apos;preview-container&apos;)
           const previewBounds = previewContainer.getBoundingClientRect()
           const headerBounds = mockHeader.getBoundingClientRect()
 
@@ -259,19 +259,19 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     })
   })
 
-  describe('Modal and Overlay Z-Index', () => {
-    test('should apply highest z-index to modal overlays', async () => {
+  describe(&apos;Modal and Overlay Z-Index&apos;, () => {
+    test(&apos;should apply highest z-index to modal overlays&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Simulate opening a modal (e.g., image upload modal)
-      const uploadButton = screen.queryByRole('button', { name: /이미지 업로드|image upload/i })
+      const uploadButton = screen.queryByRole(&apos;button&apos;, { name: /이미지 업로드|image upload/i })
 
       if (uploadButton) {
         await user.click(uploadButton)
 
         // Look for modal overlay
-        const modal = screen.queryByTestId('upload-modal')
+        const modal = screen.queryByTestId(&apos;upload-modal&apos;)
 
         if (modal) {
           // Act
@@ -284,24 +284,24 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
       }
     })
 
-    test('should ensure modals appear above all other content', async () => {
+    test(&apos;should ensure modals appear above all other content&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Create mock elements with various z-indexes
-      const editorElement = screen.getByTestId('jodit-editor-container')
-      const previewToggle = screen.queryByTestId('preview-toggle')
+      const editorElement = screen.getByTestId(&apos;jodit-editor-container&apos;)
+      const previewToggle = screen.queryByTestId(&apos;preview-toggle&apos;)
 
       if (previewToggle) {
         await user.click(previewToggle)
 
-        const previewContainer = screen.queryByTestId('preview-container')
-        const uploadButton = screen.queryByRole('button', { name: /이미지 업로드|image upload/i })
+        const previewContainer = screen.queryByTestId(&apos;preview-container&apos;)
+        const uploadButton = screen.queryByRole(&apos;button&apos;, { name: /이미지 업로드|image upload/i })
 
         if (uploadButton) {
           await user.click(uploadButton)
 
-          const modal = screen.queryByTestId('upload-modal')
+          const modal = screen.queryByTestId(&apos;upload-modal&apos;)
 
           if (modal && previewContainer) {
             // Act - Get z-index values
@@ -322,60 +322,60 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     })
   })
 
-  describe('Responsive Z-Index Behavior', () => {
-    test('should maintain z-index hierarchy on mobile viewports', async () => {
+  describe(&apos;Responsive Z-Index Behavior&apos;, () => {
+    test(&apos;should maintain z-index hierarchy on mobile viewports&apos;, async () => {
       // Arrange
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, &apos;innerWidth&apos;, {
         writable: true,
         configurable: true,
         value: 375 // Mobile width
       })
 
-      Object.defineProperty(window, 'innerHeight', {
+      Object.defineProperty(window, &apos;innerHeight&apos;, {
         writable: true,
         configurable: true,
         value: 667 // Mobile height
       })
 
       // Trigger resize event
-      fireEvent(window, new Event('resize'))
+      fireEvent(window, new Event(&apos;resize&apos;))
 
       render(<WritePostForm />)
 
       await waitFor(() => {
         // Act - Get elements after mobile layout
-        const editorContainer = screen.getByTestId('jodit-editor-container')
+        const editorContainer = screen.getByTestId(&apos;jodit-editor-container&apos;)
         const computedStyle = window.getComputedStyle(document.documentElement)
 
         // Assert - Z-index hierarchy should still be maintained
-        const headerZIndex = parseInt(computedStyle.getPropertyValue('--writepost-header-z-index'))
+        const headerZIndex = parseInt(computedStyle.getPropertyValue(&apos;--writepost-header-z-index&apos;))
         const editorZIndex = parseInt(window.getComputedStyle(editorContainer).zIndex)
 
         expect(headerZIndex).toBeGreaterThan(editorZIndex)
       })
     })
 
-    test('should handle z-index in landscape orientation', async () => {
+    test(&apos;should handle z-index in landscape orientation&apos;, async () => {
       // Arrange - Simulate landscape orientation
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, &apos;innerWidth&apos;, {
         writable: true,
         configurable: true,
         value: 812
       })
 
-      Object.defineProperty(window, 'innerHeight', {
+      Object.defineProperty(window, &apos;innerHeight&apos;, {
         writable: true,
         configurable: true,
         value: 375
       })
 
-      fireEvent(window, new Event('resize'))
+      fireEvent(window, new Event(&apos;resize&apos;))
 
       render(<WritePostForm />)
 
       await waitFor(() => {
         // Act
-        const editorContainer = screen.getByTestId('jodit-editor-container')
+        const editorContainer = screen.getByTestId(&apos;jodit-editor-container&apos;)
 
         // Assert - Should still maintain proper z-index
         const editorStyle = window.getComputedStyle(editorContainer)
@@ -385,33 +385,33 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     })
   })
 
-  describe('Dynamic Z-Index Changes', () => {
-    test('should update z-index when switching between editor and preview modes', async () => {
+  describe(&apos;Dynamic Z-Index Changes&apos;, () => {
+    test(&apos;should update z-index when switching between editor and preview modes&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Fill some content
       const titleInput = screen.getByLabelText(/title|제목/i)
-      const editor = screen.getByTestId('jodit-editor')
+      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
 
-      await user.type(titleInput, 'Test Post')
-      await user.type(editor, 'Test content')
+      await user.type(titleInput, &apos;Test Post&apos;)
+      await user.type(editor, &apos;Test content&apos;)
 
-      const editorContainer = screen.getByTestId('jodit-editor-container')
+      const editorContainer = screen.getByTestId(&apos;jodit-editor-container&apos;)
       const initialEditorStyle = window.getComputedStyle(editorContainer)
 
       // Act - Toggle to preview mode
-      const previewToggle = screen.queryByTestId('preview-toggle')
+      const previewToggle = screen.queryByTestId(&apos;preview-toggle&apos;)
 
       if (previewToggle) {
         await user.click(previewToggle)
 
         await waitFor(() => {
-          const previewContainer = screen.getByTestId('preview-container')
+          const previewContainer = screen.getByTestId(&apos;preview-container&apos;)
           const previewStyle = window.getComputedStyle(previewContainer)
 
           // Assert - Preview should be visible/active with appropriate z-index
-          expect(previewStyle.zIndex).toBe('25')
+          expect(previewStyle.zIndex).toBe(&apos;25&apos;)
         })
 
         // Act - Toggle back to editor mode
@@ -427,32 +427,32 @@ describe('WritePostForm - CSS Z-Index Hierarchy', () => {
     })
   })
 
-  describe('Scroll Behavior and Z-Index', () => {
-    test('should maintain header visibility during scroll in preview mode', async () => {
+  describe(&apos;Scroll Behavior and Z-Index&apos;, () => {
+    test(&apos;should maintain header visibility during scroll in preview mode&apos;, async () => {
       // Arrange
       render(<WritePostForm />)
 
       // Create long content to enable scrolling
-      const editor = screen.getByTestId('jodit-editor')
-      const longContent = Array(50).fill('This is a long line of content to create scrollable content.').join('\n')
+      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      const longContent = Array(50).fill(&apos;This is a long line of content to create scrollable content.&apos;).join(&apos;\n&apos;)
 
       await user.type(editor, longContent)
 
-      const previewToggle = screen.queryByTestId('preview-toggle')
+      const previewToggle = screen.queryByTestId(&apos;preview-toggle&apos;)
 
       if (previewToggle) {
         await user.click(previewToggle)
 
         await waitFor(() => {
-          const previewContainer = screen.getByTestId('preview-container')
+          const previewContainer = screen.getByTestId(&apos;preview-container&apos;)
 
           // Act - Simulate scroll
           fireEvent.scroll(previewContainer, { target: { scrollY: 1000 } })
 
           // Mock header element
-          const mockHeader = document.createElement('header')
-          mockHeader.style.position = 'fixed'
-          mockHeader.style.zIndex = '40'
+          const mockHeader = document.createElement(&apos;header&apos;)
+          mockHeader.style.position = &apos;fixed&apos;
+          mockHeader.style.zIndex = &apos;40&apos;
           document.body.appendChild(mockHeader)
 
           // Assert - Header should remain above preview content during scroll

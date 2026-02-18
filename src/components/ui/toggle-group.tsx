@@ -1,17 +1,17 @@
-"use client"
+"use client&quot;
 
-import * as React from "react"
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
-import { type VariantProps } from "class-variance-authority"
+import * as React from &quot;react&quot;
+import * as ToggleGroupPrimitive from &quot;@radix-ui/react-toggle-group&quot;
+import { type VariantProps } from &quot;class-variance-authority&quot;
 
-import { cn } from "@/lib/utils"
-import { toggleVariants } from "@/components/ui/toggle"
+import { cn } from &quot;@/lib/utils&quot;
+import { toggleVariants } from &quot;@/components/ui/toggle&quot;
 
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants>
 >({
-  size: "default",
-  variant: "default",
+  size: &quot;default&quot;,
+  variant: &quot;default&quot;,
 })
 
 function ToggleGroup({
@@ -24,11 +24,11 @@ function ToggleGroup({
   VariantProps<typeof toggleVariants>) {
   return (
     <ToggleGroupPrimitive.Root
-      data-slot="toggle-group"
+      data-slot=&quot;toggle-group&quot;
       data-variant={variant}
       data-size={size}
       className={cn(
-        "group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs",
+        &quot;group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs&quot;,
         className
       )}
       {...props}
@@ -52,7 +52,7 @@ function ToggleGroupItem({
 
   return (
     <ToggleGroupPrimitive.Item
-      data-slot="toggle-group-item"
+      data-slot=&quot;toggle-group-item&quot;
       data-variant={context.variant || variant}
       data-size={context.size || size}
       className={cn(
@@ -60,7 +60,7 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l",
+        &quot;min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l&quot;,
         className
       )}
       {...props}

@@ -1,13 +1,13 @@
-import { Suspense } from 'react'
-import { Metadata } from 'next'
-import Header from '@/components/layout/Header'
-import Sidebar from '@/components/layout/Sidebar'
-import SidebarChannels from '@/components/channels/SidebarChannels'
-import { LoadingSpinner } from '@/components/common/LoadingSpinner'
-import UserProfile from './UserProfile'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { APP_CONFIG } from '@/lib/constants'
-import StructuredData, { createPersonStructuredData } from '@/components/seo/StructuredData'
+import { Suspense } from &apos;react&apos;
+import { Metadata } from &apos;next&apos;
+import Header from &apos;@/components/layout/Header&apos;
+import Sidebar from &apos;@/components/layout/Sidebar&apos;
+import SidebarChannels from &apos;@/components/channels/SidebarChannels&apos;
+import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
+import UserProfile from &apos;./UserProfile&apos;
+import { createAdminClient } from &apos;@/lib/supabase/admin&apos;
+import { APP_CONFIG } from &apos;@/lib/constants&apos;
+import StructuredData, { createPersonStructuredData } from &apos;@/components/seo/StructuredData&apos;
 
 interface UserPageProps {
   params: Promise<{
@@ -23,9 +23,9 @@ export default async function UserPage({ params }: UserPageProps) {
   let userStructuredData = null
   try {
     const { data: user } = await supabase
-      .from('users')
-      .select('username, display_name, bio')
-      .eq('username', username)
+      .from(&apos;users&apos;)
+      .select(&apos;username, display_name, bio&apos;)
+      .eq(&apos;username&apos;, username)
       .single()
 
     if (user) {
@@ -39,28 +39,28 @@ export default async function UserPage({ params }: UserPageProps) {
       )
     }
   } catch (error) {
-    console.error('Error fetching user for structured data:', error)
+    console.error(&apos;Error fetching user for structured data:&apos;, error)
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className=&quot;min-h-screen bg-gray-900 text-white&quot;>
       {userStructuredData && (
         <StructuredData data={userStructuredData} />
       )}
       
       <Header />
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className=&quot;max-w-6xl mx-auto px-4 py-6&quot;>
+        <div className=&quot;grid grid-cols-1 lg:grid-cols-4 gap-6&quot;>
           {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Suspense fallback={<LoadingSpinner text="Loading user profile..." />}>
+          <div className=&quot;lg:col-span-3&quot;>
+            <Suspense fallback={<LoadingSpinner text=&quot;Loading user profile...&quot; />}>
               <UserProfile username={username} />
             </Suspense>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className=&quot;lg:col-span-1 space-y-6&quot;>
             <Sidebar>
               <Suspense fallback={<LoadingSpinner />}>
                 <SidebarChannels />
@@ -79,9 +79,9 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
 
   try {
     const { data: user } = await supabase
-      .from('users')
-      .select('username, display_name, bio, created_at, posts(count), total_tokens')
-      .eq('username', username)
+      .from(&apos;users&apos;)
+      .select(&apos;username, display_name, bio, created_at, posts(count), total_tokens&apos;)
+      .eq(&apos;username&apos;, username)
       .single()
 
     if (!user) {
@@ -93,7 +93,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
 
     const displayName = user.display_name || user.username
     const bio = user.bio || `${displayName} is a member of the ddudl community`
-    const description = bio.length > 160 ? bio.substring(0, 160) + '...' : bio
+    const description = bio.length > 160 ? bio.substring(0, 160) + &apos;...&apos; : bio
     const title = `${displayName} (@${user.username}) - ddudl`
     const url = `https://ddudl.com/u/${username}`
 
@@ -101,14 +101,14 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
       title,
       description,
       openGraph: {
-        type: 'website',
+        type: &apos;website&apos;,
         title,
         description,
         url,
         siteName: APP_CONFIG.name,
       },
       twitter: {
-        card: 'summary',
+        card: &apos;summary&apos;,
         title,
         description,
       },
@@ -117,7 +117,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
       },
     }
   } catch (error) {
-    console.error('Error generating user metadata:', error)
+    console.error(&apos;Error generating user metadata:&apos;, error)
     return {
       title: `${username} - ddudl`,
       description: `User profile for ${username} on ddudl`,

@@ -1,9 +1,9 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { useEffect, useState } from &apos;react&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
+import { Button } from &apos;@/components/ui/button&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
 import {
   Table,
   TableBody,
@@ -11,15 +11,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from &apos;@/components/ui/table&apos;
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from &apos;@/components/ui/dropdown-menu&apos;
 // AlertDialog component not available, using confirm instead
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from &apos;@/hooks/use-toast&apos;
 import {
   Bot,
   MoreVertical,
@@ -31,7 +31,7 @@ import {
   Key,
   Calendar,
   Activity
-} from 'lucide-react'
+} from &apos;lucide-react&apos;
 
 interface Agent {
   id: string
@@ -59,30 +59,30 @@ export default function AgentManagement() {
 
   const fetchAgents = async () => {
     try {
-      const response = await fetch('/api/admin/agents')
+      const response = await fetch(&apos;/api/admin/agents&apos;)
       if (!response.ok) {
-        throw new Error('Failed to fetch agents')
+        throw new Error(&apos;Failed to fetch agents&apos;)
       }
       const data = await response.json()
       setAgents(data.agents || [])
     } catch (error) {
-      console.error('Error fetching agents:', error)
+      console.error(&apos;Error fetching agents:&apos;, error)
       toast({
-        title: 'Error',
-        description: 'Failed to load agents',
-        variant: 'destructive'
+        title: &apos;Error&apos;,
+        description: &apos;Failed to load agents&apos;,
+        variant: &apos;destructive&apos;
       })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleAgentAction = async (agentId: string, action: 'activate' | 'deactivate' | 'delete') => {
+  const handleAgentAction = async (agentId: string, action: &apos;activate&apos; | &apos;deactivate&apos; | &apos;delete&apos;) => {
     setActionLoading(agentId)
     try {
-      const response = await fetch('/api/admin/agents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(&apos;/api/admin/agents&apos;, {
+        method: &apos;POST&apos;,
+        headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
         body: JSON.stringify({ agentId, action })
       })
 
@@ -93,7 +93,7 @@ export default function AgentManagement() {
       const data = await response.json()
       
       toast({
-        title: 'Success',
+        title: &apos;Success&apos;,
         description: data.message
       })
 
@@ -102,9 +102,9 @@ export default function AgentManagement() {
     } catch (error) {
       console.error(`Error ${action}ing agent:`, error)
       toast({
-        title: 'Error',
+        title: &apos;Error&apos;,
         description: `Failed to ${action} agent`,
-        variant: 'destructive'
+        variant: &apos;destructive&apos;
       })
     } finally {
       setActionLoading(null)
@@ -112,14 +112,14 @@ export default function AgentManagement() {
   }
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString || dateString === 'Never') return 'Never'
+    if (!dateString || dateString === &apos;Never&apos;) return &apos;Never&apos;
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      return new Date(dateString).toLocaleDateString(&apos;en-US&apos;, {
+        year: &apos;numeric&apos;,
+        month: &apos;short&apos;,
+        day: &apos;numeric&apos;,
+        hour: &apos;2-digit&apos;,
+        minute: &apos;2-digit&apos;
       })
     } catch {
       return dateString
@@ -129,8 +129,8 @@ export default function AgentManagement() {
   if (loading) {
     return (
       <Card>
-        <CardContent className="pt-6 text-center">
-          <div className="text-gray-500">Loading agents...</div>
+        <CardContent className=&quot;pt-6 text-center&quot;>
+          <div className=&quot;text-gray-500&quot;>Loading agents...</div>
         </CardContent>
       </Card>
     )
@@ -142,46 +142,46 @@ export default function AgentManagement() {
   const totalComments = agents.reduce((sum, agent) => sum + (agent.total_comments || 0), 0)
 
   return (
-    <div className="space-y-6">
+    <div className=&quot;space-y-6&quot;>
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className=&quot;grid grid-cols-1 md:grid-cols-4 gap-4&quot;>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Agents</CardTitle>
-            <Bot className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+            <CardTitle className=&quot;text-sm font-medium&quot;>Total Agents</CardTitle>
+            <Bot className=&quot;h-4 w-4 text-muted-foreground&quot; />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalAgents}</div>
+            <div className=&quot;text-2xl font-bold&quot;>{totalAgents}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Agents</CardTitle>
-            <Activity className="h-4 w-4 text-green-600" />
+          <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+            <CardTitle className=&quot;text-sm font-medium&quot;>Active Agents</CardTitle>
+            <Activity className=&quot;h-4 w-4 text-green-600&quot; />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{activeAgents}</div>
+            <div className=&quot;text-2xl font-bold text-green-600&quot;>{activeAgents}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-            <FileText className="h-4 w-4 text-blue-600" />
+          <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+            <CardTitle className=&quot;text-sm font-medium&quot;>Total Posts</CardTitle>
+            <FileText className=&quot;h-4 w-4 text-blue-600&quot; />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalPosts.toLocaleString()}</div>
+            <div className=&quot;text-2xl font-bold&quot;>{totalPosts.toLocaleString()}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Comments</CardTitle>
-            <MessageSquare className="h-4 w-4 text-purple-600" />
+          <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
+            <CardTitle className=&quot;text-sm font-medium&quot;>Total Comments</CardTitle>
+            <MessageSquare className=&quot;h-4 w-4 text-purple-600&quot; />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalComments.toLocaleString()}</div>
+            <div className=&quot;text-2xl font-bold&quot;>{totalComments.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
@@ -196,7 +196,7 @@ export default function AgentManagement() {
         </CardHeader>
         <CardContent>
           {agents.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className=&quot;text-center py-8 text-gray-500&quot;>
               No agents found
             </div>
           ) : (
@@ -216,43 +216,43 @@ export default function AgentManagement() {
               <TableBody>
                 {agents.map((agent) => (
                   <TableRow key={agent.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center space-x-2">
-                        <Bot className="h-4 w-4 text-blue-600" />
+                    <TableCell className=&quot;font-medium&quot;>
+                      <div className=&quot;flex items-center space-x-2&quot;>
+                        <Bot className=&quot;h-4 w-4 text-blue-600&quot; />
                         <span>{agent.username}</span>
                       </div>
                       {agent.description && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className=&quot;text-xs text-gray-500 mt-1&quot;>
                           {agent.description}
                         </div>
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Key className="h-3 w-3 text-gray-400" />
-                        <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                      <div className=&quot;flex items-center space-x-2&quot;>
+                        <Key className=&quot;h-3 w-3 text-gray-400&quot; />
+                        <code className=&quot;text-xs bg-gray-100 px-2 py-1 rounded&quot;>
                           {agent.api_key}
                         </code>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{agent.total_posts || 0}</Badge>
+                      <Badge variant=&quot;outline&quot;>{agent.total_posts || 0}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{agent.total_comments || 0}</Badge>
+                      <Badge variant=&quot;outline&quot;>{agent.total_comments || 0}</Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="h-3 w-3 text-gray-400" />
-                        <span className="text-sm">{formatDate(agent.last_used_at)}</span>
+                      <div className=&quot;flex items-center space-x-2&quot;>
+                        <Calendar className=&quot;h-3 w-3 text-gray-400&quot; />
+                        <span className=&quot;text-sm&quot;>{formatDate(agent.last_used_at)}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={agent.is_active ? 'default' : 'secondary'}
-                        className={agent.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
+                        variant={agent.is_active ? &apos;default&apos; : &apos;secondary&apos;}
+                        className={agent.is_active ? &apos;bg-green-100 text-green-800&apos; : &apos;bg-gray-100 text-gray-800&apos;}
                       >
-                        {agent.is_active ? 'Active' : 'Inactive'}
+                        {agent.is_active ? &apos;Active&apos; : &apos;Inactive&apos;}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -261,38 +261,38 @@ export default function AgentManagement() {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" disabled={actionLoading === agent.id}>
-                            <MoreVertical className="h-4 w-4" />
+                          <Button variant=&quot;ghost&quot; size=&quot;sm&quot; disabled={actionLoading === agent.id}>
+                            <MoreVertical className=&quot;h-4 w-4&quot; />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align=&quot;end&quot;>
                           <DropdownMenuItem
                             onClick={() => handleAgentAction(
                               agent.id,
-                              agent.is_active ? 'deactivate' : 'activate'
+                              agent.is_active ? &apos;deactivate&apos; : &apos;activate&apos;
                             )}
                           >
                             {agent.is_active ? (
                               <>
-                                <Pause className="mr-2 h-4 w-4" />
+                                <Pause className=&quot;mr-2 h-4 w-4&quot; />
                                 Deactivate
                               </>
                             ) : (
                               <>
-                                <Play className="mr-2 h-4 w-4" />
+                                <Play className=&quot;mr-2 h-4 w-4&quot; />
                                 Activate
                               </>
                             )}
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className=&quot;text-red-600&quot;
                             onClick={() => {
-                              if (confirm(`Are you sure you want to delete agent "${agent.username}"? This action cannot be undone.`)) {
-                                handleAgentAction(agent.id, 'delete')
+                              if (confirm(`Are you sure you want to delete agent &quot;${agent.username}&quot;? This action cannot be undone.`)) {
+                                handleAgentAction(agent.id, &apos;delete&apos;)
                               }
                             }}
                           >
-                            <Trash2 className="mr-2 h-4 w-4" />
+                            <Trash2 className=&quot;mr-2 h-4 w-4&quot; />
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>

@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
     
     // user ID 찾기 또는 생성 (에이전트가 아닐 때만)
-    let { data: user } = await supabase
+    const { data: user } = await supabase
       .from('users')
       .select('id')
       .eq('username', authorName)

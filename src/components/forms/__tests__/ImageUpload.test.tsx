@@ -1,20 +1,20 @@
 // T013: Unit test for ImageUpload module - TDD Phase
 // This test MUST FAIL before implementation
 
-import React from 'react'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { ImageUpload } from '../ImageUpload'
-import type { UploadedImage } from '../../../types/forms'
+import React from &apos;react&apos;
+import { render, screen, fireEvent, waitFor, act } from &apos;@testing-library/react&apos;
+import userEvent from &apos;@testing-library/user-event&apos;
+import { ImageUpload } from &apos;../ImageUpload&apos;
+import type { UploadedImage } from &apos;../../../types/forms&apos;
 
 // Mock useImageUpload hook
-jest.mock('../../../hooks/useImageUpload', () => ({
+jest.mock(&apos;../../../hooks/useImageUpload&apos;, () => ({
   useImageUpload: jest.fn()
 }))
 
-const mockUseImageUpload = require('../../../hooks/useImageUpload').useImageUpload
+const mockUseImageUpload = require(&apos;../../../hooks/useImageUpload&apos;).useImageUpload
 
-describe('ImageUpload', () => {
+describe(&apos;ImageUpload&apos;, () => {
   const defaultHookReturn = {
     images: [],
     uploading: false,
@@ -40,32 +40,32 @@ describe('ImageUpload', () => {
     jest.restoreAllMocks()
   })
 
-  describe('Rendering', () => {
-    it('should render upload area when no images', () => {
+  describe(&apos;Rendering&apos;, () => {
+    it(&apos;should render upload area when no images&apos;, () => {
       render(<ImageUpload />)
 
-      expect(screen.getByText('이미지를 드래그하여 업로드하거나 클릭하여 선택하세요')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /파일 선택/i })).toBeInTheDocument()
-      expect(screen.getByText('최대 10개 파일, 각각 5MB 이하')).toBeInTheDocument()
+      expect(screen.getByText(&apos;이미지를 드래그하여 업로드하거나 클릭하여 선택하세요&apos;)).toBeInTheDocument()
+      expect(screen.getByRole(&apos;button&apos;, { name: /파일 선택/i })).toBeInTheDocument()
+      expect(screen.getByText(&apos;최대 10개 파일, 각각 5MB 이하&apos;)).toBeInTheDocument()
     })
 
-    it('should render uploaded images grid', () => {
+    it(&apos;should render uploaded images grid&apos;, () => {
       const mockImages: UploadedImage[] = [
         {
-          url: 'https://example.com/image1.jpg',
-          fileName: 'image1.jpg',
+          url: &apos;https://example.com/image1.jpg&apos;,
+          fileName: &apos;image1.jpg&apos;,
           size: 1000000,
-          mimeType: 'image/jpeg',
+          mimeType: &apos;image/jpeg&apos;,
           width: 800,
           height: 600,
-          uploadedAt: new Date('2023-01-01')
+          uploadedAt: new Date(&apos;2023-01-01&apos;)
         },
         {
-          url: 'https://example.com/image2.jpg',
-          fileName: 'image2.jpg',
+          url: &apos;https://example.com/image2.jpg&apos;,
+          fileName: &apos;image2.jpg&apos;,
           size: 2000000,
-          mimeType: 'image/jpeg',
-          uploadedAt: new Date('2023-01-02')
+          mimeType: &apos;image/jpeg&apos;,
+          uploadedAt: new Date(&apos;2023-01-02&apos;)
         }
       ]
 
@@ -76,13 +76,13 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      expect(screen.getByRole('list', { name: /업로드된 이미지/i })).toBeInTheDocument()
-      expect(screen.getAllByRole('listitem')).toHaveLength(2)
-      expect(screen.getByAltText('image1.jpg')).toBeInTheDocument()
-      expect(screen.getByAltText('image2.jpg')).toBeInTheDocument()
+      expect(screen.getByRole(&apos;list&apos;, { name: /업로드된 이미지/i })).toBeInTheDocument()
+      expect(screen.getAllByRole(&apos;listitem&apos;)).toHaveLength(2)
+      expect(screen.getByAltText(&apos;image1.jpg&apos;)).toBeInTheDocument()
+      expect(screen.getByAltText(&apos;image2.jpg&apos;)).toBeInTheDocument()
     })
 
-    it('should show max images limit warning', () => {
+    it(&apos;should show max images limit warning&apos;, () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
         maxImages: 3,
@@ -91,34 +91,34 @@ describe('ImageUpload', () => {
           url: `https://example.com/image${i + 1}.jpg`,
           fileName: `image${i + 1}.jpg`,
           size: 1000000,
-          mimeType: 'image/jpeg',
+          mimeType: &apos;image/jpeg&apos;,
           uploadedAt: new Date()
         }))
       })
 
       render(<ImageUpload />)
 
-      expect(screen.getByText('최대 이미지 개수에 도달했습니다 (3/3)')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /파일 선택/i })).toBeDisabled()
+      expect(screen.getByText(&apos;최대 이미지 개수에 도달했습니다 (3/3)&apos;)).toBeInTheDocument()
+      expect(screen.getByRole(&apos;button&apos;, { name: /파일 선택/i })).toBeDisabled()
     })
 
-    it('should render with custom max images', () => {
+    it(&apos;should render with custom max images&apos;, () => {
       render(<ImageUpload maxImages={5} />)
 
-      expect(screen.getByText('최대 5개 파일, 각각 5MB 이하')).toBeInTheDocument()
+      expect(screen.getByText(&apos;최대 5개 파일, 각각 5MB 이하&apos;)).toBeInTheDocument()
     })
 
-    it('should render with custom allowed types', () => {
-      render(<ImageUpload allowedTypes={['image/png', 'image/gif']} />)
+    it(&apos;should render with custom allowed types&apos;, () => {
+      render(<ImageUpload allowedTypes={[&apos;image/png&apos;, &apos;image/gif&apos;]} />)
 
       expect(screen.getByText(/PNG, GIF 파일만 지원/i)).toBeInTheDocument()
     })
   })
 
-  describe('File Selection', () => {
-    it('should handle file selection via input', async () => {
+  describe(&apos;File Selection&apos;, () => {
+    it(&apos;should handle file selection via input&apos;, async () => {
       const user = userEvent.setup()
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const mockFile = new File([&apos;test&apos;], &apos;test.jpg&apos;, { type: &apos;image/jpeg&apos; })
 
       render(<ImageUpload />)
 
@@ -129,11 +129,11 @@ describe('ImageUpload', () => {
       expect(defaultHookReturn.uploadImage).toHaveBeenCalledWith(mockFile)
     })
 
-    it('should handle multiple file selection', async () => {
+    it(&apos;should handle multiple file selection&apos;, async () => {
       const user = userEvent.setup()
       const mockFiles = [
-        new File(['test1'], 'test1.jpg', { type: 'image/jpeg' }),
-        new File(['test2'], 'test2.jpg', { type: 'image/jpeg' })
+        new File([&apos;test1&apos;], &apos;test1.jpg&apos;, { type: &apos;image/jpeg&apos; }),
+        new File([&apos;test2&apos;], &apos;test2.jpg&apos;, { type: &apos;image/jpeg&apos; })
       ]
 
       render(<ImageUpload />)
@@ -145,23 +145,23 @@ describe('ImageUpload', () => {
       expect(defaultHookReturn.uploadBatch).toHaveBeenCalledWith(mockFiles)
     })
 
-    it('should validate file types before upload', async () => {
+    it(&apos;should validate file types before upload&apos;, async () => {
       const user = userEvent.setup()
-      const mockFile = new File(['test'], 'test.txt', { type: 'text/plain' })
+      const mockFile = new File([&apos;test&apos;], &apos;test.txt&apos;, { type: &apos;text/plain&apos; })
 
-      render(<ImageUpload allowedTypes={['image/jpeg', 'image/png']} />)
+      render(<ImageUpload allowedTypes={[&apos;image/jpeg&apos;, &apos;image/png&apos;]} />)
 
       const fileInput = screen.getByLabelText(/파일 선택/i) as HTMLInputElement
 
       await user.upload(fileInput, mockFile)
 
-      expect(screen.getByText('지원하지 않는 파일 형식입니다: text/plain')).toBeInTheDocument()
+      expect(screen.getByText(&apos;지원하지 않는 파일 형식입니다: text/plain&apos;)).toBeInTheDocument()
       expect(defaultHookReturn.uploadImage).not.toHaveBeenCalled()
     })
 
-    it('should validate file size before upload', async () => {
+    it(&apos;should validate file size before upload&apos;, async () => {
       const user = userEvent.setup()
-      const largeFile = new File([new ArrayBuffer(6 * 1024 * 1024)], 'large.jpg', { type: 'image/jpeg' })
+      const largeFile = new File([new ArrayBuffer(6 * 1024 * 1024)], &apos;large.jpg&apos;, { type: &apos;image/jpeg&apos; })
 
       render(<ImageUpload maxFileSize={5 * 1024 * 1024} />)
 
@@ -173,7 +173,7 @@ describe('ImageUpload', () => {
       expect(defaultHookReturn.uploadImage).not.toHaveBeenCalled()
     })
 
-    it('should prevent selection when at max capacity', () => {
+    it(&apos;should prevent selection when at max capacity&apos;, () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
         canAddMore: false
@@ -186,26 +186,26 @@ describe('ImageUpload', () => {
     })
   })
 
-  describe('Drag and Drop', () => {
-    it('should handle drag enter and leave events', () => {
+  describe(&apos;Drag and Drop&apos;, () => {
+    it(&apos;should handle drag enter and leave events&apos;, () => {
       render(<ImageUpload />)
 
-      const dropZone = screen.getByRole('button', { name: /드래그하여 업로드/i })
+      const dropZone = screen.getByRole(&apos;button&apos;, { name: /드래그하여 업로드/i })
 
       fireEvent.dragEnter(dropZone)
-      expect(dropZone).toHaveClass('border-primary')
+      expect(dropZone).toHaveClass(&apos;border-primary&apos;)
 
       fireEvent.dragLeave(dropZone)
-      expect(dropZone).not.toHaveClass('border-primary')
+      expect(dropZone).not.toHaveClass(&apos;border-primary&apos;)
     })
 
-    it('should handle drag over event', () => {
+    it(&apos;should handle drag over event&apos;, () => {
       render(<ImageUpload />)
 
-      const dropZone = screen.getByRole('button', { name: /드래그하여 업로드/i })
+      const dropZone = screen.getByRole(&apos;button&apos;, { name: /드래그하여 업로드/i })
 
-      const dragOverEvent = new Event('dragover')
-      Object.defineProperty(dragOverEvent, 'preventDefault', {
+      const dragOverEvent = new Event(&apos;dragover&apos;)
+      Object.defineProperty(dragOverEvent, &apos;preventDefault&apos;, {
         value: jest.fn()
       })
 
@@ -213,19 +213,19 @@ describe('ImageUpload', () => {
       expect(dragOverEvent.preventDefault).toHaveBeenCalled()
     })
 
-    it('should handle file drop', async () => {
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+    it(&apos;should handle file drop&apos;, async () => {
+      const mockFile = new File([&apos;test&apos;], &apos;test.jpg&apos;, { type: &apos;image/jpeg&apos; })
 
       render(<ImageUpload />)
 
-      const dropZone = screen.getByRole('button', { name: /드래그하여 업로드/i })
+      const dropZone = screen.getByRole(&apos;button&apos;, { name: /드래그하여 업로드/i })
 
-      const dropEvent = new Event('drop', { bubbles: true })
-      Object.defineProperty(dropEvent, 'dataTransfer', {
+      const dropEvent = new Event(&apos;drop&apos;, { bubbles: true })
+      Object.defineProperty(dropEvent, &apos;dataTransfer&apos;, {
         value: {
           files: [mockFile],
           items: [{
-            kind: 'file',
+            kind: &apos;file&apos;,
             getAsFile: () => mockFile
           }]
         }
@@ -238,18 +238,18 @@ describe('ImageUpload', () => {
       })
     })
 
-    it('should handle multiple file drop', async () => {
+    it(&apos;should handle multiple file drop&apos;, async () => {
       const mockFiles = [
-        new File(['test1'], 'test1.jpg', { type: 'image/jpeg' }),
-        new File(['test2'], 'test2.jpg', { type: 'image/jpeg' })
+        new File([&apos;test1&apos;], &apos;test1.jpg&apos;, { type: &apos;image/jpeg&apos; }),
+        new File([&apos;test2&apos;], &apos;test2.jpg&apos;, { type: &apos;image/jpeg&apos; })
       ]
 
       render(<ImageUpload />)
 
-      const dropZone = screen.getByRole('button', { name: /드래그하여 업로드/i })
+      const dropZone = screen.getByRole(&apos;button&apos;, { name: /드래그하여 업로드/i })
 
-      const dropEvent = new Event('drop', { bubbles: true })
-      Object.defineProperty(dropEvent, 'dataTransfer', {
+      const dropEvent = new Event(&apos;drop&apos;, { bubbles: true })
+      Object.defineProperty(dropEvent, &apos;dataTransfer&apos;, {
         value: {
           files: mockFiles
         }
@@ -262,20 +262,20 @@ describe('ImageUpload', () => {
       })
     })
 
-    it('should prevent drop when at max capacity', () => {
+    it(&apos;should prevent drop when at max capacity&apos;, () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
         canAddMore: false
       })
 
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const mockFile = new File([&apos;test&apos;], &apos;test.jpg&apos;, { type: &apos;image/jpeg&apos; })
 
       render(<ImageUpload />)
 
-      const dropZone = screen.getByRole('button', { name: /드래그하여 업로드/i })
+      const dropZone = screen.getByRole(&apos;button&apos;, { name: /드래그하여 업로드/i })
 
-      const dropEvent = new Event('drop', { bubbles: true })
-      Object.defineProperty(dropEvent, 'dataTransfer', {
+      const dropEvent = new Event(&apos;drop&apos;, { bubbles: true })
+      Object.defineProperty(dropEvent, &apos;dataTransfer&apos;, {
         value: {
           files: [mockFile]
         }
@@ -288,8 +288,8 @@ describe('ImageUpload', () => {
     })
   })
 
-  describe('Upload Progress', () => {
-    it('should show progress bar during upload', () => {
+  describe(&apos;Upload Progress&apos;, () => {
+    it(&apos;should show progress bar during upload&apos;, () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
         uploading: true,
@@ -298,12 +298,12 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      expect(screen.getByRole('progressbar')).toBeInTheDocument()
-      expect(screen.getByText('45%')).toBeInTheDocument()
-      expect(screen.getByText('업로드 중...')).toBeInTheDocument()
+      expect(screen.getByRole(&apos;progressbar&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;45%&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;업로드 중...&apos;)).toBeInTheDocument()
     })
 
-    it('should show upload success message', async () => {
+    it(&apos;should show upload success message&apos;, async () => {
       const { rerender } = render(<ImageUpload />)
 
       mockUseImageUpload.mockReturnValue({
@@ -312,10 +312,10 @@ describe('ImageUpload', () => {
         uploadProgress: 100,
         images: [
           {
-            url: 'https://example.com/uploaded.jpg',
-            fileName: 'uploaded.jpg',
+            url: &apos;https://example.com/uploaded.jpg&apos;,
+            fileName: &apos;uploaded.jpg&apos;,
             size: 1000000,
-            mimeType: 'image/jpeg',
+            mimeType: &apos;image/jpeg&apos;,
             uploadedAt: new Date()
           }
         ]
@@ -324,11 +324,11 @@ describe('ImageUpload', () => {
       rerender(<ImageUpload />)
 
       await waitFor(() => {
-        expect(screen.getByText('업로드 완료!')).toBeInTheDocument()
+        expect(screen.getByText(&apos;업로드 완료!&apos;)).toBeInTheDocument()
       })
     })
 
-    it('should show abort button during upload', async () => {
+    it(&apos;should show abort button during upload&apos;, async () => {
       const user = userEvent.setup()
 
       mockUseImageUpload.mockReturnValue({
@@ -339,32 +339,32 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      const abortButton = screen.getByRole('button', { name: /취소/i })
+      const abortButton = screen.getByRole(&apos;button&apos;, { name: /취소/i })
       await user.click(abortButton)
 
       expect(defaultHookReturn.abortUpload).toHaveBeenCalled()
     })
   })
 
-  describe('Image Management', () => {
+  describe(&apos;Image Management&apos;, () => {
     const mockImages: UploadedImage[] = [
       {
-        url: 'https://example.com/image1.jpg',
-        fileName: 'image1.jpg',
+        url: &apos;https://example.com/image1.jpg&apos;,
+        fileName: &apos;image1.jpg&apos;,
         size: 1000000,
-        mimeType: 'image/jpeg',
+        mimeType: &apos;image/jpeg&apos;,
         uploadedAt: new Date()
       },
       {
-        url: 'https://example.com/image2.jpg',
-        fileName: 'image2.jpg',
+        url: &apos;https://example.com/image2.jpg&apos;,
+        fileName: &apos;image2.jpg&apos;,
         size: 2000000,
-        mimeType: 'image/jpeg',
+        mimeType: &apos;image/jpeg&apos;,
         uploadedAt: new Date()
       }
     ]
 
-    it('should show remove button on image hover', async () => {
+    it(&apos;should show remove button on image hover&apos;, async () => {
       const user = userEvent.setup()
 
       mockUseImageUpload.mockReturnValue({
@@ -374,13 +374,13 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      const firstImage = screen.getByAltText('image1.jpg')
+      const firstImage = screen.getByAltText(&apos;image1.jpg&apos;)
       await user.hover(firstImage)
 
-      expect(screen.getByRole('button', { name: /삭제/i })).toBeInTheDocument()
+      expect(screen.getByRole(&apos;button&apos;, { name: /삭제/i })).toBeInTheDocument()
     })
 
-    it('should remove image when delete button clicked', async () => {
+    it(&apos;should remove image when delete button clicked&apos;, async () => {
       const user = userEvent.setup()
 
       mockUseImageUpload.mockReturnValue({
@@ -390,13 +390,13 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      const deleteButton = screen.getAllByRole('button', { name: /삭제/i })[0]
+      const deleteButton = screen.getAllByRole(&apos;button&apos;, { name: /삭제/i })[0]
       await user.click(deleteButton)
 
-      expect(defaultHookReturn.removeImage).toHaveBeenCalledWith('https://example.com/image1.jpg')
+      expect(defaultHookReturn.removeImage).toHaveBeenCalledWith(&apos;https://example.com/image1.jpg&apos;)
     })
 
-    it('should show image details on hover', async () => {
+    it(&apos;should show image details on hover&apos;, async () => {
       const user = userEvent.setup()
 
       mockUseImageUpload.mockReturnValue({
@@ -406,14 +406,14 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      const firstImage = screen.getByAltText('image1.jpg')
+      const firstImage = screen.getByAltText(&apos;image1.jpg&apos;)
       await user.hover(firstImage)
 
-      expect(screen.getByText('1.0 MB')).toBeInTheDocument()
-      expect(screen.getByText('JPEG')).toBeInTheDocument()
+      expect(screen.getByText(&apos;1.0 MB&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;JPEG&apos;)).toBeInTheDocument()
     })
 
-    it('should support image reordering via drag and drop', async () => {
+    it(&apos;should support image reordering via drag and drop&apos;, async () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
         images: mockImages
@@ -421,7 +421,7 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload enableReordering />)
 
-      const imageItems = screen.getAllByRole('listitem')
+      const imageItems = screen.getAllByRole(&apos;listitem&apos;)
       const firstImage = imageItems[0]
       const secondImage = imageItems[1]
 
@@ -433,7 +433,7 @@ describe('ImageUpload', () => {
       expect(defaultHookReturn.reorderImages).toHaveBeenCalledWith(0, 1)
     })
 
-    it('should show clear all button when multiple images', async () => {
+    it(&apos;should show clear all button when multiple images&apos;, async () => {
       const user = userEvent.setup()
 
       mockUseImageUpload.mockReturnValue({
@@ -443,55 +443,55 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      const clearButton = screen.getByRole('button', { name: /모든 이미지 삭제/i })
+      const clearButton = screen.getByRole(&apos;button&apos;, { name: /모든 이미지 삭제/i })
       await user.click(clearButton)
 
       expect(defaultHookReturn.clearImages).toHaveBeenCalled()
     })
   })
 
-  describe('Error States', () => {
-    it('should display upload errors', () => {
+  describe(&apos;Error States&apos;, () => {
+    it(&apos;should display upload errors&apos;, () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
-        error: 'Upload failed: Network error'
+        error: &apos;Upload failed: Network error&apos;
       })
 
       render(<ImageUpload />)
 
-      expect(screen.getByRole('alert')).toBeInTheDocument()
-      expect(screen.getByText('Upload failed: Network error')).toBeInTheDocument()
+      expect(screen.getByRole(&apos;alert&apos;)).toBeInTheDocument()
+      expect(screen.getByText(&apos;Upload failed: Network error&apos;)).toBeInTheDocument()
     })
 
-    it('should show retry button on error', async () => {
+    it(&apos;should show retry button on error&apos;, async () => {
       const user = userEvent.setup()
 
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
-        error: 'Upload failed',
-        lastFailedFile: new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+        error: &apos;Upload failed&apos;,
+        lastFailedFile: new File([&apos;test&apos;], &apos;test.jpg&apos;, { type: &apos;image/jpeg&apos; })
       })
 
       render(<ImageUpload />)
 
-      const retryButton = screen.getByRole('button', { name: /다시 시도/i })
+      const retryButton = screen.getByRole(&apos;button&apos;, { name: /다시 시도/i })
       await user.click(retryButton)
 
       expect(defaultHookReturn.uploadImage).toHaveBeenCalled()
     })
 
-    it('should clear error when new upload starts', () => {
+    it(&apos;should clear error when new upload starts&apos;, () => {
       const { rerender } = render(
         <ImageUpload />
       )
 
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
-        error: 'Previous error'
+        error: &apos;Previous error&apos;
       })
 
       rerender(<ImageUpload />)
-      expect(screen.getByText('Previous error')).toBeInTheDocument()
+      expect(screen.getByText(&apos;Previous error&apos;)).toBeInTheDocument()
 
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
@@ -500,26 +500,26 @@ describe('ImageUpload', () => {
       })
 
       rerender(<ImageUpload />)
-      expect(screen.queryByText('Previous error')).not.toBeInTheDocument()
+      expect(screen.queryByText(&apos;Previous error&apos;)).not.toBeInTheDocument()
     })
   })
 
-  describe('Accessibility', () => {
-    it('should have proper ARIA labels', () => {
+  describe(&apos;Accessibility&apos;, () => {
+    it(&apos;should have proper ARIA labels&apos;, () => {
       render(<ImageUpload />)
 
       expect(screen.getByLabelText(/이미지 업로드 영역/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /파일 선택/i })).toBeInTheDocument()
+      expect(screen.getByRole(&apos;button&apos;, { name: /파일 선택/i })).toBeInTheDocument()
     })
 
-    it('should support keyboard navigation', async () => {
+    it(&apos;should support keyboard navigation&apos;, async () => {
       const user = userEvent.setup()
       const mockImages: UploadedImage[] = [
         {
-          url: 'https://example.com/image1.jpg',
-          fileName: 'image1.jpg',
+          url: &apos;https://example.com/image1.jpg&apos;,
+          fileName: &apos;image1.jpg&apos;,
           size: 1000000,
-          mimeType: 'image/jpeg',
+          mimeType: &apos;image/jpeg&apos;,
           uploadedAt: new Date()
         }
       ]
@@ -535,15 +535,15 @@ describe('ImageUpload', () => {
       await user.tab()
       await user.tab()
 
-      const deleteButton = screen.getByRole('button', { name: /삭제/i })
+      const deleteButton = screen.getByRole(&apos;button&apos;, { name: /삭제/i })
       expect(deleteButton).toHaveFocus()
 
       // Press Enter to delete
-      await user.keyboard('{Enter}')
+      await user.keyboard(&apos;{Enter}&apos;)
       expect(defaultHookReturn.removeImage).toHaveBeenCalled()
     })
 
-    it('should announce upload progress to screen readers', () => {
+    it(&apos;should announce upload progress to screen readers&apos;, () => {
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
         uploading: true,
@@ -552,19 +552,19 @@ describe('ImageUpload', () => {
 
       render(<ImageUpload />)
 
-      const progressBar = screen.getByRole('progressbar')
-      expect(progressBar).toHaveAttribute('aria-valuenow', '67')
-      expect(progressBar).toHaveAttribute('aria-valuemin', '0')
-      expect(progressBar).toHaveAttribute('aria-valuemax', '100')
-      expect(progressBar).toHaveAttribute('aria-label', '업로드 진행률')
+      const progressBar = screen.getByRole(&apos;progressbar&apos;)
+      expect(progressBar).toHaveAttribute(&apos;aria-valuenow&apos;, &apos;67&apos;)
+      expect(progressBar).toHaveAttribute(&apos;aria-valuemin&apos;, &apos;0&apos;)
+      expect(progressBar).toHaveAttribute(&apos;aria-valuemax&apos;, &apos;100&apos;)
+      expect(progressBar).toHaveAttribute(&apos;aria-label&apos;, &apos;업로드 진행률&apos;)
     })
   })
 
-  describe('Callbacks', () => {
-    it('should call onUploadStart callback', async () => {
+  describe(&apos;Callbacks&apos;, () => {
+    it(&apos;should call onUploadStart callback&apos;, async () => {
       const onUploadStart = jest.fn()
       const user = userEvent.setup()
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const mockFile = new File([&apos;test&apos;], &apos;test.jpg&apos;, { type: &apos;image/jpeg&apos; })
 
       render(<ImageUpload onUploadStart={onUploadStart} />)
 
@@ -574,13 +574,13 @@ describe('ImageUpload', () => {
       expect(onUploadStart).toHaveBeenCalledWith(mockFile)
     })
 
-    it('should call onUploadComplete callback', () => {
+    it(&apos;should call onUploadComplete callback&apos;, () => {
       const onUploadComplete = jest.fn()
       const mockImage: UploadedImage = {
-        url: 'https://example.com/image.jpg',
-        fileName: 'image.jpg',
+        url: &apos;https://example.com/image.jpg&apos;,
+        fileName: &apos;image.jpg&apos;,
         size: 1000000,
-        mimeType: 'image/jpeg',
+        mimeType: &apos;image/jpeg&apos;,
         uploadedAt: new Date()
       }
 
@@ -599,32 +599,32 @@ describe('ImageUpload', () => {
       expect(onUploadComplete).toHaveBeenCalledWith(mockImage)
     })
 
-    it('should call onUploadError callback', () => {
+    it(&apos;should call onUploadError callback&apos;, () => {
       const onUploadError = jest.fn()
 
       mockUseImageUpload.mockReturnValue({
         ...defaultHookReturn,
-        error: 'Upload error'
+        error: &apos;Upload error&apos;
       })
 
       render(<ImageUpload onUploadError={onUploadError} />)
 
       // Simulate error effect
       act(() => {
-        onUploadError(new Error('Upload error'))
+        onUploadError(new Error(&apos;Upload error&apos;))
       })
 
-      expect(onUploadError).toHaveBeenCalledWith(new Error('Upload error'))
+      expect(onUploadError).toHaveBeenCalledWith(new Error(&apos;Upload error&apos;))
     })
 
-    it('should call onChange callback when images change', () => {
+    it(&apos;should call onChange callback when images change&apos;, () => {
       const onChange = jest.fn()
       const mockImages: UploadedImage[] = [
         {
-          url: 'https://example.com/image.jpg',
-          fileName: 'image.jpg',
+          url: &apos;https://example.com/image.jpg&apos;,
+          fileName: &apos;image.jpg&apos;,
           size: 1000000,
-          mimeType: 'image/jpeg',
+          mimeType: &apos;image/jpeg&apos;,
           uploadedAt: new Date()
         }
       ]
@@ -645,13 +645,13 @@ describe('ImageUpload', () => {
     })
   })
 
-  describe('Integration', () => {
-    it('should integrate with form validation', () => {
+  describe(&apos;Integration&apos;, () => {
+    it(&apos;should integrate with form validation&apos;, () => {
       const mockImages: UploadedImage[] = Array(11).fill(null).map((_, i) => ({
         url: `https://example.com/image${i + 1}.jpg`,
         fileName: `image${i + 1}.jpg`,
         size: 1000000,
-        mimeType: 'image/jpeg',
+        mimeType: &apos;image/jpeg&apos;,
         uploadedAt: new Date()
       }))
 
@@ -667,15 +667,15 @@ describe('ImageUpload', () => {
       expect(screen.getByText(/최대 이미지 개수에 도달/i)).toBeInTheDocument()
     })
 
-    it('should handle paste events from clipboard', async () => {
+    it(&apos;should handle paste events from clipboard&apos;, async () => {
       const clipboardData = {
-        files: [new File(['image'], 'clipboard.png', { type: 'image/png' })]
+        files: [new File([&apos;image&apos;], &apos;clipboard.png&apos;, { type: &apos;image/png&apos; })]
       }
 
       render(<ImageUpload enablePaste />)
 
-      const pasteEvent = new Event('paste', { bubbles: true })
-      Object.defineProperty(pasteEvent, 'clipboardData', {
+      const pasteEvent = new Event(&apos;paste&apos;, { bubbles: true })
+      Object.defineProperty(pasteEvent, &apos;clipboardData&apos;, {
         value: clipboardData
       })
 
@@ -686,15 +686,15 @@ describe('ImageUpload', () => {
       })
     })
 
-    it('should work with external file references', () => {
+    it(&apos;should work with external file references&apos;, () => {
       const externalImages = [
-        'https://example.com/external1.jpg',
-        'https://example.com/external2.jpg'
+        &apos;https://example.com/external1.jpg&apos;,
+        &apos;https://example.com/external2.jpg&apos;
       ]
 
       render(<ImageUpload externalImages={externalImages} />)
 
-      expect(screen.getByText('외부 이미지 2개')).toBeInTheDocument()
+      expect(screen.getByText(&apos;외부 이미지 2개&apos;)).toBeInTheDocument()
     })
   })
 })

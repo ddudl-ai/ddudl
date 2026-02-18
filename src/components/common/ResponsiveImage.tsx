@@ -1,7 +1,7 @@
-'use client'
+'use client&apos;
 
-import React, { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
+import React, { useState, useEffect, useRef } from &apos;react&apos;
+import Image from &apos;next/image&apos;
 
 export interface ResponsiveImageProps {
   src: string
@@ -12,7 +12,7 @@ export interface ResponsiveImageProps {
   className?: string
   priority?: boolean
   quality?: number
-  placeholder?: 'blur' | 'empty'
+  placeholder?: &apos;blur&apos; | &apos;empty&apos;
   blurDataURL?: string
   onLoad?: () => void
   onError?: (error: Error) => void
@@ -24,10 +24,10 @@ export function ResponsiveImage({
   originalWidth,
   originalHeight,
   maxWidth = 800,
-  className = '',
+  className = &apos;',
   priority = false,
   quality = 85,
-  placeholder = 'empty',
+  placeholder = &apos;empty&apos;,
   blurDataURL,
   onLoad,
   onError
@@ -40,7 +40,7 @@ export function ResponsiveImage({
   // Calculate responsive dimensions
   const getResponsiveDimensions = (originalW?: number, originalH?: number) => {
     if (!originalW || !originalH) {
-      return { width: maxWidth, height: 'auto' as const }
+      return { width: maxWidth, height: &apos;auto&apos; as const }
     }
 
     // For small images, use original size
@@ -94,19 +94,19 @@ export function ResponsiveImage({
   // CSS styles for responsive behavior
   const imageStyles: React.CSSProperties = {
     maxWidth: `min(100%, ${maxWidth}px)`,
-    height: 'auto',
-    width: '100%',
-    objectFit: 'contain',
-    transition: 'opacity 0.3s ease-in-out',
+    height: &apos;auto&apos;,
+    width: &apos;100%&apos;,
+    objectFit: &apos;contain&apos;,
+    transition: &apos;opacity 0.3s ease-in-out&apos;,
     opacity: isLoaded ? 1 : 0.7
   }
 
   // Container styles
   const containerStyles: React.CSSProperties = {
-    position: 'relative',
-    display: 'inline-block',
+    position: &apos;relative&apos;,
+    display: &apos;inline-block&apos;,
     maxWidth: `${responsiveDimensions.width}px`,
-    width: '100%'
+    width: &apos;100%&apos;
   }
 
   if (hasError) {
@@ -115,16 +115,16 @@ export function ResponsiveImage({
         className={`responsive-image-error ${className}`}
         style={{
           ...containerStyles,
-          backgroundColor: '#f3f4f6',
-          border: '2px dashed #d1d5db',
-          borderRadius: '8px',
-          padding: '2rem',
-          textAlign: 'center',
-          color: '#6b7280'
+          backgroundColor: &apos;#f3f4f6&apos;,
+          border: &apos;2px dashed #d1d5db&apos;,
+          borderRadius: &apos;8px&apos;,
+          padding: &apos;2rem&apos;,
+          textAlign: &apos;center&apos;,
+          color: &apos;#6b7280&apos;
         }}
       >
         <div>Unable to load image</div>
-        <div style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>{alt}</div>
+        <div style={{ fontSize: &apos;0.875rem&apos;, marginTop: &apos;0.5rem&apos; }}>{alt}</div>
       </div>
     )
   }
@@ -139,7 +139,7 @@ export function ResponsiveImage({
         src={src}
         alt={alt}
         width={responsiveDimensions.width}
-        height={typeof responsiveDimensions.height === 'number' ? responsiveDimensions.height : 400}
+        height={typeof responsiveDimensions.height === &apos;number&apos; ? responsiveDimensions.height : 400}
         priority={priority}
         quality={quality}
         placeholder={placeholder}
@@ -154,15 +154,15 @@ export function ResponsiveImage({
       {!isLoaded && !hasError && (
         <div
           style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            padding: '0.5rem',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            color: '#6b7280'
+            position: &apos;absolute&apos;,
+            top: &apos;50%&apos;,
+            left: &apos;50%&apos;,
+            transform: &apos;translate(-50%, -50%)&apos;,
+            backgroundColor: &apos;rgba(255, 255, 255, 0.9)&apos;,
+            padding: &apos;0.5rem&apos;,
+            borderRadius: &apos;4px&apos;,
+            fontSize: &apos;0.875rem&apos;,
+            color: &apos;#6b7280&apos;
           }}
         >
           Loading...

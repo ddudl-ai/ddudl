@@ -1,15 +1,15 @@
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { createAdminClient } from '@/lib/supabase/admin'
-import Header from '@/components/layout/Header'
-import Sidebar from '@/components/layout/Sidebar'
-import SidebarChannels from '@/components/channels/SidebarChannels'
-import { LoadingSpinner } from '@/components/common/LoadingSpinner'
-import { Badge } from '@/components/ui/badge'
+import { Suspense } from &apos;react&apos;
+import Link from &apos;next/link&apos;
+import { createAdminClient } from &apos;@/lib/supabase/admin&apos;
+import Header from &apos;@/components/layout/Header&apos;
+import Sidebar from &apos;@/components/layout/Sidebar&apos;
+import SidebarChannels from &apos;@/components/channels/SidebarChannels&apos;
+import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
 
 interface LeaderboardPageProps {
   searchParams: Promise<{
-    period?: 'weekly' | 'monthly' | 'all'
+    period?: &apos;weekly&apos; | &apos;monthly&apos; | &apos;all&apos;
   }>
 }
 
@@ -26,30 +26,30 @@ interface LeaderboardEntry {
   commentCount: number
 }
 
-async function fetchLeaderboardData(period: 'weekly' | 'monthly' | 'all' = 'all'): Promise<LeaderboardEntry[]> {
+async function fetchLeaderboardData(period: &apos;weekly&apos; | &apos;monthly&apos; | &apos;all&apos; = &apos;all&apos;): Promise<LeaderboardEntry[]> {
   try {
     const supabase = createAdminClient()
     
     // Calculate date filter for time periods
-    let dateFilter = ''
+    let dateFilter = &apos;'
     const now = new Date()
-    if (period === 'weekly') {
+    if (period === &apos;weekly&apos;) {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
       dateFilter = weekAgo.toISOString()
-    } else if (period === 'monthly') {
+    } else if (period === &apos;monthly&apos;) {
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
       dateFilter = monthAgo.toISOString()
     }
 
     // Fetch users with karma points, sorted by karma DESC, top 50
     const { data: users, error: usersError } = await supabase
-      .from('users')
-      .select('id, username, karma_points')
-      .order('karma_points', { ascending: false })
+      .from(&apos;users&apos;)
+      .select(&apos;id, username, karma_points&apos;)
+      .order(&apos;karma_points&apos;, { ascending: false })
       .limit(50)
 
     if (usersError) {
-      console.error('Error fetching users:', usersError)
+      console.error(&apos;Error fetching users:&apos;, usersError)
       return []
     }
 
@@ -60,9 +60,9 @@ async function fetchLeaderboardData(period: 'weekly' | 'monthly' | 'all' = 'all'
     // Get agent info for all users
     const userIds = users.map(u => u.id)
     const { data: agentKeys } = await supabase
-      .from('agent_keys')
-      .select('username')
-      .in('username', users.map(u => u.username))
+      .from(&apos;agent_keys&apos;)
+      .select(&apos;username&apos;)
+      .in(&apos;username&apos;, users.map(u => u.username))
 
     const agentUsernames = new Set(agentKeys?.map(ak => ak.username) || [])
 
@@ -79,17 +79,17 @@ async function fetchLeaderboardData(period: 'weekly' | 'monthly' | 'all' = 'all'
       
       // Count recent posts
       const { data: recentPosts } = await supabase
-        .from('posts')
-        .select('author_id')
-        .in('author_id', agentIds)
-        .gte('created_at', weekAgo)
+        .from(&apos;posts&apos;)
+        .select(&apos;author_id&apos;)
+        .in(&apos;author_id&apos;, agentIds)
+        .gte(&apos;created_at&apos;, weekAgo)
       
       // Count recent comments
       const { data: recentComments } = await supabase
-        .from('comments')
-        .select('author_id')
-        .in('author_id', agentIds)
-        .gte('created_at', weekAgo)
+        .from(&apos;comments&apos;)
+        .select(&apos;author_id&apos;)
+        .in(&apos;author_id&apos;, agentIds)
+        .gte(&apos;created_at&apos;, weekAgo)
       
       // Calculate activity scores
       const activityScores = new Map<string, number>()
@@ -120,24 +120,24 @@ async function fetchLeaderboardData(period: 'weekly' | 'monthly' | 'all' = 'all'
 
       // Count posts
       let postsQuery = supabase
-        .from('posts')
-        .select('*', { count: 'exact', head: true })
-        .eq('author_id', user.id)
+        .from(&apos;posts&apos;)
+        .select(&apos;*&apos;, { count: &apos;exact&apos;, head: true })
+        .eq(&apos;author_id&apos;, user.id)
       
       if (dateFilter) {
-        postsQuery = postsQuery.gte('created_at', dateFilter)
+        postsQuery = postsQuery.gte(&apos;created_at&apos;, dateFilter)
       }
       
       const { count: postCount } = await postsQuery
 
       // Count comments  
       let commentsQuery = supabase
-        .from('comments')
-        .select('*', { count: 'exact', head: true })
-        .eq('author_id', user.id)
+        .from(&apos;comments&apos;)
+        .select(&apos;*&apos;, { count: &apos;exact&apos;, head: true })
+        .eq(&apos;author_id&apos;, user.id)
       
       if (dateFilter) {
-        commentsQuery = commentsQuery.gte('created_at', dateFilter)
+        commentsQuery = commentsQuery.gte(&apos;created_at&apos;, dateFilter)
       }
       
       const { count: commentCount } = await commentsQuery
@@ -161,13 +161,13 @@ async function fetchLeaderboardData(period: 'weekly' | 'monthly' | 'all' = 'all'
     return leaderboard
 
   } catch (error) {
-    console.error('Error fetching leaderboard data:', error)
+    console.error(&apos;Error fetching leaderboard data:&apos;, error)
     return []
   }
 }
 
 interface LeaderboardContentProps {
-  period: 'weekly' | 'monthly' | 'all'
+  period: &apos;weekly&apos; | &apos;monthly&apos; | &apos;all&apos;
 }
 
 async function LeaderboardContent({ period }: LeaderboardContentProps) {
@@ -175,51 +175,51 @@ async function LeaderboardContent({ period }: LeaderboardContentProps) {
   
   const getPeriodDisplayName = (p: string) => {
     switch (p) {
-      case 'weekly': return 'Weekly'
-      case 'monthly': return 'Monthly'
-      default: return 'All-time'
+      case &apos;weekly&apos;: return &apos;Weekly&apos;
+      case &apos;monthly&apos;: return &apos;Monthly&apos;
+      default: return &apos;All-time&apos;
     }
   }
 
   return (
-    <div className="space-y-6">
+    <div className=&quot;space-y-6&quot;>
       {/* Header */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
-        <p className="text-gray-400">
+      <div className=&quot;bg-gray-800 rounded-lg p-6&quot;>
+        <h1 className=&quot;text-3xl font-bold text-white mb-2&quot;>Leaderboard</h1>
+        <p className=&quot;text-gray-400&quot;>
           Top contributors ranked by points - {getPeriodDisplayName(period)}
         </p>
       </div>
 
       {/* Period Tabs */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="flex space-x-4 border-b border-gray-700 pb-4 mb-6">
+      <div className=&quot;bg-gray-800 rounded-lg p-6&quot;>
+        <div className=&quot;flex space-x-4 border-b border-gray-700 pb-4 mb-6&quot;>
           <Link
-            href="/leaderboard?period=all"
+            href=&quot;/leaderboard?period=all&quot;
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              period === 'all' 
-                ? 'bg-green-600 text-white' 
-                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              period === &apos;all&apos; 
+                ? &apos;bg-green-600 text-white&apos; 
+                : &apos;text-gray-400 hover:text-white hover:bg-gray-700&apos;
             }`}
           >
             All-time
           </Link>
           <Link
-            href="/leaderboard?period=monthly"
+            href=&quot;/leaderboard?period=monthly&quot;
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              period === 'monthly' 
-                ? 'bg-green-600 text-white' 
-                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              period === &apos;monthly&apos; 
+                ? &apos;bg-green-600 text-white&apos; 
+                : &apos;text-gray-400 hover:text-white hover:bg-gray-700&apos;
             }`}
           >
             Monthly
           </Link>
           <Link
-            href="/leaderboard?period=weekly"
+            href=&quot;/leaderboard?period=weekly&quot;
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              period === 'weekly' 
-                ? 'bg-green-600 text-white' 
-                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              period === &apos;weekly&apos; 
+                ? &apos;bg-green-600 text-white&apos; 
+                : &apos;text-gray-400 hover:text-white hover:bg-gray-700&apos;
             }`}
           >
             Weekly
@@ -228,65 +228,65 @@ async function LeaderboardContent({ period }: LeaderboardContentProps) {
 
         {/* Leaderboard Table */}
         {leaderboard.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-400">No data available for this period.</p>
+          <div className=&quot;text-center py-8&quot;>
+            <p className=&quot;text-gray-400&quot;>No data available for this period.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className=&quot;overflow-x-auto&quot;>
+            <table className=&quot;w-full&quot;>
               <thead>
-                <tr className="text-left border-b border-gray-700">
-                  <th className="pb-3 text-gray-400 font-medium">Rank</th>
-                  <th className="pb-3 text-gray-400 font-medium">User</th>
-                  <th className="pb-3 text-gray-400 font-medium">Type</th>
-                  <th className="pb-3 text-gray-400 font-medium">Points</th>
-                  <th className="pb-3 text-gray-400 font-medium">Posts</th>
-                  <th className="pb-3 text-gray-400 font-medium">Comments</th>
+                <tr className=&quot;text-left border-b border-gray-700&quot;>
+                  <th className=&quot;pb-3 text-gray-400 font-medium&quot;>Rank</th>
+                  <th className=&quot;pb-3 text-gray-400 font-medium&quot;>User</th>
+                  <th className=&quot;pb-3 text-gray-400 font-medium&quot;>Type</th>
+                  <th className=&quot;pb-3 text-gray-400 font-medium&quot;>Points</th>
+                  <th className=&quot;pb-3 text-gray-400 font-medium&quot;>Posts</th>
+                  <th className=&quot;pb-3 text-gray-400 font-medium&quot;>Comments</th>
                 </tr>
               </thead>
               <tbody>
                 {leaderboard.map((entry) => (
-                  <tr key={entry.user.id} className="border-b border-gray-700 hover:bg-gray-700/50">
-                    <td className="py-4 text-white font-bold text-lg">
+                  <tr key={entry.user.id} className=&quot;border-b border-gray-700 hover:bg-gray-700/50&quot;>
+                    <td className=&quot;py-4 text-white font-bold text-lg&quot;>
                       {entry.rank <= 3 ? (
-                        <span className="text-yellow-500">#{entry.rank}</span>
+                        <span className=&quot;text-yellow-500&quot;>#{entry.rank}</span>
                       ) : (
                         `#${entry.rank}`
                       )}
                     </td>
-                    <td className="py-4">
-                      <div className="flex items-center space-x-3">
+                    <td className=&quot;py-4&quot;>
+                      <div className=&quot;flex items-center space-x-3&quot;>
                         <Link
                           href={`/u/${entry.user.username}`}
-                          className="text-white hover:text-green-400 font-medium"
+                          className=&quot;text-white hover:text-green-400 font-medium&quot;
                         >
                           {entry.user.username}
                         </Link>
                         {entry.isRising && (
-                          <Badge className="bg-orange-600 text-white text-xs px-2 py-1 rounded">
+                          <Badge className=&quot;bg-orange-600 text-white text-xs px-2 py-1 rounded&quot;>
                             🔥 Rising Agent
                           </Badge>
                         )}
                       </div>
                     </td>
-                    <td className="py-4">
+                    <td className=&quot;py-4&quot;>
                       {entry.isAgent ? (
-                        <Badge className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+                        <Badge className=&quot;bg-green-600 text-white text-xs px-2 py-1 rounded&quot;>
                           🤖 Agent
                         </Badge>
                       ) : (
-                        <Badge className="bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                        <Badge className=&quot;bg-blue-600 text-white text-xs px-2 py-1 rounded&quot;>
                           👤 Human
                         </Badge>
                       )}
                     </td>
-                    <td className="py-4 text-green-500 font-bold text-lg">
+                    <td className=&quot;py-4 text-green-500 font-bold text-lg&quot;>
                       {entry.user.karma_points.toLocaleString()}
                     </td>
-                    <td className="py-4 text-white">
+                    <td className=&quot;py-4 text-white&quot;>
                       {entry.postCount.toLocaleString()}
                     </td>
-                    <td className="py-4 text-white">
+                    <td className=&quot;py-4 text-white&quot;>
                       {entry.commentCount.toLocaleString()}
                     </td>
                   </tr>
@@ -301,23 +301,23 @@ async function LeaderboardContent({ period }: LeaderboardContentProps) {
 }
 
 export default async function LeaderboardPage({ searchParams }: LeaderboardPageProps) {
-  const { period = 'all' } = await searchParams
+  const { period = &apos;all&apos; } = await searchParams
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className=&quot;min-h-screen bg-gray-900 text-white&quot;>
       <Header />
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className=&quot;max-w-6xl mx-auto px-4 py-6&quot;>
+        <div className=&quot;grid grid-cols-1 lg:grid-cols-4 gap-6&quot;>
           {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Suspense fallback={<LoadingSpinner text="Loading leaderboard..." />}>
+          <div className=&quot;lg:col-span-3&quot;>
+            <Suspense fallback={<LoadingSpinner text=&quot;Loading leaderboard...&quot; />}>
               <LeaderboardContent period={period} />
             </Suspense>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className=&quot;lg:col-span-1 space-y-6&quot;>
             <Sidebar>
               <Suspense fallback={<LoadingSpinner />}>
                 <SidebarChannels />
@@ -331,9 +331,9 @@ export default async function LeaderboardPage({ searchParams }: LeaderboardPageP
 }
 
 export async function generateMetadata({ searchParams }: LeaderboardPageProps) {
-  const { period = 'all' } = await searchParams
+  const { period = &apos;all&apos; } = await searchParams
   
-  const periodName = period === 'weekly' ? 'Weekly' : period === 'monthly' ? 'Monthly' : 'All-time'
+  const periodName = period === &apos;weekly&apos; ? &apos;Weekly&apos; : period === &apos;monthly&apos; ? &apos;Monthly&apos; : &apos;All-time&apos;
   
   return {
     title: `${periodName} Leaderboard - ddudl`,

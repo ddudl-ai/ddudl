@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
-import { Badge } from '@/components/ui/badge'
-import { createAdminClient } from '@/lib/supabase/admin'
+import Link from &apos;next/link&apos;
+import { formatDistanceToNow } from &apos;date-fns&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { createAdminClient } from &apos;@/lib/supabase/admin&apos;
 
 interface UserProfileProps {
   username: string
@@ -13,22 +13,22 @@ async function fetchUserData(username: string) {
 
     // Fetch user
     const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('username', username)
+      .from(&apos;users&apos;)
+      .select(&apos;*&apos;)
+      .eq(&apos;username&apos;, username)
       .single()
 
     if (userError) {
-      if (userError.code === 'PGRST116') return null
-      console.error('Error fetching user:', userError)
+      if (userError.code === &apos;PGRST116&apos;) return null
+      console.error(&apos;Error fetching user:&apos;, userError)
       return null
     }
 
     // Check if agent
     const { data: agentData } = await supabase
-      .from('agent_keys')
-      .select('description, total_posts, total_comments, last_used_at')
-      .eq('username', username)
+      .from(&apos;agent_keys&apos;)
+      .select(&apos;description, total_posts, total_comments, last_used_at&apos;)
+      .eq(&apos;username&apos;, username)
       .single()
 
     const isAgent = !!agentData
@@ -41,22 +41,22 @@ async function fetchUserData(username: string) {
 
     // Post count
     const { count: postCount } = await supabase
-      .from('posts')
-      .select('*', { count: 'exact', head: true })
-      .eq('author_id', user.id)
+      .from(&apos;posts&apos;)
+      .select(&apos;*&apos;, { count: &apos;exact&apos;, head: true })
+      .eq(&apos;author_id&apos;, user.id)
 
     // Comment count
     const { count: commentCount } = await supabase
-      .from('comments')
-      .select('*', { count: 'exact', head: true })
-      .eq('author_id', user.id)
+      .from(&apos;comments&apos;)
+      .select(&apos;*&apos;, { count: &apos;exact&apos;, head: true })
+      .eq(&apos;author_id&apos;, user.id)
 
     // Recent posts
     const { data: recentPosts } = await supabase
-      .from('posts')
-      .select('id, title, created_at, channels (name, display_name)')
-      .eq('author_id', user.id)
-      .order('created_at', { ascending: false })
+      .from(&apos;posts&apos;)
+      .select(&apos;id, title, created_at, channels (name, display_name)&apos;)
+      .eq(&apos;author_id&apos;, user.id)
+      .order(&apos;created_at&apos;, { ascending: false })
       .limit(10)
 
     return {
@@ -77,7 +77,7 @@ async function fetchUserData(username: string) {
       recentPosts: recentPosts || []
     }
   } catch (error) {
-    console.error('Error fetching user data:', error)
+    console.error(&apos;Error fetching user data:&apos;, error)
     return null
   }
 }
@@ -87,9 +87,9 @@ export default async function UserProfile({ username }: UserProfileProps) {
 
   if (!userData) {
     return (
-      <div className="bg-gray-800 rounded-lg p-8 text-center">
-        <h1 className="text-2xl font-bold text-white mb-4">User Not Found</h1>
-        <p className="text-gray-400">The user &quot;{username}&quot; does not exist.</p>
+      <div className=&quot;bg-gray-800 rounded-lg p-8 text-center&quot;>
+        <h1 className=&quot;text-2xl font-bold text-white mb-4&quot;>User Not Found</h1>
+        <p className=&quot;text-gray-400&quot;>The user &quot;{username}&quot; does not exist.</p>
       </div>
     )
   }
@@ -103,56 +103,56 @@ export default async function UserProfile({ username }: UserProfileProps) {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString(&apos;en-US&apos;, {
+      year: &apos;numeric&apos;,
+      month: &apos;long&apos;,
+      day: &apos;numeric&apos;
     })
   }
 
   return (
-    <div className="space-y-6">
+    <div className=&quot;space-y-6&quot;>
       {/* Header Section */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="flex items-center space-x-4">
+      <div className=&quot;bg-gray-800 rounded-lg p-6&quot;>
+        <div className=&quot;flex items-center space-x-4&quot;>
           {/* Profile Image */}
           {user.profileImageUrl ? (
             <img
               src={user.profileImageUrl}
-              alt={`${username}'s profile`}
-              className="w-20 h-20 rounded-full"
+              alt={`${username}&apos;s profile`}
+              className=&quot;w-20 h-20 rounded-full&quot;
             />
           ) : (
-            <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-300">
+            <div className=&quot;w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center&quot;>
+              <span className=&quot;text-2xl font-bold text-gray-300&quot;>
                 {username.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
 
           {/* User Info */}
-          <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">{username}</h1>
+          <div className=&quot;flex-1&quot;>
+            <div className=&quot;flex items-center space-x-3 mb-2&quot;>
+              <h1 className=&quot;text-2xl font-bold text-white&quot;>{username}</h1>
               {isAgent ? (
-                <Badge className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+                <Badge className=&quot;bg-green-600 text-white text-xs px-2 py-1 rounded&quot;>
                   🤖 Agent
                 </Badge>
               ) : (
-                <Badge className="bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                <Badge className=&quot;bg-blue-600 text-white text-xs px-2 py-1 rounded&quot;>
                   👤 Human
                 </Badge>
               )}
             </div>
             
             {/* Description */}
-            <p className="text-gray-400 mb-2">
+            <p className=&quot;text-gray-400 mb-2&quot;>
               {isAgent && agentInfo?.description 
                 ? agentInfo.description 
                 : `Member since ${formatDate(user.createdAt)}`}
             </p>
 
-            <p className="text-sm text-gray-500">
+            <p className=&quot;text-sm text-gray-500&quot;>
               Joined {formatTimeAgo(user.createdAt)}
             </p>
           </div>
@@ -160,54 +160,54 @@ export default async function UserProfile({ username }: UserProfileProps) {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gray-800 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-white mb-2">{stats.totalPosts}</div>
-          <div className="text-gray-400">Posts</div>
+      <div className=&quot;grid grid-cols-1 md:grid-cols-3 gap-4&quot;>
+        <div className=&quot;bg-gray-800 rounded-lg p-6 text-center&quot;>
+          <div className=&quot;text-3xl font-bold text-white mb-2&quot;>{stats.totalPosts}</div>
+          <div className=&quot;text-gray-400&quot;>Posts</div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-white mb-2">{stats.totalComments}</div>
-          <div className="text-gray-400">Comments</div>
+        <div className=&quot;bg-gray-800 rounded-lg p-6 text-center&quot;>
+          <div className=&quot;text-3xl font-bold text-white mb-2&quot;>{stats.totalComments}</div>
+          <div className=&quot;text-gray-400&quot;>Comments</div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-green-500 mb-2">{stats.points}</div>
-          <div className="text-gray-400">Points</div>
+        <div className=&quot;bg-gray-800 rounded-lg p-6 text-center&quot;>
+          <div className=&quot;text-3xl font-bold text-green-500 mb-2&quot;>{stats.points}</div>
+          <div className=&quot;text-gray-400&quot;>Points</div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-white mb-4">Recent Posts</h2>
+      <div className=&quot;bg-gray-800 rounded-lg p-6&quot;>
+        <h2 className=&quot;text-xl font-bold text-white mb-4&quot;>Recent Posts</h2>
         
         {recentPosts.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-400">No posts yet.</p>
+          <div className=&quot;text-center py-8&quot;>
+            <p className=&quot;text-gray-400&quot;>No posts yet.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className=&quot;space-y-3&quot;>
             {recentPosts.map((post) => {
               const channel = post.channels as unknown as { name: string; display_name: string } | null
               return (
-              <div key={post.id} className="border-b border-gray-700 pb-3 last:border-b-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
+              <div key={post.id} className=&quot;border-b border-gray-700 pb-3 last:border-b-0&quot;>
+                <div className=&quot;flex items-center justify-between&quot;>
+                  <div className=&quot;flex-1&quot;>
                     <Link
-                      href={`/c/${channel?.name || 'general'}/posts/${post.id}`}
-                      className="text-white hover:text-green-400 font-medium line-clamp-1"
+                      href={`/c/${channel?.name || &apos;general&apos;}/posts/${post.id}`}
+                      className=&quot;text-white hover:text-green-400 font-medium line-clamp-1&quot;
                     >
                       {post.title}
                     </Link>
-                    <div className="flex items-center space-x-2 mt-1">
+                    <div className=&quot;flex items-center space-x-2 mt-1&quot;>
                       <Link
-                        href={`/c/${channel?.name || 'general'}`}
-                        className="text-sm text-gray-400 hover:text-gray-300"
+                        href={`/c/${channel?.name || &apos;general&apos;}`}
+                        className=&quot;text-sm text-gray-400 hover:text-gray-300&quot;
                       >
-                        c/{channel?.display_name || channel?.name || 'general'}
+                        c/{channel?.display_name || channel?.name || &apos;general&apos;}
                       </Link>
-                      <span className="text-gray-500 text-sm">•</span>
-                      <span className="text-sm text-gray-500">
+                      <span className=&quot;text-gray-500 text-sm&quot;>•</span>
+                      <span className=&quot;text-sm text-gray-500&quot;>
                         {formatTimeAgo(post.created_at)}
                       </span>
                     </div>

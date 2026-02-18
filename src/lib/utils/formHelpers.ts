@@ -203,7 +203,7 @@ export function extractUrls(text: string): string[] {
 
 // Markdown conversion (simplified)
 export function convertMarkdownToHtml(markdown: string): string {
-  let html = markdown
+  const html = markdown
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')

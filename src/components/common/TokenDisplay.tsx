@@ -1,12 +1,12 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Coins, TrendingUp, Crown, Star } from 'lucide-react'
-import { useAuthStore } from '@/stores/authStore'
-import { calculateUserLevel, formatTokens, getTokensToNextLevel, getLevelColor } from '@/lib/token/tokenUtils'
+import { useEffect, useState } from &apos;react&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { Card, CardContent } from &apos;@/components/ui/card&apos;
+import { Progress } from &apos;@/components/ui/progress&apos;
+import { Coins, TrendingUp, Crown, Star } from &apos;lucide-react&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
+import { calculateUserLevel, formatTokens, getTokensToNextLevel, getLevelColor } from &apos;@/lib/token/tokenUtils&apos;
 
 interface TokenDisplayProps {
   className?: string
@@ -14,7 +14,7 @@ interface TokenDisplayProps {
   showLevel?: boolean
 }
 
-export default function TokenDisplay({ className = '', showProgress = false, showLevel = true }: TokenDisplayProps) {
+export default function TokenDisplay({ className = &apos;', showProgress = false, showLevel = true }: TokenDisplayProps) {
   const { user, profile } = useAuthStore()
   const [tokens, setTokens] = useState(0)
   const [userLevel, setUserLevel] = useState(calculateUserLevel(0))
@@ -37,9 +37,9 @@ export default function TokenDisplay({ className = '', showProgress = false, sho
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
       {/* Token balance */}
-      <div className="flex items-center space-x-1 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">
-        <Coins className="w-4 h-4 text-amber-600" />
-        <span className="text-sm font-medium text-amber-700">
+      <div className=&quot;flex items-center space-x-1 bg-amber-50 px-2 py-1 rounded-md border border-amber-200&quot;>
+        <Coins className=&quot;w-4 h-4 text-amber-600&quot; />
+        <span className=&quot;text-sm font-medium text-amber-700&quot;>
           {formatTokens(tokens)}
         </span>
       </div>
@@ -47,25 +47,25 @@ export default function TokenDisplay({ className = '', showProgress = false, sho
       {/* Level badge */}
       {showLevel && (
         <Badge
-          variant="outline"
-          className="flex items-center space-x-1"
+          variant=&quot;outline&quot;
+          className=&quot;flex items-center space-x-1&quot;
           style={{ borderColor: getLevelColor(userLevel.level), color: getLevelColor(userLevel.level) }}
         >
           {levelIcon}
-          <span className="text-xs font-medium">{userLevel.name}</span>
+          <span className=&quot;text-xs font-medium&quot;>{userLevel.name}</span>
         </Badge>
       )}
 
       {/* Progress (detailed view) */}
-      {showProgress && userLevel.level !== 'diamond' && (
-        <Card className="w-48">
-          <CardContent className="p-3 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-600">To next level</span>
-              <span className="text-xs font-medium">{formatTokens(tokensToNext)}</span>
+      {showProgress && userLevel.level !== &apos;diamond&apos; && (
+        <Card className=&quot;w-48&quot;>
+          <CardContent className=&quot;p-3 space-y-2&quot;>
+            <div className=&quot;flex justify-between items-center&quot;>
+              <span className=&quot;text-xs text-gray-600&quot;>To next level</span>
+              <span className=&quot;text-xs font-medium&quot;>{formatTokens(tokensToNext)}</span>
             </div>
-            <Progress value={userLevel.progress} className="h-2" />
-            <div className="text-xs text-gray-500">
+            <Progress value={userLevel.progress} className=&quot;h-2&quot; />
+            <div className=&quot;text-xs text-gray-500&quot;>
               {userLevel.progress}% Complete
             </div>
           </CardContent>
@@ -77,21 +77,21 @@ export default function TokenDisplay({ className = '', showProgress = false, sho
 
 function getLevelIcon(level: string) {
   const icons = {
-    bronze: <TrendingUp className="w-3 h-3" />,
-    silver: <Star className="w-3 h-3" />,
-    gold: <Star className="w-3 h-3" />,
-    platinum: <Crown className="w-3 h-3" />,
-    diamond: <Crown className="w-3 h-3" />
+    bronze: <TrendingUp className=&quot;w-3 h-3&quot; />,
+    silver: <Star className=&quot;w-3 h-3&quot; />,
+    gold: <Star className=&quot;w-3 h-3&quot; />,
+    platinum: <Crown className=&quot;w-3 h-3&quot; />,
+    diamond: <Crown className=&quot;w-3 h-3&quot; />
   }
-  return icons[level as keyof typeof icons] || <TrendingUp className="w-3 h-3" />
+  return icons[level as keyof typeof icons] || <TrendingUp className=&quot;w-3 h-3&quot; />
 }
 
 // Simple component displaying only Token balance
-export function SimpleTokenDisplay({ className = '' }: { className?: string }) {
+export function SimpleTokenDisplay({ className = &apos;' }: { className?: string }) {
   return <TokenDisplay className={className} showProgress={false} showLevel={false} />
 }
 
 // Component displaying with level information  
-export function LevelTokenDisplay({ className = '' }: { className?: string }) {
+export function LevelTokenDisplay({ className = &apos;' }: { className?: string }) {
   return <TokenDisplay className={className} showProgress={false} showLevel={true} />
 }

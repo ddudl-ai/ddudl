@@ -4,7 +4,7 @@
  */
 
 import { createAdminClient } from '../admin'
-import { mockSupabaseClient, mockPosts, mockComments, mockUsers, mockChannels } from '@/lib/test/mocks'
+import { mockSupabaseClient, mockPosts, mockComments, mockUsers, mockChannels } from '../../../../test-utils/mocks'
 
 // Mock Supabase clients
 jest.mock('../admin', () => ({

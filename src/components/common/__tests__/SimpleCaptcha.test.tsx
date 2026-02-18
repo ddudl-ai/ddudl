@@ -1,37 +1,37 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
-import SimpleCaptcha from '../SimpleCaptcha'
+import { describe, it, expect, beforeEach, afterEach, jest } from &apos;@jest/globals&apos;
+import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
+import userEvent from &apos;@testing-library/user-event&apos;
+import &apos;@testing-library/jest-dom&apos;
+import SimpleCaptcha from &apos;../SimpleCaptcha&apos;
 
-describe('SimpleCaptcha Integration Tests', () => {
+describe(&apos;SimpleCaptcha Integration Tests&apos;, () => {
   const mockOnVerify = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
     // Mock Math.random to make tests deterministic
-    jest.spyOn(Math, 'random').mockImplementation(() => 0.5)
+    jest.spyOn(Math, &apos;random&apos;).mockImplementation(() => 0.5)
   })
 
   afterEach(() => {
     jest.restoreAllMocks()
   })
 
-  describe('Basic Functionality', () => {
-    it('should render captcha with question and input', () => {
+  describe(&apos;Basic Functionality&apos;, () => {
+    it(&apos;should render captcha with question and input&apos;, () => {
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
       // Should display a math question
       expect(screen.getByText(/[\d\s+\-×=?]+/)).toBeInTheDocument()
 
       // Should have an input field
-      expect(screen.getByPlaceholderText('답을 입력하세요')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)).toBeInTheDocument()
 
       // Should have a refresh button
-      expect(screen.getByRole('button')).toBeInTheDocument()
+      expect(screen.getByRole(&apos;button&apos;)).toBeInTheDocument()
     })
 
-    it('should generate addition question', () => {
+    it(&apos;should generate addition question&apos;, () => {
       // Mock Math.random to generate addition (first operation)
       Math.random = jest.fn()
         .mockReturnValueOnce(0) // Select addition operation (index 0)
@@ -40,10 +40,10 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      expect(screen.getByText('6 + 4 = ?')).toBeInTheDocument()
+      expect(screen.getByText(&apos;6 + 4 = ?&apos;)).toBeInTheDocument()
     })
 
-    it('should generate subtraction question', () => {
+    it(&apos;should generate subtraction question&apos;, () => {
       // Mock Math.random to generate subtraction (second operation)
       Math.random = jest.fn()
         .mockReturnValueOnce(0.5) // Select subtraction operation (index 1)
@@ -52,10 +52,10 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      expect(screen.getByText('10 - 2 = ?')).toBeInTheDocument()
+      expect(screen.getByText(&apos;10 - 2 = ?&apos;)).toBeInTheDocument()
     })
 
-    it('should generate multiplication question', () => {
+    it(&apos;should generate multiplication question&apos;, () => {
       // Mock Math.random to generate multiplication (third operation)
       Math.random = jest.fn()
         .mockReturnValueOnce(0.9) // Select multiplication operation (index 2)
@@ -64,18 +64,18 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      expect(screen.getByText('4 × 3 = ?')).toBeInTheDocument()
+      expect(screen.getByText(&apos;4 × 3 = ?&apos;)).toBeInTheDocument()
     })
 
-    it('should call onVerify with false initially', () => {
+    it(&apos;should call onVerify with false initially&apos;, () => {
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
       expect(mockOnVerify).toHaveBeenCalledWith(false)
     })
   })
 
-  describe('User Interaction', () => {
-    it('should verify correct answer', async () => {
+  describe(&apos;User Interaction&apos;, () => {
+    it(&apos;should verify correct answer&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up a predictable math question: 6 + 4 = 10
@@ -86,15 +86,15 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '10')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;10&apos;)
 
       expect(mockOnVerify).toHaveBeenCalledWith(true)
-      expect(screen.getByText('✓ 확인됨')).toBeInTheDocument()
-      expect(input).toHaveClass('border-green-500', 'bg-green-50')
+      expect(screen.getByText(&apos;✓ 확인됨&apos;)).toBeInTheDocument()
+      expect(input).toHaveClass(&apos;border-green-500&apos;, &apos;bg-green-50&apos;)
     })
 
-    it('should not verify incorrect answer', async () => {
+    it(&apos;should not verify incorrect answer&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up a predictable math question: 6 + 4 = 10
@@ -105,15 +105,15 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '15')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;15&apos;)
 
       expect(mockOnVerify).toHaveBeenCalledWith(false)
-      expect(screen.queryByText('✓ 확인됨')).not.toBeInTheDocument()
-      expect(input).not.toHaveClass('border-green-500')
+      expect(screen.queryByText(&apos;✓ 확인됨&apos;)).not.toBeInTheDocument()
+      expect(input).not.toHaveClass(&apos;border-green-500&apos;)
     })
 
-    it('should update verification status as user types', async () => {
+    it(&apos;should update verification status as user types&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up a predictable math question: 6 + 4 = 10
@@ -124,19 +124,19 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
 
       // Type wrong answer first
-      await user.type(input, '9')
+      await user.type(input, &apos;9&apos;)
       expect(mockOnVerify).toHaveBeenCalledWith(false)
 
       // Clear and type correct answer
       await user.clear(input)
-      await user.type(input, '10')
+      await user.type(input, &apos;10&apos;)
       expect(mockOnVerify).toHaveBeenCalledWith(true)
     })
 
-    it('should handle partial input correctly', async () => {
+    it(&apos;should handle partial input correctly&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up a predictable math question: 6 + 4 = 10
@@ -147,20 +147,20 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
 
       // Type partial answer
-      await user.type(input, '1')
+      await user.type(input, &apos;1&apos;)
       expect(mockOnVerify).toHaveBeenCalledWith(false)
 
       // Complete the answer
-      await user.type(input, '0')
+      await user.type(input, &apos;0&apos;)
       expect(mockOnVerify).toHaveBeenCalledWith(true)
     })
   })
 
-  describe('Refresh Functionality', () => {
-    it('should generate new question when refresh button is clicked', async () => {
+  describe(&apos;Refresh Functionality&apos;, () => {
+    it(&apos;should generate new question when refresh button is clicked&apos;, async () => {
       const user = userEvent.setup()
 
       // First question setup
@@ -176,45 +176,45 @@ describe('SimpleCaptcha Integration Tests', () => {
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
       // Verify initial question
-      expect(screen.getByText('6 + 4 = ?')).toBeInTheDocument()
+      expect(screen.getByText(&apos;6 + 4 = ?&apos;)).toBeInTheDocument()
 
       // Answer the initial question
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '10')
-      expect(screen.getByText('✓ 확인됨')).toBeInTheDocument()
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;10&apos;)
+      expect(screen.getByText(&apos;✓ 확인됨&apos;)).toBeInTheDocument()
 
       // Click refresh button
-      const refreshButton = screen.getByRole('button')
+      const refreshButton = screen.getByRole(&apos;button&apos;)
       await user.click(refreshButton)
 
       // Should generate new question and reset state
-      expect(input.value).toBe('')
-      expect(screen.queryByText('✓ 확인됨')).not.toBeInTheDocument()
+      expect(input.value).toBe(&apos;')
+      expect(screen.queryByText(&apos;✓ 확인됨&apos;)).not.toBeInTheDocument()
       expect(mockOnVerify).toHaveBeenLastCalledWith(false)
     })
 
-    it('should reset verification state when refreshing', async () => {
+    it(&apos;should reset verification state when refreshing&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
 
       // Answer correctly first
-      await user.type(input, '10') // Assuming this matches the generated answer
+      await user.type(input, &apos;10&apos;) // Assuming this matches the generated answer
 
       // Click refresh
-      const refreshButton = screen.getByRole('button')
+      const refreshButton = screen.getByRole(&apos;button&apos;)
       await user.click(refreshButton)
 
       // Verification should be reset
-      expect(input).not.toHaveClass('border-green-500')
-      expect(screen.queryByText('✓ 확인됨')).not.toBeInTheDocument()
+      expect(input).not.toHaveClass(&apos;border-green-500&apos;)
+      expect(screen.queryByText(&apos;✓ 확인됨&apos;)).not.toBeInTheDocument()
     })
   })
 
-  describe('Different Operation Types', () => {
-    it('should handle subtraction verification correctly', async () => {
+  describe(&apos;Different Operation Types&apos;, () => {
+    it(&apos;should handle subtraction verification correctly&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up subtraction: 10 - 2 = 8
@@ -225,16 +225,16 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      expect(screen.getByText('10 - 2 = ?')).toBeInTheDocument()
+      expect(screen.getByText(&apos;10 - 2 = ?&apos;)).toBeInTheDocument()
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '8')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;8&apos;)
 
       expect(mockOnVerify).toHaveBeenCalledWith(true)
-      expect(screen.getByText('✓ 확인됨')).toBeInTheDocument()
+      expect(screen.getByText(&apos;✓ 확인됨&apos;)).toBeInTheDocument()
     })
 
-    it('should handle multiplication verification correctly', async () => {
+    it(&apos;should handle multiplication verification correctly&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up multiplication: 4 × 3 = 12
@@ -245,45 +245,45 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      expect(screen.getByText('4 × 3 = ?')).toBeInTheDocument()
+      expect(screen.getByText(&apos;4 × 3 = ?&apos;)).toBeInTheDocument()
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '12')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;12&apos;)
 
       expect(mockOnVerify).toHaveBeenCalledWith(true)
-      expect(screen.getByText('✓ 확인됨')).toBeInTheDocument()
+      expect(screen.getByText(&apos;✓ 확인됨&apos;)).toBeInTheDocument()
     })
   })
 
-  describe('Edge Cases', () => {
-    it('should handle empty input', async () => {
+  describe(&apos;Edge Cases&apos;, () => {
+    it(&apos;should handle empty input&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
 
       // Type and then clear
-      await user.type(input, '10')
+      await user.type(input, &apos;10&apos;)
       await user.clear(input)
 
       expect(mockOnVerify).toHaveBeenLastCalledWith(false)
-      expect(screen.queryByText('✓ 확인됨')).not.toBeInTheDocument()
+      expect(screen.queryByText(&apos;✓ 확인됨&apos;)).not.toBeInTheDocument()
     })
 
-    it('should handle non-numeric input', async () => {
+    it(&apos;should handle non-numeric input&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, 'abc')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;abc&apos;)
 
       expect(mockOnVerify).toHaveBeenCalledWith(false)
-      expect(screen.queryByText('✓ 확인됨')).not.toBeInTheDocument()
+      expect(screen.queryByText(&apos;✓ 확인됨&apos;)).not.toBeInTheDocument()
     })
 
-    it('should handle leading/trailing whitespace', async () => {
+    it(&apos;should handle leading/trailing whitespace&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up a predictable math question: 6 + 4 = 10
@@ -294,59 +294,59 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, ' 10 ')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos; 10 &apos;)
 
       // Should not verify with whitespace
       expect(mockOnVerify).toHaveBeenCalledWith(false)
     })
 
-    it('should handle very large numbers', async () => {
+    it(&apos;should handle very large numbers&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '999999')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;999999&apos;)
 
       expect(mockOnVerify).toHaveBeenCalledWith(false)
     })
   })
 
-  describe('Accessibility', () => {
-    it('should be keyboard accessible', async () => {
+  describe(&apos;Accessibility&apos;, () => {
+    it(&apos;should be keyboard accessible&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
       // Tab to input
       await user.tab()
-      const input = screen.getByPlaceholderText('답을 입력하세요')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
       expect(input).toHaveFocus()
 
       // Tab to refresh button
       await user.tab()
-      const refreshButton = screen.getByRole('button')
+      const refreshButton = screen.getByRole(&apos;button&apos;)
       expect(refreshButton).toHaveFocus()
 
       // Enter should trigger refresh
-      await user.keyboard('{Enter}')
+      await user.keyboard(&apos;{Enter}&apos;)
       expect(mockOnVerify).toHaveBeenLastCalledWith(false)
     })
 
-    it('should have proper ARIA attributes', () => {
+    it(&apos;should have proper ARIA attributes&apos;, () => {
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      expect(input).toHaveAttribute('type', 'text')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      expect(input).toHaveAttribute(&apos;type&apos;, &apos;text&apos;)
 
-      const refreshButton = screen.getByRole('button')
-      expect(refreshButton).toHaveAttribute('type', 'button')
+      const refreshButton = screen.getByRole(&apos;button&apos;)
+      expect(refreshButton).toHaveAttribute(&apos;type&apos;, &apos;button&apos;)
     })
   })
 
-  describe('Visual States', () => {
-    it('should apply success styling when verified', async () => {
+  describe(&apos;Visual States&apos;, () => {
+    it(&apos;should apply success styling when verified&apos;, async () => {
       const user = userEvent.setup()
 
       // Set up a predictable answer
@@ -357,35 +357,35 @@ describe('SimpleCaptcha Integration Tests', () => {
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '10')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;10&apos;)
 
-      expect(input).toHaveClass('border-green-500', 'bg-green-50')
-      expect(screen.getByText('✓ 확인됨')).toHaveClass('text-green-600')
+      expect(input).toHaveClass(&apos;border-green-500&apos;, &apos;bg-green-50&apos;)
+      expect(screen.getByText(&apos;✓ 확인됨&apos;)).toHaveClass(&apos;text-green-600&apos;)
     })
 
-    it('should not apply success styling for wrong answer', async () => {
+    it(&apos;should not apply success styling for wrong answer&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '999')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;999&apos;)
 
-      expect(input).not.toHaveClass('border-green-500', 'bg-green-50')
+      expect(input).not.toHaveClass(&apos;border-green-500&apos;, &apos;bg-green-50&apos;)
     })
 
-    it('should apply custom className', () => {
-      const customClass = 'custom-captcha-class'
+    it(&apos;should apply custom className&apos;, () => {
+      const customClass = &apos;custom-captcha-class&apos;
       render(<SimpleCaptcha onVerify={mockOnVerify} className={customClass} />)
 
-      const container = screen.getByText(/[\d\s+\-×=?]+/).closest('div')
+      const container = screen.getByText(/[\d\s+\-×=?]+/).closest(&apos;div&apos;)
       expect(container).toHaveClass(customClass)
     })
   })
 
-  describe('Component Lifecycle', () => {
-    it('should generate question on mount', () => {
+  describe(&apos;Component Lifecycle&apos;, () => {
+    it(&apos;should generate question on mount&apos;, () => {
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
       // Should have a question displayed
@@ -393,7 +393,7 @@ describe('SimpleCaptcha Integration Tests', () => {
       expect(mockOnVerify).toHaveBeenCalledWith(false)
     })
 
-    it('should handle re-renders gracefully', () => {
+    it(&apos;should handle re-renders gracefully&apos;, () => {
       const { rerender } = render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
       const originalQuestion = screen.getByText(/[\d\s+\-×=?]+/).textContent
@@ -405,44 +405,44 @@ describe('SimpleCaptcha Integration Tests', () => {
       expect(screen.getByText(originalQuestion!)).toBeInTheDocument()
     })
 
-    it('should handle prop changes', async () => {
+    it(&apos;should handle prop changes&apos;, async () => {
       const user = userEvent.setup()
       const newOnVerify = jest.fn()
 
       const { rerender } = render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
-      await user.type(input, '10')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
+      await user.type(input, &apos;10&apos;)
 
       // Change onVerify prop
       rerender(<SimpleCaptcha onVerify={newOnVerify} />)
 
-      await user.type(input, '5')
+      await user.type(input, &apos;5&apos;)
 
       expect(newOnVerify).toHaveBeenCalled()
     })
   })
 
-  describe('Performance', () => {
-    it('should handle rapid input changes', async () => {
+  describe(&apos;Performance&apos;, () => {
+    it(&apos;should handle rapid input changes&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const input = screen.getByPlaceholderText('답을 입력하세요')
+      const input = screen.getByPlaceholderText(&apos;답을 입력하세요&apos;)
 
       // Rapid typing
-      await user.type(input, '123456789', { delay: 1 })
+      await user.type(input, &apos;123456789&apos;, { delay: 1 })
 
       expect(mockOnVerify).toHaveBeenCalledTimes(10) // Initial + 9 characters
     })
 
-    it('should handle multiple refresh clicks', async () => {
+    it(&apos;should handle multiple refresh clicks&apos;, async () => {
       const user = userEvent.setup()
 
       render(<SimpleCaptcha onVerify={mockOnVerify} />)
 
-      const refreshButton = screen.getByRole('button')
+      const refreshButton = screen.getByRole(&apos;button&apos;)
 
       // Click refresh multiple times rapidly
       await user.click(refreshButton)

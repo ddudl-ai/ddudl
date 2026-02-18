@@ -1,13 +1,13 @@
 // T025: Implementation of PostEditor component
 // Following TDD GREEN phase - making tests pass
 
-'use client'
+'use client&apos;
 
-import React, { useState, useCallback, useRef, useEffect } from 'react'
-import { cn } from '../../lib/utils'
-import { useLinkPreview, type UseLinkPreviewOptions } from '../../hooks/useLinkPreview'
-import { useFormValidation, type UseFormValidationOptions } from '../../hooks/useFormValidation'
-import type { LinkPreviewData } from '../../types/forms'
+import React, { useState, useCallback, useRef, useEffect } from &apos;react&apos;
+import { cn } from &apos;../../lib/utils&apos;
+import { useLinkPreview, type UseLinkPreviewOptions } from &apos;../../hooks/useLinkPreview&apos;
+import { useFormValidation, type UseFormValidationOptions } from &apos;../../hooks/useFormValidation&apos;
+import type { LinkPreviewData } from &apos;../../types/forms&apos;
 
 export interface PostEditorData {
   content: string
@@ -60,9 +60,9 @@ interface ToolbarButtonProps {
 function ToolbarButton({ onClick, icon, label, shortcut }: ToolbarButtonProps) {
   return (
     <button
-      type="button"
+      type=&quot;button&quot;
       onClick={onClick}
-      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+      className=&quot;p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors&quot;
       title={shortcut ? `${label} (${shortcut})` : label}
       aria-label={label}
     >
@@ -73,7 +73,7 @@ function ToolbarButton({ onClick, icon, label, shortcut }: ToolbarButtonProps) {
 
 export function PostEditor({
   className,
-  initialContent = '',
+  initialContent = &apos;',
   draftContent,
   onChange,
   onSave,
@@ -107,7 +107,7 @@ export function PostEditor({
   const debounceTimer = useRef<NodeJS.Timeout | null>(null)
   const autoSaveTimer = useRef<NodeJS.Timeout | null>(null)
 
-  const { validateField, getFieldError, isFieldValid } = useFormValidation({}, { mode: 'onChange', shouldFocusError: false })
+  const { validateField, getFieldError, isFieldValid } = useFormValidation({}, { mode: &apos;onChange&apos;, shouldFocusError: false })
 
   const {
     preview,
@@ -124,7 +124,7 @@ export function PostEditor({
   useEffect(() => {
     if (autoResize && contentRef.current) {
       const textarea = contentRef.current
-      textarea.style.height = 'auto'
+      textarea.style.height = &apos;auto&apos;
       textarea.style.height = `${textarea.scrollHeight}px`
     }
   }, [formData.content, autoResize])
@@ -159,19 +159,19 @@ export function PostEditor({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
-          case 'b':
+          case &apos;b&apos;:
             e.preventDefault()
-            applyFormat('bold')
+            applyFormat(&apos;bold&apos;)
             break
-          case 'i':
+          case &apos;i&apos;:
             e.preventDefault()
-            applyFormat('italic')
+            applyFormat(&apos;italic&apos;)
             break
-          case 'k':
+          case &apos;k&apos;:
             e.preventDefault()
-            applyFormat('link')
+            applyFormat(&apos;link&apos;)
             break
-          case 's':
+          case &apos;s&apos;:
             e.preventDefault()
             if (onSave) {
               onSave(formData.content)
@@ -181,8 +181,8 @@ export function PostEditor({
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    document.addEventListener(&apos;keydown&apos;, handleKeyDown)
+    return () => document.removeEventListener(&apos;keydown&apos;, handleKeyDown)
   }, [enableKeyboardShortcuts, formData, onSave])
 
   // Hide draft restored message
@@ -193,7 +193,7 @@ export function PostEditor({
     }
   }, [showDraftRestored])
 
-  const handleInputChange = useCallback((field: 'content', value: string) => {
+  const handleInputChange = useCallback((field: &apos;content&apos;, value: string) => {
     const newData = { ...formData, [field]: value }
     setFormData(newData)
 
@@ -218,12 +218,12 @@ export function PostEditor({
     }
 
     // Link preview for content
-    if (field === 'content' && enableLinkPreview) {
+    if (field === &apos;content&apos; && enableLinkPreview) {
       onTextChange(value)
     }
   }, [formData, onChange, debounceMs, validateOnChange, validateField, enableLinkPreview, onTextChange])
 
-  const handleBlur = (field: 'content') => {
+  const handleBlur = (field: &apos;content&apos;) => {
     if (validateOnBlur) {
       validateField(field, formData[field])
     }
@@ -231,18 +231,18 @@ export function PostEditor({
 
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    handleInputChange('content', e.target.value)
+    handleInputChange(&apos;content&apos;, e.target.value)
   }
 
   const handleTabKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (enableTabIndent && e.key === 'Tab') {
+    if (enableTabIndent && e.key === &apos;Tab&apos;) {
       e.preventDefault()
       const textarea = e.currentTarget
       const start = textarea.selectionStart
       const end = textarea.selectionEnd
 
       const value = textarea.value
-      const newValue = value.substring(0, start) + '    ' + value.substring(end)
+      const newValue = value.substring(0, start) + &apos;    &apos; + value.substring(end)
 
       setFormData(prev => ({ ...prev, content: newValue }))
 
@@ -259,7 +259,7 @@ export function PostEditor({
     // Check for images first
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
-      if (item.kind === 'file' && item.type.startsWith('image/')) {
+      if (item.kind === &apos;file&apos; && item.type.startsWith(&apos;image/&apos;)) {
         const file = item.getAsFile()
         if (file && onImagePaste) {
           e.preventDefault()
@@ -271,14 +271,14 @@ export function PostEditor({
 
     // Handle HTML paste conversion
     if (convertPastedHtml) {
-      const htmlData = e.clipboardData.getData('text/html')
+      const htmlData = e.clipboardData.getData(&apos;text/html&apos;)
       if (htmlData) {
         e.preventDefault()
         // Simple HTML to Markdown conversion
         const markdownText = htmlData
-          .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
-          .replace(/<em>(.*?)<\/em>/g, '*$1*')
-          .replace(/<[^>]+>/g, '') // Strip remaining HTML
+          .replace(/<strong>(.*?)<\/strong>/g, &apos;**$1**&apos;)
+          .replace(/<em>(.*?)<\/em>/g, &apos;*$1*&apos;)
+          .replace(/<[^>]+>/g, &apos;') // Strip remaining HTML
 
         const textarea = e.currentTarget
         const start = textarea.selectionStart
@@ -286,12 +286,12 @@ export function PostEditor({
         const currentValue = textarea.value
 
         const newValue = currentValue.substring(0, start) + markdownText + currentValue.substring(end)
-        handleInputChange('content', newValue)
+        handleInputChange(&apos;content&apos;, newValue)
       }
     }
   }
 
-  const applyFormat = (format: 'bold' | 'italic' | 'link' | 'list' | 'code') => {
+  const applyFormat = (format: &apos;bold&apos; | &apos;italic&apos; | &apos;link&apos; | &apos;list&apos; | &apos;code&apos;) => {
     const textarea = contentRef.current
     if (!textarea) return
 
@@ -300,34 +300,34 @@ export function PostEditor({
     const selectedText = textarea.value.substring(start, end)
     const currentValue = textarea.value
 
-    let replacement = ''
+    let replacement = &apos;'
     let cursorOffset = 0
 
     switch (format) {
-      case 'bold':
+      case &apos;bold&apos;:
         replacement = `**${selectedText}**`
         cursorOffset = selectedText ? 2 : 2
         break
-      case 'italic':
+      case &apos;italic&apos;:
         replacement = `*${selectedText}*`
         cursorOffset = selectedText ? 1 : 1
         break
-      case 'link':
+      case &apos;link&apos;:
         replacement = `[${selectedText}]()`
         cursorOffset = selectedText ? selectedText.length + 3 : 1
         break
-      case 'list':
+      case &apos;list&apos;:
         replacement = `- ${selectedText}`
         cursorOffset = selectedText ? selectedText.length + 2 : 2
         break
-      case 'code':
-        replacement = '```\n\n```'
+      case &apos;code&apos;:
+        replacement = &apos;```\n\n```&apos;
         cursorOffset = 4
         break
     }
 
     const newValue = currentValue.substring(0, start) + replacement + currentValue.substring(end)
-    handleInputChange('content', newValue)
+    handleInputChange(&apos;content&apos;, newValue)
 
     // Set cursor position
     setTimeout(() => {
@@ -341,29 +341,29 @@ export function PostEditor({
   }
 
   return (
-    <div className={cn('post-editor space-y-4', className)}>
+    <div className={cn(&apos;post-editor space-y-4&apos;, className)}>
       {/* Draft Restored Notice */}
       {showDraftRestored && (
-        <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded">
+        <div className=&quot;text-sm text-blue-600 bg-blue-50 p-3 rounded&quot;>
           임시저장에서 복원됨
         </div>
       )}
 
 
       {/* Content Editor */}
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <label htmlFor="post-content" className="block text-sm font-medium text-gray-700">
+      <div className=&quot;space-y-2&quot;>
+        <div className=&quot;flex justify-between items-center&quot;>
+          <label htmlFor=&quot;post-content&quot; className=&quot;block text-sm font-medium text-gray-700&quot;>
             내용
           </label>
           {showToolbar && collapsibleToolbar && (
             <button
-              type="button"
+              type=&quot;button&quot;
               onClick={toggleToolbar}
-              className="text-sm text-gray-600 hover:text-gray-900"
-              aria-label={toolbarVisible ? '도구모음 접기' : '도구모음 펼치기'}
+              className=&quot;text-sm text-gray-600 hover:text-gray-900&quot;
+              aria-label={toolbarVisible ? &apos;도구모음 접기&apos; : &apos;도구모음 펼치기&apos;}
             >
-              {toolbarVisible ? '도구모음 접기' : '도구모음 펼치기'}
+              {toolbarVisible ? &apos;도구모음 접기&apos; : &apos;도구모음 펼치기&apos;}
             </button>
           )}
         </div>
@@ -371,68 +371,68 @@ export function PostEditor({
         {/* Toolbar */}
         {showToolbar && toolbarVisible && (
           <div
-            className="flex gap-1 p-2 border rounded bg-gray-50"
-            role="toolbar"
-            aria-label="편집 도구"
+            className=&quot;flex gap-1 p-2 border rounded bg-gray-50&quot;
+            role=&quot;toolbar&quot;
+            aria-label=&quot;편집 도구&quot;
           >
             <ToolbarButton
-              onClick={() => applyFormat('bold')}
-              icon="B"
-              label="굵게"
-              shortcut="Ctrl+B"
+              onClick={() => applyFormat(&apos;bold&apos;)}
+              icon=&quot;B&quot;
+              label=&quot;굵게&quot;
+              shortcut=&quot;Ctrl+B&quot;
             />
             <ToolbarButton
-              onClick={() => applyFormat('italic')}
-              icon="I"
-              label="기울임"
-              shortcut="Ctrl+I"
+              onClick={() => applyFormat(&apos;italic&apos;)}
+              icon=&quot;I&quot;
+              label=&quot;기울임&quot;
+              shortcut=&quot;Ctrl+I&quot;
             />
             <ToolbarButton
-              onClick={() => applyFormat('link')}
-              icon="🔗"
-              label="링크"
-              shortcut="Ctrl+K"
+              onClick={() => applyFormat(&apos;link&apos;)}
+              icon=&quot;🔗&quot;
+              label=&quot;링크&quot;
+              shortcut=&quot;Ctrl+K&quot;
             />
             <ToolbarButton
-              onClick={() => applyFormat('list')}
-              icon="•"
-              label="목록"
+              onClick={() => applyFormat(&apos;list&apos;)}
+              icon=&quot;•&quot;
+              label=&quot;목록&quot;
             />
             <ToolbarButton
-              onClick={() => applyFormat('code')}
-              icon="{ }"
-              label="코드"
+              onClick={() => applyFormat(&apos;code&apos;)}
+              icon=&quot;{ }&quot;
+              label=&quot;코드&quot;
             />
           </div>
         )}
 
         <textarea
           ref={contentRef}
-          id="post-content"
-          name="content"
+          id=&quot;post-content&quot;
+          name=&quot;content&quot;
           value={formData.content}
           onChange={handleContentChange}
-          onBlur={() => handleBlur('content')}
+          onBlur={() => handleBlur(&apos;content&apos;)}
           onKeyDown={handleTabKey}
           onPaste={handlePaste}
           maxLength={contentMaxLength}
           className={cn(
-            'w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-            autoResize ? 'resize-none overflow-hidden' : 'min-h-[200px] resize-y'
+            &apos;w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500&apos;,
+            autoResize ? &apos;resize-none overflow-hidden&apos; : &apos;min-h-[200px] resize-y&apos;
           )}
-          placeholder="게시물 내용을 입력하세요"
-          aria-describedby={!isFieldValid('content') ? 'content-error' : 'content-help'}
+          placeholder=&quot;게시물 내용을 입력하세요&quot;
+          aria-describedby={!isFieldValid(&apos;content&apos;) ? &apos;content-error&apos; : &apos;content-help&apos;}
         />
 
-        <div className="flex justify-between text-sm text-gray-500">
+        <div className=&quot;flex justify-between text-sm text-gray-500&quot;>
           <div>
-            {getFieldError('content') && (
-              <span id="content-error" className="text-red-600" role="alert">
-                {getFieldError('content')}
+            {getFieldError(&apos;content&apos;) && (
+              <span id=&quot;content-error&quot; className=&quot;text-red-600&quot; role=&quot;alert&quot;>
+                {getFieldError(&apos;content&apos;)}
               </span>
             )}
           </div>
-          <div id="content-help">
+          <div id=&quot;content-help&quot;>
             {formData.content.length}자
             {contentMaxLength && ` / ${contentMaxLength}`}
           </div>
@@ -441,42 +441,42 @@ export function PostEditor({
 
       {/* Link Preview */}
       {enableLinkPreview && (
-        <div className="space-y-2">
+        <div className=&quot;space-y-2&quot;>
           {linkPreviewLoading && (
-            <div className="text-sm text-gray-600">
+            <div className=&quot;text-sm text-gray-600&quot;>
               링크 미리보기 로딩 중...
             </div>
           )}
 
           {linkPreviewError && (
-            <div className="text-sm text-red-600">
+            <div className=&quot;text-sm text-red-600&quot;>
               링크 미리보기를 불러올 수 없습니다
             </div>
           )}
 
           {preview && (
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h4 className="font-medium">{preview.title}</h4>
+            <div className=&quot;border rounded-lg p-4 bg-gray-50&quot;>
+              <div className=&quot;flex justify-between items-start&quot;>
+                <div className=&quot;flex-1&quot;>
+                  <h4 className=&quot;font-medium&quot;>{preview.title}</h4>
                   {preview.description && (
-                    <p className="text-sm text-gray-600 mt-1">{preview.description}</p>
+                    <p className=&quot;text-sm text-gray-600 mt-1&quot;>{preview.description}</p>
                   )}
                   {preview.siteName && (
-                    <p className="text-xs text-gray-500 mt-1">{preview.siteName}</p>
+                    <p className=&quot;text-xs text-gray-500 mt-1&quot;>{preview.siteName}</p>
                   )}
                 </div>
                 {preview.image && (
                   <img
                     src={preview.image}
-                    alt="Link preview"
-                    className="w-16 h-16 object-cover rounded ml-4"
+                    alt=&quot;Link preview&quot;
+                    className=&quot;w-16 h-16 object-cover rounded ml-4&quot;
                   />
                 )}
                 <button
                   onClick={clearPreview}
-                  className="ml-2 text-gray-400 hover:text-gray-600"
-                  aria-label="미리보기 닫기"
+                  className=&quot;ml-2 text-gray-400 hover:text-gray-600&quot;
+                  aria-label=&quot;미리보기 닫기&quot;
                 >
                   ✕
                 </button>
@@ -488,8 +488,8 @@ export function PostEditor({
 
       {/* Draft Status */}
       {showDraftStatus && (
-        <div className="text-sm text-gray-500">
-          {draftSaved ? '임시저장됨' : ''}
+        <div className=&quot;text-sm text-gray-500&quot;>
+          {draftSaved ? &apos;임시저장됨&apos; : &apos;'}
         </div>
       )}
     </div>

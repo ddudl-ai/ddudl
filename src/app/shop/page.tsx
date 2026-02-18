@@ -1,15 +1,15 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useToast } from '@/hooks/use-toast'
-import { useAuthStore } from '@/stores/authStore'
-import { TokenBalance } from '@/components/tokens/TokenBalance'
-import { TokenHistory } from '@/components/tokens/TokenHistory'
+import { useEffect, useState } from &apos;react&apos;
+import { createClientComponentClient } from &apos;@supabase/auth-helpers-nextjs&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
+import { Button } from &apos;@/components/ui/button&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { Tabs, TabsContent, TabsList, TabsTrigger } from &apos;@/components/ui/tabs&apos;
+import { useToast } from &apos;@/hooks/use-toast&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
+import { TokenBalance } from &apos;@/components/tokens/TokenBalance&apos;
+import { TokenHistory } from &apos;@/components/tokens/TokenHistory&apos;
 import {
   Coins,
   Rocket,
@@ -20,7 +20,7 @@ import {
   ShoppingBag,
   TrendingUp,
   Crown
-} from 'lucide-react'
+} from &apos;lucide-react&apos;
 
 interface ShopItem {
   id: string
@@ -28,90 +28,90 @@ interface ShopItem {
   description: string
   cost: number
   icon: React.ReactNode
-  category: 'boost' | 'premium' | 'cosmetic'
+  category: &apos;boost&apos; | &apos;premium&apos; | &apos;cosmetic&apos;
   action: string
   duration?: string
 }
 
 const shopItems: ShopItem[] = [
   {
-    id: '1',
-    name: '1-hour Boost',
-    description: 'Pin your post to the top for 1 hour',
+    id: &apos;1&apos;,
+    name: &apos;1-hour Boost&apos;,
+    description: &apos;Pin your post to the top for 1 hour&apos;,
     cost: 100,
-    icon: <Rocket className="w-6 h-6" />,
-    category: 'boost',
-    action: 'post_boost_1h',
-    duration: '1 hour'
+    icon: <Rocket className=&quot;w-6 h-6&quot; />,
+    category: &apos;boost&apos;,
+    action: &apos;post_boost_1h&apos;,
+    duration: &apos;1 hour&apos;
   },
   {
-    id: '2',
-    name: '6-hour Boost',
-    description: 'Pin your post to the top for 6 hours',
+    id: &apos;2&apos;,
+    name: &apos;6-hour Boost&apos;,
+    description: &apos;Pin your post to the top for 6 hours&apos;,
     cost: 500,
-    icon: <TrendingUp className="w-6 h-6" />,
-    category: 'boost',
-    action: 'post_boost_6h',
-    duration: '6 hours'
+    icon: <TrendingUp className=&quot;w-6 h-6&quot; />,
+    category: &apos;boost&apos;,
+    action: &apos;post_boost_6h&apos;,
+    duration: &apos;6 hours&apos;
   },
   {
-    id: '3',
-    name: '24-hour Boost',
-    description: 'Pin your post to the top for 24 hours',
+    id: &apos;3&apos;,
+    name: &apos;24-hour Boost&apos;,
+    description: &apos;Pin your post to the top for 24 hours&apos;,
     cost: 1500,
-    icon: <Rocket className="w-6 h-6 text-orange-500" />,
-    category: 'boost',
-    action: 'post_boost_24h',
-    duration: '24 hours'
+    icon: <Rocket className=&quot;w-6 h-6 text-orange-500&quot; />,
+    category: &apos;boost&apos;,
+    action: &apos;post_boost_24h&apos;,
+    duration: &apos;24 hours&apos;
   },
   {
-    id: '4',
-    name: 'Premium Badge (7 days)',
-    description: 'Display premium badge on profile',
+    id: &apos;4&apos;,
+    name: &apos;Premium Badge (7 days)&apos;,
+    description: &apos;Display premium badge on profile&apos;,
     cost: 1000,
-    icon: <Star className="w-6 h-6 text-yellow-500" />,
-    category: 'premium',
-    action: 'premium_badge_7d',
-    duration: '7 days'
+    icon: <Star className=&quot;w-6 h-6 text-yellow-500&quot; />,
+    category: &apos;premium&apos;,
+    action: &apos;premium_badge_7d&apos;,
+    duration: &apos;7 days&apos;
   },
   {
-    id: '5',
-    name: 'Premium Badge (30 days)',
-    description: 'Display premium badge on profile',
+    id: &apos;5&apos;,
+    name: &apos;Premium Badge (30 days)&apos;,
+    description: &apos;Display premium badge on profile&apos;,
     cost: 3000,
-    icon: <Crown className="w-6 h-6 text-yellow-500" />,
-    category: 'premium',
-    action: 'premium_badge_30d',
-    duration: '30 days'
+    icon: <Crown className=&quot;w-6 h-6 text-yellow-500&quot; />,
+    category: &apos;premium&apos;,
+    action: &apos;premium_badge_30d&apos;,
+    duration: &apos;30 days&apos;
   },
   {
-    id: '6',
-    name: 'Custom Flair',
-    description: 'Set custom user flair',
+    id: &apos;6&apos;,
+    name: &apos;Custom Flair&apos;,
+    description: &apos;Set custom user flair&apos;,
     cost: 500,
-    icon: <Palette className="w-6 h-6 text-purple-500" />,
-    category: 'cosmetic',
-    action: 'custom_flair'
+    icon: <Palette className=&quot;w-6 h-6 text-purple-500&quot; />,
+    category: &apos;cosmetic&apos;,
+    action: &apos;custom_flair&apos;
   },
   {
-    id: '7',
-    name: 'Highlight Comment',
-    description: 'Highlight comments (7 days)',
+    id: &apos;7&apos;,
+    name: &apos;Highlight Comment&apos;,
+    description: &apos;Highlight comments (7 days)&apos;,
     cost: 50,
-    icon: <MessageSquare className="w-6 h-6 text-blue-500" />,
-    category: 'cosmetic',
-    action: 'highlight_comment',
-    duration: '7 days'
+    icon: <MessageSquare className=&quot;w-6 h-6 text-blue-500&quot; />,
+    category: &apos;cosmetic&apos;,
+    action: &apos;highlight_comment&apos;,
+    duration: &apos;7 days&apos;
   },
   {
-    id: '8',
-    name: 'Pin Post (1 day)',
-    description: 'Pin post to top of channel',
+    id: &apos;8&apos;,
+    name: &apos;Pin Post (1 day)&apos;,
+    description: &apos;Pin post to top of channel&apos;,
     cost: 2000,
-    icon: <Pin className="w-6 h-6 text-red-500" />,
-    category: 'boost',
-    action: 'pin_post_1d',
-    duration: '1 day'
+    icon: <Pin className=&quot;w-6 h-6 text-red-500&quot; />,
+    category: &apos;boost&apos;,
+    action: &apos;pin_post_1d&apos;,
+    duration: &apos;1 day&apos;
   }
 ]
 
@@ -121,8 +121,8 @@ export default function ShopPage() {
   const { user } = useAuthStore()
   const { toast } = useToast()
   const supabase = createClientComponentClient({
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co',
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key-for-build'
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || &apos;https://example.supabase.co&apos;,
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || &apos;dummy-key-for-build&apos;
   })
 
   useEffect(() => {
@@ -136,43 +136,43 @@ export default function ShopPage() {
 
     try {
       const { data, error } = await supabase
-        .from('users')
-        .select('karma_points')
-        .eq('id', user.id)
+        .from(&apos;users&apos;)
+        .select(&apos;karma_points&apos;)
+        .eq(&apos;id&apos;, user.id)
         .single()
 
       if (!error && data) {
         setBalance(data.karma_points)
       }
     } catch (error) {
-      console.error('Failed to fetch balance:', error)
+      console.error(&apos;Failed to fetch balance:&apos;, error)
     }
   }
 
   const handlePurchase = async (item: ShopItem) => {
     if (!user?.id) {
       toast({
-        title: 'Login Required',
-        description: 'Please log in to purchase.',
-        variant: 'destructive'
+        title: &apos;Login Required&apos;,
+        description: &apos;Please log in to purchase.&apos;,
+        variant: &apos;destructive&apos;
       })
       return
     }
 
     if (balance < item.cost) {
       toast({
-        title: 'Insufficient Tokens',
+        title: &apos;Insufficient Tokens&apos;,
         description: `You need ${item.cost - balance} more tokens.`,
-        variant: 'destructive'
+        variant: &apos;destructive&apos;
       })
       return
     }
 
     setPurchasing(item.id)
     try {
-      const response = await fetch('/api/tokens/spend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(&apos;/api/tokens/spend&apos;, {
+        method: &apos;POST&apos;,
+        headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
         body: JSON.stringify({
           userId: user.id,
           action: item.action,
@@ -184,22 +184,22 @@ export default function ShopPage() {
 
       if (response.ok) {
         toast({
-          title: 'Purchase Complete!',
+          title: &apos;Purchase Complete!&apos;,
           description: `You have purchased ${item.name}.`,
         })
         setBalance(data.newBalance)
       } else {
         toast({
-          title: 'Purchase Failed',
-          description: data.message || 'An error occurred.',
-          variant: 'destructive'
+          title: &apos;Purchase Failed&apos;,
+          description: data.message || &apos;An error occurred.&apos;,
+          variant: &apos;destructive&apos;
         })
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'An error occurred while processing your purchase.',
-        variant: 'destructive'
+        title: &apos;Error&apos;,
+        description: &apos;An error occurred while processing your purchase.&apos;,
+        variant: &apos;destructive&apos;
       })
     } finally {
       setPurchasing(null)
@@ -209,98 +209,98 @@ export default function ShopPage() {
   const ItemCard = ({ item }: { item: ShopItem }) => (
     <Card>
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+        <div className=&quot;flex items-start justify-between&quot;>
+          <div className=&quot;flex items-center gap-3&quot;>
             {item.icon}
             <div>
-              <CardTitle className="text-lg">{item.name}</CardTitle>
+              <CardTitle className=&quot;text-lg&quot;>{item.name}</CardTitle>
               {item.duration && (
-                <Badge variant="secondary" className="mt-1">
+                <Badge variant=&quot;secondary&quot; className=&quot;mt-1&quot;>
                   {item.duration}
                 </Badge>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Coins className="w-4 h-4" />
-            <span className="font-bold">{item.cost}</span>
+          <div className=&quot;flex items-center gap-1&quot;>
+            <Coins className=&quot;w-4 h-4&quot; />
+            <span className=&quot;font-bold&quot;>{item.cost}</span>
           </div>
         </div>
-        <CardDescription className="mt-2">{item.description}</CardDescription>
+        <CardDescription className=&quot;mt-2&quot;>{item.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Button
           onClick={() => handlePurchase(item)}
           disabled={purchasing === item.id || balance < item.cost}
-          className="w-full"
+          className=&quot;w-full&quot;
         >
-          {purchasing === item.id ? 'Purchasing...' :
-            balance < item.cost ? `${item.cost - balance} tokens short` : 'Purchase'}
+          {purchasing === item.id ? &apos;Purchasing...&apos; :
+            balance < item.cost ? `${item.cost - balance} tokens short` : &apos;Purchase&apos;}
         </Button>
       </CardContent>
     </Card>
   )
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className=&quot;container mx-auto py-8&quot;>
+      <div className=&quot;flex items-center justify-between mb-8&quot;>
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <ShoppingBag className="w-8 h-8" />
+          <h1 className=&quot;text-3xl font-bold flex items-center gap-3&quot;>
+            <ShoppingBag className=&quot;w-8 h-8&quot; />
             Token Shop
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className=&quot;text-muted-foreground mt-2&quot;>
             Purchase various features with your tokens
           </p>
         </div>
-        <TokenBalance className="scale-125" />
+        <TokenBalance className=&quot;scale-125&quot; />
       </div>
 
-      <Tabs defaultValue="shop" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="shop">Shop</TabsTrigger>
-          <TabsTrigger value="history">Transaction History</TabsTrigger>
+      <Tabs defaultValue=&quot;shop&quot; className=&quot;space-y-6&quot;>
+        <TabsList className=&quot;grid w-full grid-cols-2&quot;>
+          <TabsTrigger value=&quot;shop&quot;>Shop</TabsTrigger>
+          <TabsTrigger value=&quot;history&quot;>Transaction History</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="shop" className="space-y-6">
+        <TabsContent value=&quot;shop&quot; className=&quot;space-y-6&quot;>
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Rocket className="w-5 h-5" />
+            <h2 className=&quot;text-xl font-semibold mb-4 flex items-center gap-2&quot;>
+              <Rocket className=&quot;w-5 h-5&quot; />
               Boost
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {shopItems.filter(item => item.category === 'boost').map(item => (
+            <div className=&quot;grid gap-4 md:grid-cols-2 lg:grid-cols-3&quot;>
+              {shopItems.filter(item => item.category === &apos;boost&apos;).map(item => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Star className="w-5 h-5" />
+            <h2 className=&quot;text-xl font-semibold mb-4 flex items-center gap-2&quot;>
+              <Star className=&quot;w-5 h-5&quot; />
               Premium
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {shopItems.filter(item => item.category === 'premium').map(item => (
+            <div className=&quot;grid gap-4 md:grid-cols-2 lg:grid-cols-3&quot;>
+              {shopItems.filter(item => item.category === &apos;premium&apos;).map(item => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Palette className="w-5 h-5" />
+            <h2 className=&quot;text-xl font-semibold mb-4 flex items-center gap-2&quot;>
+              <Palette className=&quot;w-5 h-5&quot; />
               Cosmetic
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {shopItems.filter(item => item.category === 'cosmetic').map(item => (
+            <div className=&quot;grid gap-4 md:grid-cols-2 lg:grid-cols-3&quot;>
+              {shopItems.filter(item => item.category === &apos;cosmetic&apos;).map(item => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="history">
+        <TabsContent value=&quot;history&quot;>
           <TokenHistory />
         </TabsContent>
       </Tabs>

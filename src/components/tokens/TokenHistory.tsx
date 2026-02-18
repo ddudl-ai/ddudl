@@ -1,20 +1,20 @@
-'use client'
+'use client&apos;
 
-import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ArrowDownIcon, ArrowUpIcon, Coins } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
-import { ko } from 'date-fns/locale'
-import { useAuthStore } from '@/stores/authStore'
+import { useEffect, useState } from &apos;react&apos;
+import { createClientComponentClient } from &apos;@supabase/auth-helpers-nextjs&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
+import { Badge } from &apos;@/components/ui/badge&apos;
+import { ScrollArea } from &apos;@/components/ui/scroll-area&apos;
+import { Skeleton } from &apos;@/components/ui/skeleton&apos;
+import { ArrowDownIcon, ArrowUpIcon, Coins } from &apos;lucide-react&apos;
+import { formatDistanceToNow } from &apos;date-fns&apos;
+import { ko } from &apos;date-fns/locale&apos;
+import { useAuthStore } from &apos;@/stores/authStore&apos;
 
 interface TokenTransaction {
   id: string
   amount: number
-  type: 'earn' | 'spend'
+  type: &apos;earn&apos; | &apos;spend&apos;
   category: string
   description: string
   metadata?: any
@@ -26,8 +26,8 @@ export function TokenHistory() {
   const [loading, setLoading] = useState(true)
   const { user } = useAuthStore()
   const supabase = createClientComponentClient({
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co',
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key-for-build'
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || &apos;https://example.supabase.co&apos;,
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || &apos;dummy-key-for-build&apos;
   })
 
   useEffect(() => {
@@ -42,17 +42,17 @@ export function TokenHistory() {
     setLoading(true)
     try {
       const { data, error } = await supabase
-        .from('token_transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .from(&apos;token_transactions&apos;)
+        .select(&apos;*&apos;)
+        .eq(&apos;user_id&apos;, user.id)
+        .order(&apos;created_at&apos;, { ascending: false })
         .limit(50)
 
       if (!error && data) {
         setTransactions(data)
       }
     } catch (error) {
-      console.error('Failed to fetch transactions:', error)
+      console.error(&apos;Failed to fetch transactions:&apos;, error)
     } finally {
       setLoading(false)
     }
@@ -77,9 +77,9 @@ export function TokenHistory() {
           <CardDescription>최근 50개의 거래 내역</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className=&quot;space-y-3&quot;>
             {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
+              <Skeleton key={i} className=&quot;h-12 w-full&quot; />
             ))}
           </div>
         </CardContent>
@@ -95,7 +95,7 @@ export function TokenHistory() {
           <CardDescription>최근 50개의 거래 내역</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-center text-muted-foreground py-8">
+          <p className=&quot;text-center text-muted-foreground py-8&quot;>
             거래 내역이 없습니다.
           </p>
         </CardContent>
@@ -110,27 +110,27 @@ export function TokenHistory() {
         <CardDescription>최근 50개의 거래 내역</CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-3">
+        <ScrollArea className=&quot;h-[400px] pr-4&quot;>
+          <div className=&quot;space-y-3&quot;>
             {transactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between py-3 border-b last:border-0"
+                className=&quot;flex items-center justify-between py-3 border-b last:border-0&quot;
               >
-                <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-full ${transaction.type === 'earn'
-                    ? 'bg-green-100 text-green-600'
-                    : 'bg-red-100 text-red-600'
+                <div className=&quot;flex items-start gap-3&quot;>
+                  <div className={`p-2 rounded-full ${transaction.type === &apos;earn&apos;
+                    ? &apos;bg-green-100 text-green-600&apos;
+                    : &apos;bg-red-100 text-red-600&apos;
                     }`}>
-                    {transaction.type === 'earn' ? (
-                      <ArrowDownIcon className="w-4 h-4" />
+                    {transaction.type === &apos;earn&apos; ? (
+                      <ArrowDownIcon className=&quot;w-4 h-4&quot; />
                     ) : (
-                      <ArrowUpIcon className="w-4 h-4" />
+                      <ArrowUpIcon className=&quot;w-4 h-4&quot; />
                     )}
                   </div>
                   <div>
-                    <p className="font-medium">{transaction.description}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className=&quot;font-medium&quot;>{transaction.description}</p>
+                    <p className=&quot;text-sm text-muted-foreground&quot;>
                       {formatDistanceToNow(new Date(transaction.created_at), {
                         addSuffix: true,
                         locale: ko
@@ -138,12 +138,12 @@ export function TokenHistory() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`font-bold ${transaction.type === 'earn' ? 'text-green-600' : 'text-red-600'
+                <div className=&quot;flex items-center gap-2&quot;>
+                  <span className={`font-bold ${transaction.type === &apos;earn&apos; ? &apos;text-green-600&apos; : &apos;text-red-600&apos;
                     }`}>
-                    {transaction.type === 'earn' ? '+' : '-'}{transaction.amount}
+                    {transaction.type === &apos;earn&apos; ? &apos;+&apos; : &apos;-&apos;}{transaction.amount}
                   </span>
-                  <Coins className="w-4 h-4 text-muted-foreground" />
+                  <Coins className=&quot;w-4 h-4 text-muted-foreground&quot; />
                 </div>
               </div>
             ))}

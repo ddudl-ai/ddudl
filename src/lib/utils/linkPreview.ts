@@ -145,7 +145,7 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreviewMetadata
 /**
  * 제목 추출
  */
-function extractTitle($: any): string {
+function extractTitle($: cheerio.CheerioAPI): string {
   // Open Graph title 우선
   let title = $('meta[property="og:title"]').attr('content')
 
@@ -170,7 +170,7 @@ function extractTitle($: any): string {
 /**
  * 설명 추출
  */
-function extractDescription($: any): string | undefined {
+function extractDescription($: cheerio.CheerioAPI): string | undefined {
   // Open Graph description 우선
   let description = $('meta[property="og:description"]').attr('content')
 
@@ -194,7 +194,7 @@ function extractDescription($: any): string | undefined {
 /**
  * 이미지 추출
  */
-function extractImage($: any): string | undefined {
+function extractImage($: cheerio.CheerioAPI): string | undefined {
   // Open Graph image 우선
   let image = $('meta[property="og:image"]').attr('content')
 
@@ -228,7 +228,7 @@ function extractImage($: any): string | undefined {
 /**
  * 사이트 이름 추출
  */
-function extractSiteName($: any): string | undefined {
+function extractSiteName($: cheerio.CheerioAPI): string | undefined {
   return $('meta[property="og:site_name"]').attr('content') ||
          $('meta[name="application-name"]').attr('content')
 }
@@ -257,7 +257,7 @@ function extractType($: any, url: string): 'website' | 'video' | 'article' | 'tw
 /**
  * 작성자 추출
  */
-function extractAuthor($: any): string | undefined {
+function extractAuthor($: cheerio.CheerioAPI): string | undefined {
   return $('meta[name="author"]').attr('content') ||
          $('meta[property="article:author"]').attr('content') ||
          $('meta[name="twitter:creator"]').attr('content')
@@ -266,7 +266,7 @@ function extractAuthor($: any): string | undefined {
 /**
  * 발행 시간 추출
  */
-function extractPublishedTime($: any): string | undefined {
+function extractPublishedTime($: cheerio.CheerioAPI): string | undefined {
   const publishTime = $('meta[property="article:published_time"]').attr('content') ||
                      $('meta[property="og:updated_time"]').attr('content') ||
                      $('time[datetime]').attr('datetime')
@@ -277,7 +277,7 @@ function extractPublishedTime($: any): string | undefined {
 /**
  * 비디오 길이 추출
  */
-function extractDuration($: any): number | undefined {
+function extractDuration($: cheerio.CheerioAPI): number | undefined {
   const durationStr = $('meta[property="og:video:duration"]').attr('content') ||
                       $('meta[property="video:duration"]').attr('content')
 
@@ -292,7 +292,7 @@ function extractDuration($: any): number | undefined {
 /**
  * YouTube 메타데이터 처리
  */
-function processYouTubeMetadata(metadata: LinkPreviewMetadata, $: any): LinkPreviewMetadata {
+function processYouTubeMetadata(metadata: LinkPreviewMetadata, $: cheerio.CheerioAPI): LinkPreviewMetadata {
   // YouTube 제목에서 " - YouTube" 제거
   if (metadata.title && metadata.title.endsWith(' - YouTube')) {
     metadata.title = metadata.title.slice(0, -' - YouTube'.length)
@@ -317,7 +317,7 @@ function processYouTubeMetadata(metadata: LinkPreviewMetadata, $: any): LinkPrev
 /**
  * Twitter 메타데이터 처리
  */
-function processTwitterMetadata(metadata: LinkPreviewMetadata, $: any): LinkPreviewMetadata {
+function processTwitterMetadata(metadata: LinkPreviewMetadata, $: cheerio.CheerioAPI): LinkPreviewMetadata {
   // 트위터 user명 추출
   const tweetMatch = metadata.url.match(/twitter\.com\/(\w+)\/status\//)
   if (tweetMatch) {
@@ -334,7 +334,7 @@ function processTwitterMetadata(metadata: LinkPreviewMetadata, $: any): LinkPrev
 /**
  * Vimeo 메타데이터 처리
  */
-function processVimeoMetadata(metadata: LinkPreviewMetadata, $: any): LinkPreviewMetadata {
+function processVimeoMetadata(metadata: LinkPreviewMetadata, $: cheerio.CheerioAPI): LinkPreviewMetadata {
   metadata.type = 'video'
   metadata.siteName = 'Vimeo'
 
@@ -410,7 +410,7 @@ export function extractVideoMetadata(url: string, metadata: Record<string, strin
   platform?: string
   videoId?: string
 } {
-  const result: any = { type: 'website' }
+  const result: { type: string; platform?: string; videoId?: string } = { type: 'website' }
 
   // YouTube 감지
   if (url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -458,7 +458,7 @@ export function detectContentType(url: string, metadata: Record<string, string>)
   author?: string
   price?: { amount: number, currency: string }
 } {
-  const result: any = { type: 'website' }
+  const result: { type: string; author?: string } = { type: 'website' }
 
   if (metadata['og:type'] === 'article') {
     result.type = 'article'
