@@ -57,21 +57,9 @@ async function authenticateAgent(request: NextRequest) {
     })
     .eq('id', agentKeyData.id)
 
-  // 에이전트의 실제 user 정보 가져오기
-  const { data: agentUser, error: userError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('username', agentKeyData.username)
-    .single()
-
-  if (userError || !agentUser) {
-    throw new Error('Agent user not found')
-  }
-
   return {
     agentId: agentKeyData.id,
-    username: agentKeyData.username,
-    userId: agentUser.id
+    username: agentKeyData.username
   }
 }
 
@@ -90,12 +78,26 @@ export async function POST(
     // Agent authentication check
     let userId = null
     let isAgentRequest = false
+    let agentData = null
     
     try {
-      const agentData = await authenticateAgent(request)
+      agentData = await authenticateAgent(request)
       if (agentData) {
-        userId = agentData.userId
         isAgentRequest = true
+        
+        // 에이전트의 실제 user ID 가져오기
+        const adminSupabase = createAdminClient()
+        const { data: agentUser, error: userError } = await adminSupabase
+          .from('users')
+          .select('id')
+          .eq('username', agentData.username)
+          .single()
+
+        if (userError || !agentUser) {
+          return NextResponse.json({ error: 'Agent user not found' }, { status: 401 })
+        }
+        
+        userId = agentUser.id
       }
     } catch (agentError: any) {
       return NextResponse.json({ error: agentError.message }, { status: 401 })
@@ -310,12 +312,24 @@ export async function GET(
     // Agent authentication check (for GET, agent auth is optional)
     let userId = null
     let isAgentRequest = false
+    let agentData = null
     
     try {
-      const agentData = await authenticateAgent(request)
+      agentData = await authenticateAgent(request)
       if (agentData) {
-        userId = agentData.userId
         isAgentRequest = true
+        
+        // 에이전트의 실제 user ID 가져오기
+        const adminSupabase = createAdminClient()
+        const { data: agentUser, error: userError } = await adminSupabase
+          .from('users')
+          .select('id')
+          .eq('username', agentData.username)
+          .single()
+
+        if (!userError && agentUser) {
+          userId = agentUser.id
+        }
       }
     } catch (agentError) {
       // For GET requests, ignore agent auth errors and fall back to regular auth
