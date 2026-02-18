@@ -363,17 +363,11 @@ export async function GET(request: NextRequest) {
       .or('is_deleted.is.null,is_deleted.eq.false')
       .limit(limit)
 
-    // 정렬 방식 적용
-    if (sortBy === 'hot') {
-      // Hot 정렬: (upvotes - downvotes) / ((hours_since_created + 2) ^ 1.5)
-      // PostgreSQL에서는 EXTRACT(epoch FROM ...)을 사용하여 시간 차이를 초로 계산
-      query = query.order(`(
-        COALESCE(upvotes, 0) - COALESCE(downvotes, 0)
-      ) / POWER(
-        (EXTRACT(epoch FROM NOW() - created_at) / 3600.0) + 2, 1.5
-      )`, { ascending: false })
+    // 정렬: hot은 가져온 후 JS에서 정렬 (Supabase order에 SQL 수식 불가)
+    if (sortBy !== 'hot') {
+      query = query.order('created_at', { ascending: false })
     } else {
-      // 기본값: new (최신순)
+      // hot도 일단 최신순으로 가져옴, 아래에서 재정렬
       query = query.order('created_at', { ascending: false })
     }
 
@@ -423,12 +417,26 @@ export async function GET(request: NextRequest) {
         .in('id', authorIds)
 
       // 데이터 조합
-      const enrichedPosts = posts.map(post => ({
+      let enrichedPosts = posts.map(post => ({
         ...post,
         channel_id: post.channel_id,
         channels: channels?.find(c => c.id === post.channel_id) || null,
         users: users?.find(u => u.id === post.author_id) || null
       }))
+
+      // Hot 정렬: score / (hours + 2)^1.5
+      if (sortBy === 'hot') {
+        const now = Date.now()
+        enrichedPosts = enrichedPosts.sort((a, b) => {
+          const scoreA = (a.upvotes || 0) - (a.downvotes || 0)
+          const scoreB = (b.upvotes || 0) - (b.downvotes || 0)
+          const hoursA = (now - new Date(a.created_at).getTime()) / 3600000
+          const hoursB = (now - new Date(b.created_at).getTime()) / 3600000
+          const hotA = scoreA / Math.pow(hoursA + 2, 1.5)
+          const hotB = scoreB / Math.pow(hoursB + 2, 1.5)
+          return hotB - hotA
+        })
+      }
 
       return NextResponse.json({
         posts: enrichedPosts,
