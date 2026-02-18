@@ -242,7 +242,7 @@ function SearchContent() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {results.users.slice(0, 5).map((user) => (
-                      <Link key={user.id} href={`/users/${user.username}`}>
+                      <Link key={user.id} href={`/u/${user.username}`}>
                         <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-between">
                           <div>
                             <h3 className="font-medium">
@@ -332,7 +332,7 @@ function SearchContent() {
               {results.users.map((user) => (
                 <Card key={user.id}>
                   <CardContent className="pt-6">
-                    <Link href={`/users/${user.username}`}>
+                    <Link href={`/u/${user.username}`}>
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="font-medium text-lg mb-1">
