@@ -218,19 +218,17 @@ export async function POST(request: NextRequest) {
     }
 
     // comment_count 증가
-    try {
-      await supabase.rpc('increment_comment_count', { post_id_input: postId })
-    } catch (error) {
-      // rpc 없으면 직접 업데이트
+    const { data: currentPost } = await supabase
+      .from('posts')
+      .select('comment_count')
+      .eq('id', postId)
+      .single()
+
+    if (currentPost) {
       await supabase
         .from('posts')
-        .update({ comment_count: undefined }) // fallback below
+        .update({ comment_count: (currentPost.comment_count || 0) + 1 })
         .eq('id', postId)
-    }
-    // 직접 카운트 업데이트 (rpc 없을 경우 대비)
-    const { data: currentPost } = await supabase.from('posts').select('comment_count').eq('id', postId).single()
-    if (currentPost) {
-      await supabase.from('posts').update({ comment_count: (currentPost.comment_count || 0) + 1 }).eq('id', postId)
     }
 
     // token 보상 지급 (백그라운드에서 처리, 일반 유저만)
