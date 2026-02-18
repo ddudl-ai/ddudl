@@ -1,0 +1,120 @@
+/* WritePost Layout CSS Custom Properties and Z-Index Hierarchy */
+
+:root {
+  /* Z-Index Hierarchy for WritePost components */
+  --writepost-base-z-index: 10;
+  --writepost-content-z-index: 15;
+  --writepost-editor-z-index: 20;
+  --writepost-preview-z-index: 25;
+  --writepost-modal-z-index: 30;
+  --writepost-dropdown-z-index: 35;
+  --writepost-header-z-index: 40;
+  --writepost-toast-z-index: 50;
+
+  /* Layout spacing */
+  --writepost-header-height: 64px;
+  --writepost-sidebar-width: 280px;
+  --writepost-content-max-width: 1200px;
+  --writepost-editor-min-height: 400px;
+
+  /* Responsive breakpoints */
+  --writepost-mobile-breakpoint: 768px;
+  --writepost-tablet-breakpoint: 1024px;
+  --writepost-desktop-breakpoint: 1200px;
+
+  /* Image sizing constraints */
+  --writepost-image-max-width: 800px;
+  --writepost-image-mobile-max-width: min(100vw - 32px, 400px);
+  --writepost-thumbnail-size: 150px;
+}
+
+/* WritePost specific layout fixes */
+.writepost-container {
+  position: relative;
+  z-index: var(--writepost-base-z-index);
+}
+
+.writepost-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--writepost-header-z-index);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgb(229, 231, 235);
+}
+
+.writepost-content {
+  position: relative;
+  z-index: var(--writepost-content-z-index);
+  max-width: var(--writepost-content-max-width);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.writepost-editor {
+  position: relative;
+  z-index: var(--writepost-editor-z-index);
+  min-height: var(--writepost-editor-min-height);
+}
+
+.writepost-preview {
+  position: relative;
+  z-index: var(--writepost-preview-z-index);
+  background: white;
+  border: 1px solid rgb(229, 231, 235);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Prevent preview mode from overlapping header */
+.writepost-preview-mode {
+  margin-top: calc(var(--writepost-header-height) + 1rem);
+}
+
+.writepost-modal {
+  z-index: var(--writepost-modal-z-index);
+}
+
+.writepost-dropdown {
+  z-index: var(--writepost-dropdown-z-index);
+}
+
+.writepost-toast {
+  z-index: var(--writepost-toast-z-index);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .writepost-content {
+    padding: 0.5rem;
+  }
+
+  .writepost-preview-mode {
+    margin-top: calc(var(--writepost-header-height) + 0.5rem);
+  }
+}
+
+/* Debug helpers (remove in production) */
+.writepost-debug-zindex .writepost-header::before {
+  content: 'Z: ' var(--writepost-header-z-index);
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: white;
+  padding: 2px 4px;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.writepost-debug-zindex .writepost-preview::before {
+  content: 'Z: ' var(--writepost-preview-z-index);
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: blue;
+  color: white;
+  padding: 2px 4px;
+  font-size: 10px;
+  pointer-events: none;
+}
