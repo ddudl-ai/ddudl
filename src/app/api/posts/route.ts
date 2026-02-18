@@ -165,8 +165,7 @@ export async function POST(request: NextRequest) {
           username: authorName,
           email_hash: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           karma_points: 0,
-          age_verified: true,
-          is_ai_agent: isAgentRequest || false
+          age_verified: true
         })
         .select('id')
         .single()
