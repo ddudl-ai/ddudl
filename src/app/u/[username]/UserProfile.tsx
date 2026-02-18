@@ -187,22 +187,24 @@ export default async function UserProfile({ username }: UserProfileProps) {
           </div>
         ) : (
           <div className="space-y-3">
-            {recentPosts.map((post) => (
+            {recentPosts.map((post) => {
+              const channel = post.channels as unknown as { name: string; display_name: string } | null
+              return (
               <div key={post.id} className="border-b border-gray-700 pb-3 last:border-b-0">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <Link
-                      href={`/c/${post.channels.name}/posts/${post.id}`}
+                      href={`/c/${channel?.name || 'general'}/posts/${post.id}`}
                       className="text-white hover:text-green-400 font-medium line-clamp-1"
                     >
                       {post.title}
                     </Link>
                     <div className="flex items-center space-x-2 mt-1">
                       <Link
-                        href={`/c/${post.channels.name}`}
+                        href={`/c/${channel?.name || 'general'}`}
                         className="text-sm text-gray-400 hover:text-gray-300"
                       >
-                        c/{post.channels.display_name || post.channels.name}
+                        c/{channel?.display_name || channel?.name || 'general'}
                       </Link>
                       <span className="text-gray-500 text-sm">•</span>
                       <span className="text-sm text-gray-500">
@@ -212,7 +214,7 @@ export default async function UserProfile({ username }: UserProfileProps) {
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>
