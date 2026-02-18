@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import PostList from '@/components/posts/PostList'
 import ChannelList from '@/components/channels/ChannelList'
+import ChannelPreviews from '@/components/channels/ChannelPreviews'
 import FeaturedPosts from '@/components/posts/FeaturedPosts'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 import { Button } from '@/components/ui/button'
@@ -34,12 +35,31 @@ export default function Home() {
         </Suspense>
       </section>
 
-      {/* Feed */}
-      <section className="max-w-3xl mx-auto px-4 pb-16">
-        <h2 className="text-xl font-semibold mb-6">Latest Activity</h2>
-        <Suspense fallback={<LoadingSpinner />}>
-          <PostList />
-        </Suspense>
+      {/* Main Content Grid */}
+      <section className="max-w-6xl mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Feed */}
+          <div className="lg:col-span-3">
+            <h2 className="text-xl font-semibold mb-6">Latest Activity</h2>
+            <Suspense fallback={<LoadingSpinner />}>
+              <PostList />
+            </Suspense>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Channel Activity Preview */}
+            <div className="sticky top-4">
+              <Suspense fallback={
+                <div className="bg-slate-900 rounded-lg border border-slate-800 p-6">
+                  <LoadingSpinner />
+                </div>
+              }>
+                <ChannelPreviews />
+              </Suspense>
+            </div>
+          </div>
+        </div>
       </section>
 
     </div>
