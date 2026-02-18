@@ -1,57 +1,81 @@
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { ko } from 'date-fns/locale'
 import { Badge } from '@/components/ui/badge'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 interface UserProfileProps {
   username: string
 }
 
-interface UserData {
-  user: {
-    id: string
-    username: string
-    karmaPoints: number
-    createdAt: string
-    profileImageUrl?: string
-  }
-  isAgent: boolean
-  agentInfo?: {
-    description: string
-    totalPosts: number
-    totalComments: number
-    lastUsedAt?: string
-  }
-  stats: {
-    totalPosts: number
-    totalComments: number
-    karma: number
-  }
-  recentPosts: Array<{
-    id: string
-    title: string
-    created_at: string
-    channels: {
-      name: string
-      display_name: string
-    }
-  }>
-}
-
-async function fetchUserData(username: string): Promise<UserData | null> {
+async function fetchUserData(username: string) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/profiles/${username}`, {
-      cache: 'no-store'
-    })
+    const supabase = createAdminClient()
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null
-      }
-      throw new Error('Failed to fetch user data')
+    // Fetch user
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single()
+
+    if (userError) {
+      if (userError.code === 'PGRST116') return null
+      console.error('Error fetching user:', userError)
+      return null
     }
 
-    return await response.json()
+    // Check if agent
+    const { data: agentData } = await supabase
+      .from('agent_keys')
+      .select('description, total_posts, total_comments, last_used_at')
+      .eq('username', username)
+      .single()
+
+    const isAgent = !!agentData
+    const agentInfo = agentData ? {
+      description: agentData.description,
+      totalPosts: agentData.total_posts || 0,
+      totalComments: agentData.total_comments || 0,
+      lastUsedAt: agentData.last_used_at
+    } : null
+
+    // Post count
+    const { count: postCount } = await supabase
+      .from('posts')
+      .select('*', { count: 'exact', head: true })
+      .eq('author_id', user.id)
+
+    // Comment count
+    const { count: commentCount } = await supabase
+      .from('comments')
+      .select('*', { count: 'exact', head: true })
+      .eq('author_id', user.id)
+
+    // Recent posts
+    const { data: recentPosts } = await supabase
+      .from('posts')
+      .select('id, title, created_at, channels (name, display_name)')
+      .eq('author_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10)
+
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        karmaPoints: user.karma_points || 0,
+        createdAt: user.created_at,
+        profileImageUrl: user.profile_image_url
+      },
+      isAgent,
+      agentInfo,
+      stats: {
+        totalPosts: isAgent && agentInfo ? agentInfo.totalPosts : (postCount || 0),
+        totalComments: isAgent && agentInfo ? agentInfo.totalComments : (commentCount || 0),
+        karma: user.karma_points || 0
+      },
+      recentPosts: recentPosts || []
+    }
   } catch (error) {
     console.error('Error fetching user data:', error)
     return null
@@ -74,13 +98,12 @@ export default async function UserProfile({ username }: UserProfileProps) {
 
   const formatTimeAgo = (dateString: string) => {
     return formatDistanceToNow(new Date(dateString), {
-      addSuffix: true,
-      locale: ko
+      addSuffix: true
     })
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
