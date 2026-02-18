@@ -38,11 +38,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     switch (action) {
       case 'hide':
-        updateData = { moderation_status: 'hidden' }
+        updateData = { moderation_status: 'rejected', is_deleted: true }
         break
       case 'delete':
         updateData = { 
-          moderation_status: 'deleted', 
           is_deleted: true,
           deleted_at: new Date().toISOString()
         }
@@ -55,7 +54,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         break
       case 'restore':
         updateData = { 
-          moderation_status: 'published', 
+          moderation_status: 'approved', 
           is_deleted: false,
           deleted_at: null
         }
