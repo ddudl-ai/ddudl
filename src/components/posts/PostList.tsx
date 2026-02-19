@@ -1,14 +1,14 @@
-'use client&apos;
+'use client'
 
-import { useEffect, useState } from &apos;react&apos;
-import { useRouter, useSearchParams } from &apos;next/navigation&apos;
-import PostCard from &apos;./PostCard&apos;
-import { createClient } from &apos;@/lib/supabase/client&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from &apos;@/components/ui/select&apos;
-import { Plus, TrendingUp, Clock, BarChart3 } from &apos;lucide-react&apos;
-import { useTranslation } from &apos;@/providers/LocalizationProvider&apos;
-import { useAuthStore } from &apos;@/stores/authStore&apos;
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import PostCard from './PostCard'
+import { createClient } from '@/lib/supabase/client'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Plus, TrendingUp, Clock, BarChart3 } from 'lucide-react'
+import { useTranslation } from '@/providers/LocalizationProvider'
+import { useAuthStore } from '@/stores/authStore'
 
 interface Post {
   id: string
@@ -34,21 +34,21 @@ interface Post {
   } | null
 }
 
-type SortOption = &apos;hot&apos; | &apos;new&apos; | &apos;top&apos;
-type TimeRange = &apos;day&apos; | &apos;week&apos; | &apos;month&apos; | &apos;all&apos;
+type SortOption = 'hot' | 'new' | 'top'
+type TimeRange = 'day' | 'week' | 'month' | 'all'
 
 export default function PostList() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [errorKey, setErrorKey] = useState<string | null>(null)
-  const [timeRange, setTimeRange] = useState<TimeRange>(&apos;all&apos;)
+  const [timeRange, setTimeRange] = useState<TimeRange>('all')
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const router = useRouter()
   const searchParams = useSearchParams()
   
   // URL 쿼리 파라미터에서 정렬 옵션 가져오기
-  const sortBy = (searchParams.get(&apos;sort&apos;) as SortOption) || &apos;hot&apos;
+  const sortBy = (searchParams.get('sort') as SortOption) || 'hot'
 
   useEffect(() => {
     fetchPosts()
@@ -62,7 +62,7 @@ export default function PostList() {
       const supabase = createClient()
       
       let query = supabase
-        .from(&apos;posts&apos;)
+        .from('posts')
         .select(`
           id,
           title,
@@ -85,35 +85,35 @@ export default function PostList() {
             username
           )
         `)
-        .or(&apos;is_deleted.is.null,is_deleted.eq.false&apos;)
-        .eq(&apos;moderation_status&apos;, &apos;approved&apos;)
+        .or('is_deleted.is.null,is_deleted.eq.false')
+        .eq('moderation_status', 'approved')
         .limit(20)
 
       // 시간 범위 필터링 (Top 정렬일 때만)
-      if (sortBy === &apos;top&apos; && timeRange !== &apos;all&apos;) {
+      if (sortBy === 'top' && timeRange !== 'all') {
         const now = new Date()
-        const cutoffDate = new Date()
+        let cutoffDate = new Date()
         
         switch (timeRange) {
-          case &apos;day&apos;:
+          case 'day':
             cutoffDate.setDate(now.getDate() - 1)
             break
-          case &apos;week&apos;:
+          case 'week':
             cutoffDate.setDate(now.getDate() - 7)
             break
-          case &apos;month&apos;:
+          case 'month':
             cutoffDate.setMonth(now.getMonth() - 1)
             break
         }
         
-        query = query.gte(&apos;created_at&apos;, cutoffDate.toISOString())
+        query = query.gte('created_at', cutoffDate.toISOString())
       }
 
       // 정렬 (Hot은 클라이언트에서 처리)
-      if (sortBy === &apos;top&apos;) {
-        query = query.order(&apos;vote_score&apos;, { ascending: false })
+      if (sortBy === 'top') {
+        query = query.order('vote_score', { ascending: false })
       } else {
-        query = query.order(&apos;created_at&apos;, { ascending: false })
+        query = query.order('created_at', { ascending: false })
       }
 
       const { data, error } = await query
@@ -125,7 +125,7 @@ export default function PostList() {
       let processedPosts = data || []
 
       // Hot 정렬 처리
-      if (sortBy === &apos;hot&apos;) {
+      if (sortBy === 'hot') {
         const now = Date.now()
         processedPosts = processedPosts.sort((a, b) => {
           const scoreA = a.vote_score || 0
@@ -142,17 +142,17 @@ export default function PostList() {
       const transformedPosts = processedPosts.map(post => {
         // channels 처리
         const channels = post.channels
-        let channelInfo = { name: &apos;', display_name: &apos;' }
+        let channelInfo = { name: '', display_name: '' }
         
         if (Array.isArray(channels) && channels.length > 0) {
           channelInfo = {
-            name: channels[0].name || &apos;',
-            display_name: channels[0].display_name || &apos;'
+            name: channels[0].name || '',
+            display_name: channels[0].display_name || ''
           }
-        } else if (channels && typeof channels === &apos;object&apos;) {
+        } else if (channels && typeof channels === 'object') {
           channelInfo = {
-            name: (channels as any).name || &apos;',
-            display_name: (channels as any).display_name || &apos;'
+            name: (channels as any).name || '',
+            display_name: (channels as any).display_name || ''
           }
         }
 
@@ -161,11 +161,11 @@ export default function PostList() {
         let userInfo = null
         if (Array.isArray(users) && users.length > 0) {
           userInfo = {
-            username: users[0].username || &apos;'
+            username: users[0].username || ''
           }
-        } else if (users && typeof users === &apos;object&apos;) {
+        } else if (users && typeof users === 'object') {
           userInfo = {
-            username: (users as any).username || &apos;'
+            username: (users as any).username || ''
           }
         }
 
@@ -190,8 +190,8 @@ export default function PostList() {
 
       setPosts(transformedPosts)
     } catch (err) {
-      setErrorKey(&apos;postList.errorLoading&apos;)
-      console.error(&apos;Error:&apos;, err)
+      setErrorKey('postList.errorLoading')
+      console.error('Error:', err)
     } finally {
       setLoading(false)
     }
@@ -199,72 +199,72 @@ export default function PostList() {
 
   const getSortIcon = (sort: SortOption) => {
     switch (sort) {
-      case &apos;hot&apos;:
-        return <TrendingUp className=&quot;w-4 h-4&quot; />
-      case &apos;new&apos;:
-        return <Clock className=&quot;w-4 h-4&quot; />
-      case &apos;top&apos;:
-        return <BarChart3 className=&quot;w-4 h-4&quot; />
+      case 'hot':
+        return <TrendingUp className="w-4 h-4" />
+      case 'new':
+        return <Clock className="w-4 h-4" />
+      case 'top':
+        return <BarChart3 className="w-4 h-4" />
     }
   }
 
   const getSortLabel = (sort: SortOption) => {
     switch (sort) {
-      case &apos;hot&apos;:
-        return t(&apos;postList.sort.hot&apos;, &apos;Hot&apos;)
-      case &apos;new&apos;:
-        return t(&apos;postList.sort.new&apos;, &apos;New&apos;)
-      case &apos;top&apos;:
-        return t(&apos;postList.sort.top&apos;, &apos;Top&apos;)
+      case 'hot':
+        return t('postList.sort.hot', 'Hot')
+      case 'new':
+        return t('postList.sort.new', 'New')
+      case 'top':
+        return t('postList.sort.top', 'Top')
     }
   }
 
   const handleSortChange = (newSort: SortOption) => {
     const params = new URLSearchParams(searchParams.toString())
-    params.set(&apos;sort&apos;, newSort)
+    params.set('sort', newSort)
     router.push(`/?${params.toString()}`)
   }
 
   if (errorKey) {
     return (
-      <div className=&quot;bg-slate-900 rounded-lg border border-slate-800 p-8 text-center&quot;>
-        <p className=&quot;text-slate-400 mb-4&quot;>{t(errorKey, &apos;Failed to load posts.&apos;)}</p>
-        <Button onClick={fetchPosts} variant=&quot;outline&quot; className=&quot;border-slate-700 text-slate-300 hover:bg-slate-800&quot;>
-          {t(&apos;common.retry&apos;, &apos;Try Again&apos;)}
+      <div className="bg-slate-900 rounded-lg border border-slate-800 p-8 text-center">
+        <p className="text-slate-400 mb-4">{t(errorKey, 'Failed to load posts.')}</p>
+        <Button onClick={fetchPosts} variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800">
+          {t('common.retry', 'Try Again')}
         </Button>
       </div>
     )
   }
 
   return (
-    <div className=&quot;space-y-4&quot;>
+    <div className="space-y-4">
       {/* Header */}
-      <div className=&quot;bg-slate-900 rounded-lg border border-slate-800 p-4&quot;>
-        <div className=&quot;flex flex-col space-y-3&quot;>
-          <div className=&quot;flex items-center justify-between gap-2&quot;>
-            <div className=&quot;flex items-center gap-2 min-w-0&quot;>
-              <h1 className=&quot;text-lg sm:text-xl font-bold text-slate-100 whitespace-nowrap&quot;>{t(&apos;postList.popularPosts&apos;, &apos;Posts&apos;)}</h1>
+      <div className="bg-slate-900 rounded-lg border border-slate-800 p-4">
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="text-lg sm:text-xl font-bold text-slate-100 whitespace-nowrap">{t('postList.popularPosts', 'Posts')}</h1>
               <Select value={sortBy} onValueChange={handleSortChange}>
-                <SelectTrigger className=&quot;w-24 sm:w-32 bg-slate-800 border-slate-700 text-slate-200&quot;>
+                <SelectTrigger className="w-24 sm:w-32 bg-slate-800 border-slate-700 text-slate-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=&quot;hot&quot;>
-                    <div className=&quot;flex items-center space-x-2&quot;>
-                      {getSortIcon(&apos;hot&apos;)}
-                      <span>{getSortLabel(&apos;hot&apos;)}</span>
+                  <SelectItem value="hot">
+                    <div className="flex items-center space-x-2">
+                      {getSortIcon('hot')}
+                      <span>{getSortLabel('hot')}</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value=&quot;new&quot;>
-                    <div className=&quot;flex items-center space-x-2&quot;>
-                      {getSortIcon(&apos;new&apos;)}
-                      <span>{getSortLabel(&apos;new&apos;)}</span>
+                  <SelectItem value="new">
+                    <div className="flex items-center space-x-2">
+                      {getSortIcon('new')}
+                      <span>{getSortLabel('new')}</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value=&quot;top&quot;>
-                    <div className=&quot;flex items-center space-x-2&quot;>
-                      {getSortIcon(&apos;top&apos;)}
-                      <span>{getSortLabel(&apos;top&apos;)}</span>
+                  <SelectItem value="top">
+                    <div className="flex items-center space-x-2">
+                      {getSortIcon('top')}
+                      <span>{getSortLabel('top')}</span>
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -272,52 +272,52 @@ export default function PostList() {
             </div>
 
             <Button
-              variant=&quot;outline&quot;
-              className=&quot;flex items-center space-x-1 sm:space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shrink-0 px-3 sm:px-4&quot;
-              onClick={() => window.location.href = user ? &apos;/c/general/write&apos; : &apos;/auth/signin&apos;}
+              variant="outline"
+              className="flex items-center space-x-1 sm:space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shrink-0 px-3 sm:px-4"
+              onClick={() => window.location.href = user ? '/c/general/write' : '/auth/signin'}
             >
-              <Plus className=&quot;w-4 h-4&quot; />
-              <span className=&quot;hidden sm:inline&quot;>{t(&apos;common.writePost&apos;, &apos;Write Post&apos;)}</span>
-              <span className=&quot;sm:hidden&quot;>{t(&apos;common.write&apos;, &apos;Write&apos;)}</span>
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('common.writePost', 'Write Post')}</span>
+              <span className="sm:hidden">{t('common.write', 'Write')}</span>
             </Button>
           </div>
 
-          {/* Time Range Tabs - Only show when &apos;top&apos; is selected */}
-          {sortBy === &apos;top&apos; && (
-            <div className=&quot;flex items-center space-x-2 border-t pt-3&quot;>
-              <span className=&quot;text-sm text-muted-foreground&quot;>{t(&apos;postList.timeRangeLabel&apos;, &apos;Time Range:&apos;)}</span>
-              <div className=&quot;flex space-x-1&quot;>
+          {/* Time Range Tabs - Only show when 'top' is selected */}
+          {sortBy === 'top' && (
+            <div className="flex items-center space-x-2 border-t pt-3">
+              <span className="text-sm text-muted-foreground">{t('postList.timeRangeLabel', 'Time Range:')}</span>
+              <div className="flex space-x-1">
                 <Button
-                  variant={timeRange === &apos;day&apos; ? &apos;default&apos; : &apos;ghost&apos;}
-                  size=&quot;sm&quot;
-                  onClick={() => setTimeRange(&apos;day&apos;)}
-                  className=&quot;px-3 py-1 h-8&quot;
+                  variant={timeRange === 'day' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setTimeRange('day')}
+                  className="px-3 py-1 h-8"
                 >
-                  {t(&apos;postList.timeRange.day&apos;, &apos;Daily&apos;)}
+                  {t('postList.timeRange.day', 'Daily')}
                 </Button>
                 <Button
-                  variant={timeRange === &apos;week&apos; ? &apos;default&apos; : &apos;ghost&apos;}
-                  size=&quot;sm&quot;
-                  onClick={() => setTimeRange(&apos;week&apos;)}
-                  className=&quot;px-3 py-1 h-8&quot;
+                  variant={timeRange === 'week' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setTimeRange('week')}
+                  className="px-3 py-1 h-8"
                 >
-                  {t(&apos;postList.timeRange.week&apos;, &apos;Weekly&apos;)}
+                  {t('postList.timeRange.week', 'Weekly')}
                 </Button>
                 <Button
-                  variant={timeRange === &apos;month&apos; ? &apos;default&apos; : &apos;ghost&apos;}
-                  size=&quot;sm&quot;
-                  onClick={() => setTimeRange(&apos;month&apos;)}
-                  className=&quot;px-3 py-1 h-8&quot;
+                  variant={timeRange === 'month' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setTimeRange('month')}
+                  className="px-3 py-1 h-8"
                 >
-                  {t(&apos;postList.timeRange.month&apos;, &apos;Monthly&apos;)}
+                  {t('postList.timeRange.month', 'Monthly')}
                 </Button>
                 <Button
-                  variant={timeRange === &apos;all&apos; ? &apos;default&apos; : &apos;ghost&apos;}
-                  size=&quot;sm&quot;
-                  onClick={() => setTimeRange(&apos;all&apos;)}
-                  className=&quot;px-3 py-1 h-8&quot;
+                  variant={timeRange === 'all' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setTimeRange('all')}
+                  className="px-3 py-1 h-8"
                 >
-                  {t(&apos;postList.timeRange.all&apos;, &apos;All Time&apos;)}
+                  {t('postList.timeRange.all', 'All Time')}
                 </Button>
               </div>
             </div>
@@ -327,15 +327,15 @@ export default function PostList() {
 
       {/* Loading State */}
       {loading && (
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className=&quot;bg-slate-900 rounded-lg border border-slate-800 p-4 animate-pulse&quot;>
-              <div className=&quot;flex space-x-4&quot;>
-                <div className=&quot;w-16 h-16 bg-slate-800 rounded&quot;></div>
-                <div className=&quot;flex-1 space-y-2&quot;>
-                  <div className=&quot;h-4 bg-slate-800 rounded w-3/4&quot;></div>
-                  <div className=&quot;h-3 bg-slate-800 rounded w-1/2&quot;></div>
-                  <div className=&quot;h-3 bg-slate-800 rounded w-1/4&quot;></div>
+            <div key={i} className="bg-slate-900 rounded-lg border border-slate-800 p-4 animate-pulse">
+              <div className="flex space-x-4">
+                <div className="w-16 h-16 bg-slate-800 rounded"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-slate-800 rounded w-3/4"></div>
+                  <div className="h-3 bg-slate-800 rounded w-1/2"></div>
+                  <div className="h-3 bg-slate-800 rounded w-1/4"></div>
                 </div>
               </div>
             </div>
@@ -345,10 +345,10 @@ export default function PostList() {
 
       {/* Posts */}
       {!loading && posts.length === 0 && (
-        <div className=&quot;bg-slate-900 rounded-lg border border-slate-800 p-8 text-center&quot;>
-          <p className=&quot;text-slate-400 mb-4&quot;>No posts yet — be the first, human or agent!</p>
-          <Button onClick={() => window.location.href = user ? &apos;/c/general/write&apos; : &apos;/auth/signin&apos;}>
-            <Plus className=&quot;w-4 h-4 mr-2&quot; />
+        <div className="bg-slate-900 rounded-lg border border-slate-800 p-8 text-center">
+          <p className="text-slate-400 mb-4">No posts yet — be the first, human or agent!</p>
+          <Button onClick={() => window.location.href = user ? '/c/general/write' : '/auth/signin'}>
+            <Plus className="w-4 h-4 mr-2" />
             Write the First Post
           </Button>
         </div>
@@ -360,8 +360,8 @@ export default function PostList() {
 
       {/* Load More */}
       {!loading && posts.length > 0 && (
-        <div className=&quot;text-center py-4&quot;>
-          <Button variant=&quot;outline&quot; onClick={fetchPosts}>
+        <div className="text-center py-4">
+          <Button variant="outline" onClick={fetchPosts}>
             Load More Posts
           </Button>
         </div>

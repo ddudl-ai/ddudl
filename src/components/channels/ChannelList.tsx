@@ -1,8 +1,8 @@
-'use client&apos;
+'use client'
 
-import { useEffect, useState } from &apos;react&apos;
-import Link from &apos;next/link&apos;
-import { useTranslation } from &apos;@/providers/LocalizationProvider&apos;
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useTranslation } from '@/providers/LocalizationProvider'
 
 interface Channel {
   id: string
@@ -23,17 +23,17 @@ export default function ChannelList() {
   useEffect(() => {
     async function fetchChannels() {
       try {
-        const response = await fetch(&apos;/api/channels&apos;)
+        const response = await fetch('/api/channels')
 
         if (!response.ok) {
-          throw new Error(&apos;Failed to fetch channels&apos;)
+          throw new Error('Failed to fetch channels')
         }
 
         const { channels } = await response.json()
         setChannels(channels || [])
       } catch (err) {
-        setErrorKey(&apos;channelList.errorLoading&apos;)
-        console.error(&apos;Error:&apos;, err)
+        setErrorKey('channelList.errorLoading')
+        console.error('Error:', err)
       } finally {
         setLoading(false)
       }
@@ -70,7 +70,7 @@ export default function ChannelList() {
           })
           updates[channel.id] = translated
         } catch (error) {
-          console.error(&apos;Failed to translate community name:&apos;, error)
+          console.error('Failed to translate community name:', error)
           updates[channel.id] = channel.display_name
         }
 
@@ -94,12 +94,12 @@ export default function ChannelList() {
   if (loading) {
     return (
       <div>
-        <h2 className=&quot;text-lg font-semibold text-slate-100 mb-4&quot;>{t(&apos;channelList.popularCommunities&apos;, &apos;Popular Channels&apos;)}</h2>
-        <div className=&quot;grid grid-cols-2 sm:grid-cols-4 gap-4&quot;>
+        <h2 className="text-lg font-semibold text-slate-100 mb-4">{t('channelList.popularCommunities', 'Popular Channels')}</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className=&quot;p-4 bg-slate-900 border border-slate-800 rounded-lg animate-pulse&quot;>
-              <div className=&quot;h-4 bg-slate-800 rounded w-24 mb-2 mx-auto&quot;></div>
-              <div className=&quot;h-3 bg-slate-800 rounded w-16 mx-auto&quot;></div>
+            <div key={i} className="p-4 bg-slate-900 border border-slate-800 rounded-lg animate-pulse">
+              <div className="h-4 bg-slate-800 rounded w-24 mb-2 mx-auto"></div>
+              <div className="h-3 bg-slate-800 rounded w-16 mx-auto"></div>
             </div>
           ))}
         </div>
@@ -110,20 +110,20 @@ export default function ChannelList() {
   if (errorKey) {
     return (
       <div>
-        <h2 className=&quot;text-lg font-semibold text-slate-100 mb-4&quot;>{t(&apos;channelList.popularCommunities&apos;, &apos;Popular Channels&apos;)}</h2>
-        <p className=&quot;text-sm text-slate-400&quot;>{t(errorKey, &apos;Failed to load channels.&apos;)}</p>
+        <h2 className="text-lg font-semibold text-slate-100 mb-4">{t('channelList.popularCommunities', 'Popular Channels')}</h2>
+        <p className="text-sm text-slate-400">{t(errorKey, 'Failed to load channels.')}</p>
       </div>
     )
   }
 
   return (
     <div>
-      <h2 className=&quot;text-lg font-semibold text-slate-100 mb-4&quot;>{t(&apos;channelList.popularCommunities&apos;, &apos;Popular Channels&apos;)}</h2>
-      <div className=&quot;grid grid-cols-2 sm:grid-cols-4 gap-4&quot;>
+      <h2 className="text-lg font-semibold text-slate-100 mb-4">{t('channelList.popularCommunities', 'Popular Channels')}</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {channels.map(ch => (
-          <Link key={ch.id} href={`/c/${ch.name}`} className=&quot;p-4 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 transition text-center&quot;>
-            <h3 className=&quot;font-semibold text-slate-100&quot;>{translatedNames[ch.id] ?? ch.display_name}</h3>
-            <p className=&quot;text-sm text-slate-500 mt-1&quot;>{ch.member_count} members</p>
+          <Link key={ch.id} href={`/c/${ch.name}`} className="p-4 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 transition text-center">
+            <h3 className="font-semibold text-slate-100">{translatedNames[ch.id] ?? ch.display_name}</h3>
+            <p className="text-sm text-slate-500 mt-1">{ch.member_count} members</p>
           </Link>
         ))}
       </div>

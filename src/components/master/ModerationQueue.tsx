@@ -1,15 +1,15 @@
-"use client&quot;
+"use client"
 
-import { useState } from &quot;react&quot;
-import { useModerationQueue } from &quot;@/hooks/useModerationQueue&quot;
-import { Card, CardContent } from &quot;@/components/ui/card&quot;
-import { Badge } from &quot;@/components/ui/badge&quot;
-import { Button } from &quot;@/components/ui/button&quot;
-import { Avatar, AvatarFallback, AvatarImage } from &quot;@/components/ui/avatar&quot;
-import { Input } from &quot;@/components/ui/input&quot;
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from &quot;@/components/ui/select&quot;
-import { Progress } from &quot;@/components/ui/progress&quot;
-import { Checkbox } from &quot;@/components/ui/checkbox&quot;
+import { useState } from "react"
+import { useModerationQueue } from "@/hooks/useModerationQueue"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Progress } from "@/components/ui/progress"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   AlertTriangle,
   CheckCircle,
@@ -20,7 +20,7 @@ import {
   Flag,
   Search,
   Loader2,
-} from &quot;lucide-react&quot;
+} from "lucide-react"
 
 interface ModerationQueueProps {
   channelId: string
@@ -28,8 +28,8 @@ interface ModerationQueueProps {
 
 interface QueueItem {
   id: string
-  type: &apos;post&apos; | &apos;comment&apos; | &apos;user&apos;
-  priority: &apos;critical&apos; | &apos;high&apos; | &apos;medium&apos; | &apos;low&apos;
+  type: 'post' | 'comment' | 'user'
+  priority: 'critical' | 'high' | 'medium' | 'low'
   content: string
   author: {
     username: string
@@ -46,125 +46,125 @@ interface QueueItem {
   reportedBy?: string
   reportReason?: string
   createdAt: string
-  status: &apos;pending&apos; | &apos;approved&apos; | &apos;rejected&apos; | &apos;escalated&apos;
+  status: 'pending' | 'approved' | 'rejected' | 'escalated'
 }
 
 export function ModerationQueue({ channelId }: ModerationQueueProps) {
-  const [statusFilter, setStatusFilter] = useState(&quot;pending&quot;)
-  const [priorityFilter, setPriorityFilter] = useState(&quot;all&quot;)
-  const [typeFilter, setTypeFilter] = useState(&quot;all&quot;)
-  const [searchQuery, setSearchQuery] = useState(&quot;")
+  const [statusFilter, setStatusFilter] = useState("pending")
+  const [priorityFilter, setPriorityFilter] = useState("all")
+  const [typeFilter, setTypeFilter] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("")
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   const { loading, error, refetch, processModerationAction } = useModerationQueue({
     channelId,
-    status: statusFilter === &apos;all&apos; ? undefined : statusFilter
+    status: statusFilter === 'all' ? undefined : statusFilter
   })
 
   // Mock queue items for demo - replace with real data from API
   const mockQueueItems: QueueItem[] = [
     {
-      id: &quot;1&quot;,
-      type: &quot;post&quot;,
-      priority: &quot;critical&quot;,
-      content: &quot;이 제품은 완전히 사기입니다. 절대 사지 마세요. 돈만 날립니다.&quot;,
+      id: "1",
+      type: "post",
+      priority: "critical",
+      content: "이 제품은 완전히 사기입니다. 절대 사지 마세요. 돈만 날립니다.",
       author: {
-        username: &quot;익명User123&quot;,
+        username: "익명User123",
         karma: -15,
-        accountAge: &quot;3일&quot;,
+        accountAge: "3일",
         violations: 2,
-        avatar: &quot;/placeholder-user.jpg&quot;
+        avatar: "/placeholder-user.jpg"
       },
       ai: {
         confidence: 95,
-        violations: [&quot;스팸&quot;, &quot;허위정보&quot;],
-        reasoning: &quot;부정적 언어 패턴과 제품 비방 내용이 감지되었습니다. 계정 생성 후 즉시 부정적 리뷰만 작성하는 패턴이 의심스럽습니다.&quot;
+        violations: ["스팸", "허위정보"],
+        reasoning: "부정적 언어 패턴과 제품 비방 내용이 감지되었습니다. 계정 생성 후 즉시 부정적 리뷰만 작성하는 패턴이 의심스럽습니다."
       },
-      reportedBy: &quot;user456&quot;,
-      reportReason: &quot;부적절한 내용&quot;,
-      createdAt: &quot;5분 전&quot;,
-      status: &quot;pending&quot;
+      reportedBy: "user456",
+      reportReason: "부적절한 내용",
+      createdAt: "5분 전",
+      status: "pending"
     },
     {
-      id: &quot;2&quot;,
-      type: &quot;comment&quot;,
-      priority: &quot;high&quot;,
-      content: &quot;너 정말 멍청하다. 이런 것도 모르냐?&quot;,
+      id: "2",
+      type: "comment",
+      priority: "high",
+      content: "너 정말 멍청하다. 이런 것도 모르냐?",
       author: {
-        username: &quot;화난User&quot;,
+        username: "화난User",
         karma: 245,
-        accountAge: &quot;2개월&quot;,
+        accountAge: "2개월",
         violations: 1,
-        avatar: &quot;/placeholder-user.jpg&quot;
+        avatar: "/placeholder-user.jpg"
       },
       ai: {
         confidence: 88,
-        violations: [&quot;괴롭힘&quot;, &quot;혐오발언&quot;],
-        reasoning: &quot;공격적인 언어와 개인 모독 표현이 감지되었습니다.&quot;
+        violations: ["괴롭힘", "혐오발언"],
+        reasoning: "공격적인 언어와 개인 모독 표현이 감지되었습니다."
       },
-      reportedBy: &quot;user789&quot;,
-      reportReason: &quot;괴롭힘&quot;,
-      createdAt: &quot;12분 전&quot;,
-      status: &quot;pending&quot;
+      reportedBy: "user789",
+      reportReason: "괴롭힘",
+      createdAt: "12분 전",
+      status: "pending"
     },
     {
-      id: &quot;3&quot;,
-      type: &quot;post&quot;,
-      priority: &quot;medium&quot;,
-      content: &quot;새로운 제품 리뷰입니다. 링크: suspicious-site.com/product&quot;,
+      id: "3",
+      type: "post",
+      priority: "medium",
+      content: "새로운 제품 리뷰입니다. 링크: suspicious-site.com/product",
       author: {
-        username: &quot;리뷰어123&quot;,
+        username: "리뷰어123",
         karma: 89,
-        accountAge: &quot;1개월&quot;,
+        accountAge: "1개월",
         violations: 0,
-        avatar: &quot;/placeholder-user.jpg&quot;
+        avatar: "/placeholder-user.jpg"
       },
       ai: {
         confidence: 72,
-        violations: [&quot;의심스러운 링크&quot;],
-        reasoning: &quot;외부 링크가 포함되어 있고, 신뢰도가 낮은 도메인으로 판단됩니다.&quot;
+        violations: ["의심스러운 링크"],
+        reasoning: "외부 링크가 포함되어 있고, 신뢰도가 낮은 도메인으로 판단됩니다."
       },
-      createdAt: &quot;25분 전&quot;,
-      status: &quot;pending&quot;
+      createdAt: "25분 전",
+      status: "pending"
     }
   ]
 
-  const handleModerationAction = async (action: &apos;approve&apos; | &apos;reject&apos; | &apos;escalate&apos;, itemId: string) => {
+  const handleModerationAction = async (action: 'approve' | 'reject' | 'escalate', itemId: string) => {
     try {
       await processModerationAction({
         queueItemId: itemId,
         action,
-        reason: action === &apos;approve&apos; ? &apos;승인됨&apos; : action === &apos;reject&apos; ? &apos;거부됨&apos; : &apos;에스컬레이션됨&apos;
+        reason: action === 'approve' ? '승인됨' : action === 'reject' ? '거부됨' : '에스컬레이션됨'
       })
     } catch (err) {
-      console.error(&apos;Failed to process moderation action:&apos;, err)
+      console.error('Failed to process moderation action:', err)
     }
   }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case &apos;critical&apos;: return &apos;text-red-600&apos;
-      case &apos;high&apos;: return &apos;text-orange-600&apos;
-      case &apos;medium&apos;: return &apos;text-blue-600&apos;
-      case &apos;low&apos;: return &apos;text-green-600&apos;
-      default: return &apos;text-gray-600&apos;
+      case 'critical': return 'text-red-600'
+      case 'high': return 'text-orange-600'
+      case 'medium': return 'text-blue-600'
+      case 'low': return 'text-green-600'
+      default: return 'text-gray-600'
     }
   }
 
   const getPriorityBadgeVariant = (priority: string) => {
     switch (priority) {
-      case &apos;critical&apos;: return &apos;destructive&apos; as const
-      case &apos;high&apos;: return &apos;secondary&apos; as const
-      case &apos;medium&apos;: return &apos;outline&apos; as const
-      case &apos;low&apos;: return &apos;default&apos; as const
-      default: return &apos;outline&apos; as const
+      case 'critical': return 'destructive' as const
+      case 'high': return 'secondary' as const
+      case 'medium': return 'outline' as const
+      case 'low': return 'default' as const
+      default: return 'outline' as const
     }
   }
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 85) return &apos;text-green-600&apos;
-    if (confidence >= 70) return &apos;text-yellow-600&apos;
-    return &apos;text-red-600&apos;
+    if (confidence >= 85) return 'text-green-600'
+    if (confidence >= 70) return 'text-yellow-600'
+    return 'text-red-600'
   }
 
   const handleItemSelect = (itemId: string) => {
@@ -177,9 +177,9 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
 
   const handleSelectAll = () => {
     const filteredItems = queueItems.filter(item =>
-      (statusFilter === &apos;all&apos; || item.status === statusFilter) &&
-      (priorityFilter === &apos;all&apos; || item.priority === priorityFilter) &&
-      (typeFilter === &apos;all&apos; || item.type === typeFilter)
+      (statusFilter === 'all' || item.status === statusFilter) &&
+      (priorityFilter === 'all' || item.priority === priorityFilter) &&
+      (typeFilter === 'all' || item.type === typeFilter)
     )
 
     if (selectedItems.length === filteredItems.length) {
@@ -193,10 +193,10 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
   const queueItems = mockQueueItems
 
   const filteredItems = queueItems.filter(item => {
-    const matchesStatus = statusFilter === &apos;all&apos; || item.status === statusFilter
-    const matchesPriority = priorityFilter === &apos;all&apos; || item.priority === priorityFilter
-    const matchesType = typeFilter === &apos;all&apos; || item.type === typeFilter
-    const matchesSearch = searchQuery === &apos;' ||
+    const matchesStatus = statusFilter === 'all' || item.status === statusFilter
+    const matchesPriority = priorityFilter === 'all' || item.priority === priorityFilter
+    const matchesType = typeFilter === 'all' || item.type === typeFilter
+    const matchesSearch = searchQuery === '' ||
       item.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.author.username.toLowerCase().includes(searchQuery.toLowerCase())
 
@@ -204,25 +204,25 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
   })
 
   return (
-    <div className=&quot;min-h-screen bg-background p-6&quot;>
-      <div className=&quot;max-w-7xl mx-auto space-y-6&quot;>
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className=&quot;flex items-center justify-between&quot;>
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className=&quot;text-3xl font-bold text-foreground&quot;>모더레이션 큐</h1>
-            <p className=&quot;text-muted-foreground mt-1&quot;>검토가 필요한 콘텐츠 관리</p>
+            <h1 className="text-3xl font-bold text-foreground">모더레이션 큐</h1>
+            <p className="text-muted-foreground mt-1">검토가 필요한 콘텐츠 관리</p>
           </div>
-          <div className=&quot;flex items-center space-x-2&quot;>
-            <Badge variant=&quot;outline&quot; className=&quot;text-sm&quot;>
-              큐 크기: {loading ? &apos;...&apos; : filteredItems.length}
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-sm">
+              큐 크기: {loading ? '...' : filteredItems.length}
             </Badge>
-            <Badge variant=&quot;secondary&quot; className=&quot;text-sm&quot;>
+            <Badge variant="secondary" className="text-sm">
               평균 응답시간: 12분
             </Badge>
             {loading && (
-              <div className=&quot;flex items-center space-x-1&quot;>
-                <Loader2 className=&quot;h-4 w-4 animate-spin&quot; />
-                <span className=&quot;text-sm text-muted-foreground&quot;>로딩 중...</span>
+              <div className="flex items-center space-x-1">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm text-muted-foreground">로딩 중...</span>
               </div>
             )}
           </div>
@@ -230,16 +230,16 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
 
         {/* Error State */}
         {error && (
-          <Card className=&quot;border-red-200 bg-red-50&quot;>
-            <CardContent className=&quot;p-6&quot;>
-              <div className=&quot;flex items-center space-x-2&quot;>
-                <AlertTriangle className=&quot;h-5 w-5 text-red-600&quot; />
-                <span className=&quot;text-red-800&quot;>큐 데이터를 불러오는 중 오류가 발생했습니다: {error}</span>
+          <Card className="border-red-200 bg-red-50">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                <span className="text-red-800">큐 데이터를 불러오는 중 오류가 발생했습니다: {error}</span>
                 <Button
-                  variant=&quot;outline&quot;
-                  size=&quot;sm&quot;
+                  variant="outline"
+                  size="sm"
                   onClick={refetch}
-                  className=&quot;ml-auto&quot;
+                  className="ml-auto"
                 >
                   재시도
                 </Button>
@@ -250,70 +250,70 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
 
         {/* Filters */}
         <Card>
-          <CardContent className=&quot;p-4&quot;>
-            <div className=&quot;flex flex-wrap items-center gap-4&quot;>
-              <div className=&quot;flex items-center space-x-2&quot;>
-                <Search className=&quot;h-4 w-4 text-muted-foreground&quot; />
+          <CardContent className="p-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <Search className="h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder=&quot;검색...&quot;
+                  placeholder="검색..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className=&quot;w-64&quot;
+                  className="w-64"
                 />
               </div>
 
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className=&quot;w-32&quot;>
-                  <SelectValue placeholder=&quot;상태&quot; />
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="상태" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=&quot;all&quot;>전체</SelectItem>
-                  <SelectItem value=&quot;pending&quot;>대기중</SelectItem>
-                  <SelectItem value=&quot;approved&quot;>승인됨</SelectItem>
-                  <SelectItem value=&quot;rejected&quot;>거부됨</SelectItem>
-                  <SelectItem value=&quot;escalated&quot;>에스컬레이션</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
+                  <SelectItem value="pending">대기중</SelectItem>
+                  <SelectItem value="approved">승인됨</SelectItem>
+                  <SelectItem value="rejected">거부됨</SelectItem>
+                  <SelectItem value="escalated">에스컬레이션</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className=&quot;w-32&quot;>
-                  <SelectValue placeholder=&quot;우선순위&quot; />
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="우선순위" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=&quot;all&quot;>전체</SelectItem>
-                  <SelectItem value=&quot;critical&quot;>긴급</SelectItem>
-                  <SelectItem value=&quot;high&quot;>높음</SelectItem>
-                  <SelectItem value=&quot;medium&quot;>보통</SelectItem>
-                  <SelectItem value=&quot;low&quot;>낮음</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
+                  <SelectItem value="critical">긴급</SelectItem>
+                  <SelectItem value="high">높음</SelectItem>
+                  <SelectItem value="medium">보통</SelectItem>
+                  <SelectItem value="low">낮음</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className=&quot;w-32&quot;>
-                  <SelectValue placeholder=&quot;유형&quot; />
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="유형" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=&quot;all&quot;>전체</SelectItem>
-                  <SelectItem value=&quot;post&quot;>게시물</SelectItem>
-                  <SelectItem value=&quot;comment&quot;>댓글</SelectItem>
-                  <SelectItem value=&quot;user&quot;>User</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
+                  <SelectItem value="post">게시물</SelectItem>
+                  <SelectItem value="comment">댓글</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
                 </SelectContent>
               </Select>
 
-              <div className=&quot;flex items-center space-x-2 ml-auto&quot;>
+              <div className="flex items-center space-x-2 ml-auto">
                 <Checkbox
                   checked={selectedItems.length === filteredItems.length && filteredItems.length > 0}
                   onCheckedChange={handleSelectAll}
                 />
-                <label className=&quot;text-sm&quot;>전체 선택</label>
+                <label className="text-sm">전체 선택</label>
               </div>
 
               {selectedItems.length > 0 && (
-                <div className=&quot;flex items-center space-x-2&quot;>
-                  <Button size=&quot;sm&quot; variant=&quot;outline&quot;>
+                <div className="flex items-center space-x-2">
+                  <Button size="sm" variant="outline">
                     일괄 승인 ({selectedItems.length})
                   </Button>
-                  <Button size=&quot;sm&quot; variant=&quot;outline&quot;>
+                  <Button size="sm" variant="outline">
                     일괄 거부 ({selectedItems.length})
                   </Button>
                 </div>
@@ -323,62 +323,62 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
         </Card>
 
         {/* Queue Items */}
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {filteredItems.map((item) => (
-            <Card key={item.id} className=&quot;hover:shadow-md transition-shadow&quot;>
-              <CardContent className=&quot;p-6&quot;>
-                <div className=&quot;flex items-start space-x-4&quot;>
+            <Card key={item.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
                   <Checkbox
                     checked={selectedItems.includes(item.id)}
                     onCheckedChange={() => handleItemSelect(item.id)}
                   />
 
-                  <div className=&quot;flex-1 space-y-4&quot;>
+                  <div className="flex-1 space-y-4">
                     {/* Header */}
-                    <div className=&quot;flex items-center justify-between&quot;>
-                      <div className=&quot;flex items-center space-x-3&quot;>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
                         <div className={`w-3 h-3 rounded-full ${getPriorityColor(item.priority)}`} />
-                        {item.type === &apos;post&apos; ? (
-                          <MessageSquare className=&quot;h-4 w-4 text-muted-foreground&quot; />
-                        ) : item.type === &apos;comment&apos; ? (
-                          <MessageSquare className=&quot;h-4 w-4 text-muted-foreground&quot; />
+                        {item.type === 'post' ? (
+                          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                        ) : item.type === 'comment' ? (
+                          <MessageSquare className="h-4 w-4 text-muted-foreground" />
                         ) : (
-                          <User className=&quot;h-4 w-4 text-muted-foreground&quot; />
+                          <User className="h-4 w-4 text-muted-foreground" />
                         )}
                         <Badge variant={getPriorityBadgeVariant(item.priority)}>
-                          {item.priority === &apos;critical&apos; ? &apos;긴급&apos; :
-                            item.priority === &apos;high&apos; ? &apos;높음&apos; :
-                              item.priority === &apos;medium&apos; ? &apos;보통&apos; : &apos;낮음&apos;}
+                          {item.priority === 'critical' ? '긴급' :
+                            item.priority === 'high' ? '높음' :
+                              item.priority === 'medium' ? '보통' : '낮음'}
                         </Badge>
-                        <span className=&quot;text-sm text-muted-foreground&quot;>{item.createdAt}</span>
+                        <span className="text-sm text-muted-foreground">{item.createdAt}</span>
                       </div>
 
-                      <div className=&quot;flex items-center space-x-2&quot;>
-                        <Button size=&quot;sm&quot; variant=&quot;outline&quot;>
-                          <Eye className=&quot;h-4 w-4 mr-1&quot; />
+                      <div className="flex items-center space-x-2">
+                        <Button size="sm" variant="outline">
+                          <Eye className="h-4 w-4 mr-1" />
                           세부사항
                         </Button>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className=&quot;bg-muted/30 p-4 rounded-lg&quot;>
-                      <p className=&quot;text-sm&quot;>{item.content}</p>
+                    <div className="bg-muted/30 p-4 rounded-lg">
+                      <p className="text-sm">{item.content}</p>
                     </div>
 
                     {/* Author Info & AI Analysis */}
-                    <div className=&quot;grid grid-cols-1 md:grid-cols-2 gap-4&quot;>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Author Info */}
-                      <div className=&quot;space-y-2&quot;>
-                        <h4 className=&quot;text-sm font-medium&quot;>작성자 정보</h4>
-                        <div className=&quot;flex items-center space-x-3&quot;>
-                          <Avatar className=&quot;h-8 w-8&quot;>
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">작성자 정보</h4>
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-8 w-8">
                             <AvatarImage src={item.author.avatar} alt={item.author.username} />
                             <AvatarFallback>{item.author.username[0]}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className=&quot;text-sm font-medium&quot;>{item.author.username}</p>
-                            <div className=&quot;flex items-center space-x-2 text-xs text-muted-foreground&quot;>
+                            <p className="text-sm font-medium">{item.author.username}</p>
+                            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                               <span>Points: {item.author.karma}</span>
                               <span>•</span>
                               <span>계정: {item.author.accountAge}</span>
@@ -390,65 +390,65 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
                       </div>
 
                       {/* AI Analysis */}
-                      <div className=&quot;space-y-2&quot;>
-                        <h4 className=&quot;text-sm font-medium&quot;>AI 분석</h4>
-                        <div className=&quot;space-y-2&quot;>
-                          <div className=&quot;flex items-center justify-between&quot;>
-                            <span className=&quot;text-sm&quot;>신뢰도</span>
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">AI 분석</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">신뢰도</span>
                             <span className={`text-sm font-medium ${getConfidenceColor(item.ai.confidence)}`}>
                               {item.ai.confidence}%
                             </span>
                           </div>
-                          <Progress value={item.ai.confidence} className=&quot;h-2&quot; />
-                          <div className=&quot;flex flex-wrap gap-1&quot;>
+                          <Progress value={item.ai.confidence} className="h-2" />
+                          <div className="flex flex-wrap gap-1">
                             {item.ai.violations.map((violation) => (
-                              <Badge key={violation} variant=&quot;secondary&quot; className=&quot;text-xs&quot;>
+                              <Badge key={violation} variant="secondary" className="text-xs">
                                 {violation}
                               </Badge>
                             ))}
                           </div>
-                          <p className=&quot;text-xs text-muted-foreground&quot;>{item.ai.reasoning}</p>
+                          <p className="text-xs text-muted-foreground">{item.ai.reasoning}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Report Info */}
                     {item.reportedBy && (
-                      <div className=&quot;bg-yellow-50 border border-yellow-200 p-3 rounded-lg&quot;>
-                        <div className=&quot;flex items-center space-x-2&quot;>
-                          <Flag className=&quot;h-4 w-4 text-yellow-600&quot; />
-                          <span className=&quot;text-sm font-medium&quot;>User 신고</span>
+                      <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <Flag className="h-4 w-4 text-yellow-600" />
+                          <span className="text-sm font-medium">User 신고</span>
                         </div>
-                        <p className=&quot;text-sm text-muted-foreground mt-1&quot;>
+                        <p className="text-sm text-muted-foreground mt-1">
                           {item.reportedBy}님이 &ldquo;{item.reportReason}&rdquo; 사유로 신고
                         </p>
                       </div>
                     )}
 
                     {/* Actions */}
-                    <div className=&quot;flex items-center space-x-2 pt-2 border-t&quot;>
+                    <div className="flex items-center space-x-2 pt-2 border-t">
                       <Button
-                        size=&quot;sm&quot;
-                        className=&quot;bg-green-600 hover:bg-green-700&quot;
-                        onClick={() => handleModerationAction(&apos;approve&apos;, item.id)}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => handleModerationAction('approve', item.id)}
                       >
-                        <CheckCircle className=&quot;h-4 w-4 mr-1&quot; />
+                        <CheckCircle className="h-4 w-4 mr-1" />
                         승인
                       </Button>
                       <Button
-                        size=&quot;sm&quot;
-                        variant=&quot;destructive&quot;
-                        onClick={() => handleModerationAction(&apos;reject&apos;, item.id)}
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleModerationAction('reject', item.id)}
                       >
-                        <X className=&quot;h-4 w-4 mr-1&quot; />
+                        <X className="h-4 w-4 mr-1" />
                         거부
                       </Button>
                       <Button
-                        size=&quot;sm&quot;
-                        variant=&quot;outline&quot;
-                        onClick={() => handleModerationAction(&apos;escalate&apos;, item.id)}
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleModerationAction('escalate', item.id)}
                       >
-                        <AlertTriangle className=&quot;h-4 w-4 mr-1&quot; />
+                        <AlertTriangle className="h-4 w-4 mr-1" />
                         에스컬레이션
                       </Button>
                     </div>
@@ -461,10 +461,10 @@ export function ModerationQueue({ channelId }: ModerationQueueProps) {
 
         {filteredItems.length === 0 && (
           <Card>
-            <CardContent className=&quot;p-12 text-center&quot;>
-              <CheckCircle className=&quot;h-12 w-12 text-green-600 mx-auto mb-4&quot; />
-              <h3 className=&quot;text-lg font-medium mb-2&quot;>모든 항목이 처리되었습니다</h3>
-              <p className=&quot;text-muted-foreground&quot;>현재 검토가 필요한 콘텐츠가 없습니다.</p>
+            <CardContent className="p-12 text-center">
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">모든 항목이 처리되었습니다</h3>
+              <p className="text-muted-foreground">현재 검토가 필요한 콘텐츠가 없습니다.</p>
             </CardContent>
           </Card>
         )}

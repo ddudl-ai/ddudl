@@ -1,21 +1,21 @@
-import React from &apos;react&apos;
-import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
-import { formatDistanceToNow } from &apos;date-fns&apos;
-import { ko } from &apos;date-fns/locale&apos;
-import PostCard from &apos;../PostCard&apos;
-import { mockPosts } from &apos;@/lib/test/mocks&apos;
+import React from 'react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { formatDistanceToNow } from 'date-fns'
+import { ko } from 'date-fns/locale'
+import PostCard from '../PostCard'
+import { mockPosts } from '@/lib/test/mocks'
 
 // Mock date-fns
-jest.mock(&apos;date-fns&apos;, () => ({
+jest.mock('date-fns', () => ({
   formatDistanceToNow: jest.fn(),
 }))
 
-describe(&apos;PostCard&apos;, () => {
+describe('PostCard', () => {
   const mockPost = mockPosts[0]
   
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(formatDistanceToNow as jest.Mock).mockReturnValue(&apos;1시간 전&apos;)
+    ;(formatDistanceToNow as jest.Mock).mockReturnValue('1시간 전')
     
     // Mock fetch globally
     global.fetch = jest.fn()
@@ -25,7 +25,7 @@ describe(&apos;PostCard&apos;, () => {
     jest.restoreAllMocks()
   })
 
-  it(&apos;should render post information correctly&apos;, () => {
+  it('should render post information correctly', () => {
     render(<PostCard post={mockPost} />)
 
     // Check title
@@ -43,7 +43,7 @@ describe(&apos;PostCard&apos;, () => {
     expect(screen.getByText(`${mockPost.users?.username}님이 작성`)).toBeInTheDocument()
     
     // Check time ago
-    expect(screen.getByText(&apos;1시간 전&apos;)).toBeInTheDocument()
+    expect(screen.getByText('1시간 전')).toBeInTheDocument()
     
     // Check vote score
     const voteScore = mockPost.upvotes - mockPost.downvotes
@@ -53,48 +53,48 @@ describe(&apos;PostCard&apos;, () => {
     expect(screen.getByText(`${mockPost.comment_count} 댓글`)).toBeInTheDocument()
   })
 
-  it(&apos;should render AI generated badge for AI posts&apos;, () => {
+  it('should render AI generated badge for AI posts', () => {
     const aiPost = { ...mockPost, ai_generated: true }
     render(<PostCard post={aiPost} />)
     
-    expect(screen.getByText(&apos;AI 생성&apos;)).toBeInTheDocument()
+    expect(screen.getByText('AI 생성')).toBeInTheDocument()
   })
 
-  it(&apos;should not render AI badge for human posts&apos;, () => {
+  it('should not render AI badge for human posts', () => {
     const humanPost = { ...mockPost, ai_generated: false }
     render(<PostCard post={humanPost} />)
     
-    expect(screen.queryByText(&apos;AI 생성&apos;)).not.toBeInTheDocument()
+    expect(screen.queryByText('AI 생성')).not.toBeInTheDocument()
   })
 
-  it(&apos;should render flair when present&apos;, () => {
-    const postWithFlair = { ...mockPost, flair: &apos;질문&apos; }
+  it('should render flair when present', () => {
+    const postWithFlair = { ...mockPost, flair: '질문' }
     render(<PostCard post={postWithFlair} />)
     
-    expect(screen.getByText(&apos;질문&apos;)).toBeInTheDocument()
+    expect(screen.getByText('질문')).toBeInTheDocument()
   })
 
-  it(&apos;should not render flair when not present&apos;, () => {
+  it('should not render flair when not present', () => {
     const postWithoutFlair = { ...mockPost, flair: null }
     render(<PostCard post={postWithoutFlair} />)
     
     // Should not have any flair badge
-    expect(screen.queryByText(&apos;질문&apos;)).not.toBeInTheDocument()
+    expect(screen.queryByText('질문')).not.toBeInTheDocument()
   })
 
-  it(&apos;should handle missing user gracefully&apos;, () => {
+  it('should handle missing user gracefully', () => {
     const postWithoutUser = { ...mockPost, users: null }
     render(<PostCard post={postWithoutUser} />)
     
-    expect(screen.getByText(&apos;알 수 없는 User님이 작성&apos;)).toBeInTheDocument()
+    expect(screen.getByText('알 수 없는 User님이 작성')).toBeInTheDocument()
   })
 
-  describe(&apos;Voting functionality&apos;, () => {
-    it(&apos;should load user vote on mount&apos;, async () => {
+  describe('Voting functionality', () => {
+    it('should load user vote on mount', async () => {
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          userVote: &apos;up&apos;,
+          userVote: 'up',
           upvotes: 10,
           downvotes: 2,
         }),
@@ -107,8 +107,8 @@ describe(&apos;PostCard&apos;, () => {
       })
     })
 
-    it(&apos;should handle vote loading error gracefully&apos;, async () => {
-      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error(&apos;Network error&apos;))
+    it('should handle vote loading error gracefully', async () => {
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
       
       // Should not crash
       render(<PostCard post={mockPost} />)
@@ -118,7 +118,7 @@ describe(&apos;PostCard&apos;, () => {
       })
     })
 
-    it(&apos;should handle upvote click&apos;, async () => {
+    it('should handle upvote click', async () => {
       ;(global.fetch as jest.Mock)
         // Initial vote loading
         .mockResolvedValueOnce({
@@ -133,7 +133,7 @@ describe(&apos;PostCard&apos;, () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 11,
             downvotes: 2,
           }),
@@ -146,26 +146,26 @@ describe(&apos;PostCard&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0] // First button should be upvote
+      const upvoteButton = screen.getAllByRole('button')[0] // First button should be upvote
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(`/api/posts/${mockPost.id}/vote`, {
-          method: &apos;POST&apos;,
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;up&apos; }),
+          body: JSON.stringify({ voteType: 'up' }),
         })
       })
 
       // Check if vote count updated
       await waitFor(() => {
-        expect(screen.getByText(&apos;9&apos;)).toBeInTheDocument() // 11 - 2 = 9
+        expect(screen.getByText('9')).toBeInTheDocument() // 11 - 2 = 9
       })
     })
 
-    it(&apos;should handle downvote click&apos;, async () => {
+    it('should handle downvote click', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -178,7 +178,7 @@ describe(&apos;PostCard&apos;, () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;down&apos;,
+            userVote: 'down',
             upvotes: 10,
             downvotes: 3,
           }),
@@ -190,26 +190,26 @@ describe(&apos;PostCard&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const downvoteButton = screen.getAllByRole(&apos;button&apos;)[2] // Third button should be downvote
+      const downvoteButton = screen.getAllByRole('button')[2] // Third button should be downvote
       fireEvent.click(downvoteButton)
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(`/api/posts/${mockPost.id}/vote`, {
-          method: &apos;POST&apos;,
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;down&apos; }),
+          body: JSON.stringify({ voteType: 'down' }),
         })
       })
     })
 
-    it(&apos;should toggle vote when same vote is clicked&apos;, async () => {
+    it('should toggle vote when same vote is clicked', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 11,
             downvotes: 2,
           }),
@@ -229,21 +229,21 @@ describe(&apos;PostCard&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(`/api/posts/${mockPost.id}/vote`, {
-          method: &apos;POST&apos;,
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;remove&apos; }),
+          body: JSON.stringify({ voteType: 'remove' }),
         })
       })
     })
 
-    it(&apos;should prevent multiple simultaneous votes&apos;, async () => {
+    it('should prevent multiple simultaneous votes', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -261,7 +261,7 @@ describe(&apos;PostCard&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       
       // Click multiple times quickly
       fireEvent.click(upvoteButton)
@@ -274,7 +274,7 @@ describe(&apos;PostCard&apos;, () => {
       })
     })
 
-    it(&apos;should handle vote error and show alert for unauthenticated&apos;, async () => {
+    it('should handle vote error and show alert for unauthenticated', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -288,7 +288,7 @@ describe(&apos;PostCard&apos;, () => {
           ok: false,
           status: 401,
           json: async () => ({
-            error: &apos;Not authenticated&apos;,
+            error: 'Not authenticated',
           }),
         })
 
@@ -302,15 +302,15 @@ describe(&apos;PostCard&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(alertMock).toHaveBeenCalledWith(&apos;투표하려면 로그인이 필요합니다.&apos;)
+        expect(alertMock).toHaveBeenCalledWith('투표하려면 로그인이 필요합니다.')
       })
     })
 
-    it(&apos;should handle general vote error&apos;, async () => {
+    it('should handle general vote error', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -324,7 +324,7 @@ describe(&apos;PostCard&apos;, () => {
           ok: false,
           status: 500,
           json: async () => ({
-            error: &apos;Internal server error&apos;,
+            error: 'Internal server error',
           }),
         })
 
@@ -337,82 +337,82 @@ describe(&apos;PostCard&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(alertMock).toHaveBeenCalledWith(&apos;투표 실패: Internal server error&apos;)
+        expect(alertMock).toHaveBeenCalledWith('투표 실패: Internal server error')
       })
     })
   })
 
-  describe(&apos;Vote score display&apos;, () => {
-    it(&apos;should display positive score in orange&apos;, () => {
+  describe('Vote score display', () => {
+    it('should display positive score in orange', () => {
       const positivePost = { ...mockPost, upvotes: 15, downvotes: 5 }
       render(<PostCard post={positivePost} />)
 
-      const scoreElement = screen.getByText(&apos;10&apos;) // 15 - 5
-      expect(scoreElement).toHaveClass(&apos;text-orange-500&apos;)
+      const scoreElement = screen.getByText('10') // 15 - 5
+      expect(scoreElement).toHaveClass('text-orange-500')
     })
 
-    it(&apos;should display negative score in blue&apos;, () => {
+    it('should display negative score in blue', () => {
       const negativePost = { ...mockPost, upvotes: 5, downvotes: 15 }
       render(<PostCard post={negativePost} />)
 
-      const scoreElement = screen.getByText(&apos;-10&apos;) // 5 - 15
-      expect(scoreElement).toHaveClass(&apos;text-blue-500&apos;)
+      const scoreElement = screen.getByText('-10') // 5 - 15
+      expect(scoreElement).toHaveClass('text-blue-500')
     })
 
-    it(&apos;should display zero score in gray&apos;, () => {
+    it('should display zero score in gray', () => {
       const neutralPost = { ...mockPost, upvotes: 5, downvotes: 5 }
       render(<PostCard post={neutralPost} />)
 
-      const scoreElement = screen.getByText(&apos;0&apos;) // 5 - 5
-      expect(scoreElement).toHaveClass(&apos;text-gray-500&apos;)
+      const scoreElement = screen.getByText('0') // 5 - 5
+      expect(scoreElement).toHaveClass('text-gray-500')
     })
   })
 
-  describe(&apos;Links and navigation&apos;, () => {
-    it(&apos;should link to channel page&apos;, () => {
+  describe('Links and navigation', () => {
+    it('should link to channel page', () => {
       render(<PostCard post={mockPost} />)
 
-      const channelLink = screen.getByRole(&apos;link&apos;, { name: mockPost.channels.display_name })
-      expect(channelLink).toHaveAttribute(&apos;href&apos;, `/${mockPost.channels.name}`)
+      const channelLink = screen.getByRole('link', { name: mockPost.channels.display_name })
+      expect(channelLink).toHaveAttribute('href', `/${mockPost.channels.name}`)
     })
 
-    it(&apos;should link to post detail page&apos;, () => {
+    it('should link to post detail page', () => {
       render(<PostCard post={mockPost} />)
 
-      const titleLink = screen.getByRole(&apos;link&apos;, { name: mockPost.title })
-      expect(titleLink).toHaveAttribute(&apos;href&apos;, `/${mockPost.channels.name}/posts/${mockPost.id}`)
+      const titleLink = screen.getByRole('link', { name: mockPost.title })
+      expect(titleLink).toHaveAttribute('href', `/${mockPost.channels.name}/posts/${mockPost.id}`)
     })
   })
 
-  describe(&apos;Action buttons&apos;, () => {
-    it(&apos;should render all action buttons&apos;, () => {
+  describe('Action buttons', () => {
+    it('should render all action buttons', () => {
       render(<PostCard post={mockPost} />)
 
       expect(screen.getByText(`${mockPost.comment_count} 댓글`)).toBeInTheDocument()
-      expect(screen.getByText(&apos;공유&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;저장&apos;)).toBeInTheDocument()
+      expect(screen.getByText('공유')).toBeInTheDocument()
+      expect(screen.getByText('저장')).toBeInTheDocument()
     })
 
-    it(&apos;should render dropdown menu&apos;, () => {
+    it('should render dropdown menu', () => {
       render(<PostCard post={mockPost} />)
 
       // Click on the more options button
-      const moreButton = screen.getByRole(&apos;button&apos;, { name: &apos;' }) // Button with MoreHorizontal icon
+      const moreButton = screen.getByRole('button', { name: '' }) // Button with MoreHorizontal icon
       fireEvent.click(moreButton)
 
-      expect(screen.getByText(&apos;숨기기&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;신고하기&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;차단하기&apos;)).toBeInTheDocument()
+      expect(screen.getByText('숨기기')).toBeInTheDocument()
+      expect(screen.getByText('신고하기')).toBeInTheDocument()
+      expect(screen.getByText('차단하기')).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Date formatting&apos;, () => {
-    it(&apos;should format date with Korean locale&apos;, () => {
-      const testDate = &apos;2024-01-01T12:00:00Z&apos;
+  describe('Date formatting', () => {
+    it('should format date with Korean locale', () => {
+      const testDate = '2024-01-01T12:00:00Z'
       const postWithDate = { ...mockPost, created_at: testDate }
       
       render(<PostCard post={postWithDate} />)
@@ -424,45 +424,45 @@ describe(&apos;PostCard&apos;, () => {
     })
   })
 
-  describe(&apos;Accessibility&apos;, () => {
-    it(&apos;should have proper ARIA labels&apos;, () => {
+  describe('Accessibility', () => {
+    it('should have proper ARIA labels', () => {
       render(<PostCard post={mockPost} />)
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
-      const downvoteButton = screen.getAllByRole(&apos;button&apos;)[2]
+      const upvoteButton = screen.getAllByRole('button')[0]
+      const downvoteButton = screen.getAllByRole('button')[2]
 
       expect(upvoteButton).toBeInTheDocument()
       expect(downvoteButton).toBeInTheDocument()
     })
 
-    it(&apos;should be keyboard navigable&apos;, () => {
+    it('should be keyboard navigable', () => {
       render(<PostCard post={mockPost} />)
 
-      const titleLink = screen.getByRole(&apos;link&apos;, { name: mockPost.title })
+      const titleLink = screen.getByRole('link', { name: mockPost.title })
       titleLink.focus()
       
       expect(titleLink).toHaveFocus()
     })
   })
 
-  describe(&apos;Content truncation&apos;, () => {
-    it(&apos;should truncate long content with line-clamp&apos;, () => {
+  describe('Content truncation', () => {
+    it('should truncate long content with line-clamp', () => {
       const longContentPost = {
         ...mockPost,
-        content: &apos;A&apos;.repeat(500), // Very long content
+        content: 'A'.repeat(500), // Very long content
       }
       
       render(<PostCard post={longContentPost} />)
 
       const contentElement = screen.getByText(longContentPost.content)
-      expect(contentElement).toHaveClass(&apos;line-clamp-3&apos;)
+      expect(contentElement).toHaveClass('line-clamp-3')
     })
 
-    it(&apos;should truncate long titles with line-clamp&apos;, () => {
+    it('should truncate long titles with line-clamp', () => {
       render(<PostCard post={mockPost} />)
 
-      const titleElement = screen.getByRole(&apos;link&apos;, { name: mockPost.title })
-      expect(titleElement).toHaveClass(&apos;line-clamp-2&apos;)
+      const titleElement = screen.getByRole('link', { name: mockPost.title })
+      expect(titleElement).toHaveClass('line-clamp-2')
     })
   })
 })

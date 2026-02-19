@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Badge } from &apos;@/components/ui/badge&apos;
-import { Tabs, TabsContent, TabsList, TabsTrigger } from &apos;@/components/ui/tabs&apos;
-import { Alert, AlertDescription, AlertTitle } from &apos;@/components/ui/alert&apos;
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Shield,
   Users,
@@ -22,12 +22,12 @@ import {
   Eye,
   Trash2,
   MoreVertical
-} from &apos;lucide-react&apos;
-import Header from &apos;@/components/layout/Header&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
-import UserManagement from &apos;@/components/admin/UserManagement&apos;
-import ChannelRequests from &apos;@/components/admin/ChannelRequests&apos;
-import AgentManagement from &apos;@/components/admin/AgentManagement&apos;
+} from 'lucide-react'
+import Header from '@/components/layout/Header'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
+import UserManagement from '@/components/admin/UserManagement'
+import ChannelRequests from '@/components/admin/ChannelRequests'
+import AgentManagement from '@/components/admin/AgentManagement'
 import {
   Table,
   TableBody,
@@ -35,13 +35,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from &quot;@/components/ui/table&quot;
+} from "@/components/ui/table"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from &quot;@/components/ui/dropdown-menu&quot;
+} from "@/components/ui/dropdown-menu"
 
 interface DashboardStats {
   totalUsers: number
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
   const [reports, setReports] = useState<Report[]>([])
   const [recentPosts, setRecentPosts] = useState<RecentPost[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState(&apos;overview&apos;)
+  const [activeTab, setActiveTab] = useState('overview')
   const router = useRouter()
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
     if (user && isAdmin) {
       fetchDashboardData()
     } else if (user && !isAdmin) {
-      router.push(&apos;/&apos;)
+      router.push('/')
     } else {
       setLoading(false)
     }
@@ -107,9 +107,9 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch(&apos;/api/admin/dashboard&apos;)
+      const response = await fetch('/api/admin/dashboard')
       if (!response.ok) {
-        throw new Error(&apos;Failed to fetch dashboard data&apos;)
+        throw new Error('Failed to fetch dashboard data')
       }
 
       const data = await response.json()
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
       setRecentPosts(data.recentPosts || [])
 
     } catch (error) {
-      console.error(&apos;Error fetching dashboard data:&apos;, error)
+      console.error('Error fetching dashboard data:', error)
 
       // 오류 발생 시 기본값 설정
       setStats({
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
   }
 
   const handleDeletePost = async (postId: string) => {
-    if (confirm(&apos;정말 이 게시물을 삭제하시겠습니까?&apos;)) {
+    if (confirm('정말 이 게시물을 삭제하시겠습니까?')) {
       // API 호출로 게시물 삭제
       alert(`게시물 #${postId} 삭제됨`)
     }
@@ -158,11 +158,11 @@ export default function AdminDashboard() {
 
   if (!user || !isAdmin) {
     return (
-      <div className=&quot;min-h-screen bg-gray-50&quot;>
+      <div className="min-h-screen bg-gray-50">
         <Header />
-        <div className=&quot;max-w-4xl mx-auto px-4 py-8&quot;>
-          <Alert variant=&quot;destructive&quot;>
-            <AlertTriangle className=&quot;h-4 w-4&quot; />
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
             <AlertTitle>접근 거부</AlertTitle>
             <AlertDescription>
               Admin만 접근할 수 있는 페이지입니다.
@@ -175,11 +175,11 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className=&quot;min-h-screen bg-gray-50&quot;>
+      <div className="min-h-screen bg-gray-50">
         <Header />
-        <div className=&quot;max-w-6xl mx-auto px-4 py-8&quot;>
-          <div className=&quot;flex justify-center&quot;>
-            <LoadingSpinner text=&quot;대시보드 로딩 중...&quot; />
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="flex justify-center">
+            <LoadingSpinner text="대시보드 로딩 중..." />
           </div>
         </div>
       </div>
@@ -187,68 +187,68 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className=&quot;min-h-screen bg-gray-50&quot;>
+    <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className=&quot;max-w-7xl mx-auto px-4 py-8&quot;>
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 헤더 */}
-        <div className=&quot;mb-8&quot;>
-          <div className=&quot;flex items-center space-x-2 mb-2&quot;>
-            <Shield className=&quot;w-8 h-8 text-red-600&quot; />
-            <h1 className=&quot;text-3xl font-bold&quot;>Admin 대시보드</h1>
+        <div className="mb-8">
+          <div className="flex items-center space-x-2 mb-2">
+            <Shield className="w-8 h-8 text-red-600" />
+            <h1 className="text-3xl font-bold">Admin 대시보드</h1>
           </div>
-          <p className=&quot;text-gray-600&quot;>ddudl 커뮤니티를 관리하고 모니터링하세요</p>
+          <p className="text-gray-600">ddudl 커뮤니티를 관리하고 모니터링하세요</p>
         </div>
 
         {/* 통계 카드 */}
-        <div className=&quot;grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8&quot;>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card>
-            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
-              <CardTitle className=&quot;text-sm font-medium&quot;>총 User</CardTitle>
-              <Users className=&quot;h-4 w-4 text-muted-foreground&quot; />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">총 User</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className=&quot;text-2xl font-bold&quot;>{stats.totalUsers.toLocaleString()}</div>
-              <p className=&quot;text-xs text-muted-foreground&quot;>
+              <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">
                 오늘 신규 +{stats.newUsersToday}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
-              <CardTitle className=&quot;text-sm font-medium&quot;>총 게시물</CardTitle>
-              <FileText className=&quot;h-4 w-4 text-muted-foreground&quot; />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">총 게시물</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className=&quot;text-2xl font-bold&quot;>{stats.totalPosts.toLocaleString()}</div>
-              <p className=&quot;text-xs text-muted-foreground&quot;>
+              <div className="text-2xl font-bold">{stats.totalPosts.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">
                 오늘 +{stats.postsToday}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
-              <CardTitle className=&quot;text-sm font-medium&quot;>활성 User</CardTitle>
-              <Activity className=&quot;h-4 w-4 text-muted-foreground&quot; />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">활성 User</CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className=&quot;text-2xl font-bold&quot;>{stats.activeUsers24h}</div>
-              <p className=&quot;text-xs text-muted-foreground&quot;>
+              <div className="text-2xl font-bold">{stats.activeUsers24h}</div>
+              <p className="text-xs text-muted-foreground">
                 지난 24시간
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className=&quot;flex flex-row items-center justify-between space-y-0 pb-2&quot;>
-              <CardTitle className=&quot;text-sm font-medium&quot;>대기중 신고</CardTitle>
-              <AlertTriangle className=&quot;h-4 w-4 text-orange-500&quot; />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">대기중 신고</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-orange-500" />
             </CardHeader>
             <CardContent>
-              <div className=&quot;text-2xl font-bold text-orange-600&quot;>{stats.pendingReports}</div>
-              <p className=&quot;text-xs text-muted-foreground&quot;>
+              <div className="text-2xl font-bold text-orange-600">{stats.pendingReports}</div>
+              <p className="text-xs text-muted-foreground">
                 처리 필요
               </p>
             </CardContent>
@@ -257,18 +257,18 @@ export default function AdminDashboard() {
 
         {/* 메인 탭 */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className=&quot;grid w-full grid-cols-7&quot;>
-            <TabsTrigger value=&quot;overview&quot;>개요</TabsTrigger>
-            <TabsTrigger value=&quot;reports&quot;>신고 관리</TabsTrigger>
-            <TabsTrigger value=&quot;users&quot;>User 관리</TabsTrigger>
-            <TabsTrigger value=&quot;agents&quot;>Agents</TabsTrigger>
-            <TabsTrigger value=&quot;channels&quot;>채널 신청</TabsTrigger>
-            <TabsTrigger value=&quot;content&quot;>콘텐츠 관리</TabsTrigger>
-            <TabsTrigger value=&quot;settings&quot;>설정</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-7">
+            <TabsTrigger value="overview">개요</TabsTrigger>
+            <TabsTrigger value="reports">신고 관리</TabsTrigger>
+            <TabsTrigger value="users">User 관리</TabsTrigger>
+            <TabsTrigger value="agents">Agents</TabsTrigger>
+            <TabsTrigger value="channels">채널 신청</TabsTrigger>
+            <TabsTrigger value="content">콘텐츠 관리</TabsTrigger>
+            <TabsTrigger value="settings">설정</TabsTrigger>
           </TabsList>
 
           {/* 개요 탭 */}
-          <TabsContent value=&quot;overview&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="overview" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>최근 활동</CardTitle>
@@ -277,11 +277,11 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className=&quot;space-y-4&quot;>
+                <div className="space-y-4">
                   {/* 차트 영역 (실제로는 차트 라이브러리 사용) */}
-                  <div className=&quot;h-48 bg-gray-100 rounded-lg flex items-center justify-center&quot;>
-                    <BarChart className=&quot;w-12 h-12 text-gray-400&quot; />
-                    <span className=&quot;ml-2 text-gray-500&quot;>활동 차트</span>
+                  <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <BarChart className="w-12 h-12 text-gray-400" />
+                    <span className="ml-2 text-gray-500">활동 차트</span>
                   </div>
                 </div>
               </CardContent>
@@ -309,36 +309,36 @@ export default function AdminDashboard() {
                   <TableBody>
                     {recentPosts.map((post) => (
                       <TableRow key={post.id}>
-                        <TableCell className=&quot;font-medium&quot;>{post.title}</TableCell>
+                        <TableCell className="font-medium">{post.title}</TableCell>
                         <TableCell>{post.author}</TableCell>
                         <TableCell>{post.channel}</TableCell>
                         <TableCell>
                           <Badge
-                            variant={post.moderation_status === &apos;approved&apos; ? &apos;default&apos; : &apos;secondary&apos;}
+                            variant={post.moderation_status === 'approved' ? 'default' : 'secondary'}
                           >
-                            {post.moderation_status === &apos;approved&apos; ? &apos;승인됨&apos; : &apos;대기중&apos;}
+                            {post.moderation_status === 'approved' ? '승인됨' : '대기중'}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {new Date(post.created_at).toLocaleDateString(&apos;ko-KR&apos;)}
+                          {new Date(post.created_at).toLocaleDateString('ko-KR')}
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant=&quot;ghost&quot; size=&quot;sm&quot;>
-                                <MoreVertical className=&quot;h-4 w-4&quot; />
+                              <Button variant="ghost" size="sm">
+                                <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align=&quot;end&quot;>
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem>
-                                <Eye className=&quot;mr-2 h-4 w-4&quot; />
+                                <Eye className="mr-2 h-4 w-4" />
                                 보기
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className=&quot;text-red-600&quot;
+                                className="text-red-600"
                                 onClick={() => handleDeletePost(post.id)}
                               >
-                                <Trash2 className=&quot;mr-2 h-4 w-4&quot; />
+                                <Trash2 className="mr-2 h-4 w-4" />
                                 삭제
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -353,7 +353,7 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* 신고 관리 탭 */}
-          <TabsContent value=&quot;reports&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="reports" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>신고 목록</CardTitle>
@@ -378,36 +378,36 @@ export default function AdminDashboard() {
                       <TableRow key={report.id}>
                         <TableCell>{report.reporter}</TableCell>
                         <TableCell>
-                          <Badge variant=&quot;outline&quot;>
-                            {report.target_type === &apos;post&apos; ? &apos;게시물&apos; : &apos;댓글&apos;}
+                          <Badge variant="outline">
+                            {report.target_type === 'post' ? '게시물' : '댓글'}
                           </Badge>
                         </TableCell>
                         <TableCell>{report.reason}</TableCell>
                         <TableCell>
                           <Badge
-                            variant={report.status === &apos;pending&apos; ? &apos;secondary&apos; : &apos;default&apos;}
+                            variant={report.status === 'pending' ? 'secondary' : 'default'}
                           >
-                            {report.status === &apos;pending&apos; ? &apos;대기중&apos; : &apos;처리됨&apos;}
+                            {report.status === 'pending' ? '대기중' : '처리됨'}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {new Date(report.created_at).toLocaleDateString(&apos;ko-KR&apos;)}
+                          {new Date(report.created_at).toLocaleDateString('ko-KR')}
                         </TableCell>
                         <TableCell>
-                          <div className=&quot;flex space-x-2&quot;>
+                          <div className="flex space-x-2">
                             <Button
-                              size=&quot;sm&quot;
-                              variant=&quot;outline&quot;
+                              size="sm"
+                              variant="outline"
                               onClick={() => handleApproveReport(report.id)}
                             >
-                              <CheckCircle className=&quot;h-4 w-4 text-green-600&quot; />
+                              <CheckCircle className="h-4 w-4 text-green-600" />
                             </Button>
                             <Button
-                              size=&quot;sm&quot;
-                              variant=&quot;outline&quot;
+                              size="sm"
+                              variant="outline"
                               onClick={() => handleRejectReport(report.id)}
                             >
-                              <XCircle className=&quot;h-4 w-4 text-red-600&quot; />
+                              <XCircle className="h-4 w-4 text-red-600" />
                             </Button>
                           </div>
                         </TableCell>
@@ -420,22 +420,22 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* User 관리 탭 */}
-          <TabsContent value=&quot;users&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="users" className="space-y-6">
             <UserManagement />
           </TabsContent>
 
           {/* Agents 관리 탭 */}
-          <TabsContent value=&quot;agents&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="agents" className="space-y-6">
             <AgentManagement />
           </TabsContent>
 
           {/* 채널 신청 관리 탭 */}
-          <TabsContent value=&quot;channels&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="channels" className="space-y-6">
             <ChannelRequests />
           </TabsContent>
 
           {/* 콘텐츠 관리 탭 */}
-          <TabsContent value=&quot;content&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="content" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>콘텐츠 모더레이션</CardTitle>
@@ -444,38 +444,38 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className=&quot;grid grid-cols-1 md:grid-cols-3 gap-4&quot;>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Card>
-                    <CardHeader className=&quot;pb-3&quot;>
-                      <CardTitle className=&quot;text-sm&quot;>AI 자동 필터링</CardTitle>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">AI 자동 필터링</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className=&quot;text-2xl font-bold text-green-600&quot;>활성화</div>
-                      <p className=&quot;text-xs text-gray-500 mt-1&quot;>
+                      <div className="text-2xl font-bold text-green-600">활성화</div>
+                      <p className="text-xs text-gray-500 mt-1">
                         유해 콘텐츠 자동 감지
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
-                    <CardHeader className=&quot;pb-3&quot;>
-                      <CardTitle className=&quot;text-sm&quot;>필터링된 콘텐츠</CardTitle>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">필터링된 콘텐츠</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className=&quot;text-2xl font-bold&quot;>156</div>
-                      <p className=&quot;text-xs text-gray-500 mt-1&quot;>
+                      <div className="text-2xl font-bold">156</div>
+                      <p className="text-xs text-gray-500 mt-1">
                         이번 주
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
-                    <CardHeader className=&quot;pb-3&quot;>
-                      <CardTitle className=&quot;text-sm&quot;>정확도</CardTitle>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">정확도</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className=&quot;text-2xl font-bold&quot;>94.3%</div>
-                      <p className=&quot;text-xs text-gray-500 mt-1&quot;>
+                      <div className="text-2xl font-bold">94.3%</div>
+                      <p className="text-xs text-gray-500 mt-1">
                         AI 모더레이션 정확도
                       </p>
                     </CardContent>
@@ -486,7 +486,7 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* 설정 탭 */}
-          <TabsContent value=&quot;settings&quot; className=&quot;space-y-6&quot;>
+          <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Admin 설정</CardTitle>
@@ -495,17 +495,17 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className=&quot;space-y-4&quot;>
-                  <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
-                    <Ban className=&quot;mr-2 h-4 w-4&quot; />
+                <div className="space-y-4">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Ban className="mr-2 h-4 w-4" />
                     금지 단어 관리
                   </Button>
-                  <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
-                    <Shield className=&quot;mr-2 h-4 w-4&quot; />
+                  <Button variant="outline" className="w-full justify-start">
+                    <Shield className="mr-2 h-4 w-4" />
                     모더레이터 관리
                   </Button>
-                  <Button variant=&quot;outline&quot; className=&quot;w-full justify-start&quot;>
-                    <Settings className=&quot;mr-2 h-4 w-4&quot; />
+                  <Button variant="outline" className="w-full justify-start">
+                    <Settings className="mr-2 h-4 w-4" />
                     커뮤니티 설정
                   </Button>
                 </div>

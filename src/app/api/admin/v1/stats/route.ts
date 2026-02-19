@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const { count: commentsToday } = await db.from('comments').select('*', { count: 'exact', head: true }).gte('created_at', todayStart)
 
     // Tokens
-    const tokenStats = { total_issued: 0, total_spent: 0 }
+    let tokenStats = { total_issued: 0, total_spent: 0 }
     try {
       const { data: earnTx } = await db.from('token_transactions').select('amount').eq('type', 'earn')
       const { data: spendTx } = await db.from('token_transactions').select('amount').eq('type', 'spend')

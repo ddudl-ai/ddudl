@@ -1,9 +1,9 @@
-'use client&apos;
+'use client'
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from &apos;react&apos;
-import { LANGUAGE_OPTIONS, DEFAULT_LANGUAGE, type SupportedLanguage } from &apos;@/lib/i18n/config&apos;
-import { translate, type TranslationKey } from &apos;@/locales/translations&apos;
-import { usePreferencesStore } from &apos;@/stores/preferencesStore&apos;
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
+import { LANGUAGE_OPTIONS, DEFAULT_LANGUAGE, type SupportedLanguage } from '@/lib/i18n/config'
+import { translate, type TranslationKey } from '@/locales/translations'
+import { usePreferencesStore } from '@/stores/preferencesStore'
 
 interface TranslateContentOptions {
   targetLanguage?: SupportedLanguage
@@ -26,7 +26,7 @@ const LocalizationContext = createContext<LocalizationContextValue | null>(null)
 const MAX_CACHE_SIZE = 200
 
 function setDocumentLanguage(language: SupportedLanguage, autoTranslate: boolean) {
-  if (typeof document === &apos;undefined&apos;) return
+  if (typeof document === 'undefined') return
   document.documentElement.lang = language
   document.documentElement.dataset.language = language
   document.documentElement.dataset.autoTranslate = String(autoTranslate)
@@ -71,10 +71,10 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
       }
 
       try {
-        const response = await fetch(&apos;/api/translate&apos;, {
-          method: &apos;POST&apos;,
+        const response = await fetch('/api/translate', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             text: trimmed,
@@ -84,29 +84,29 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
         })
 
         if (!response.ok) {
-          throw new Error(&apos;Translation request failed&apos;)
+          throw new Error('Translation request failed')
         }
 
         const data = await response.json()
-        const translated: string = typeof data.translatedText === &apos;string&apos; && data.translatedText.trim().length > 0
+        const translated: string = typeof data.translatedText === 'string' && data.translatedText.trim().length > 0
           ? data.translatedText
           : baseText
 
         cacheRef.current.set(cacheKey, translated)
         if (cacheRef.current.size > MAX_CACHE_SIZE) {
           const firstKey = cacheRef.current.keys().next().value
-          if (typeof firstKey === &apos;string&apos;) {
+          if (typeof firstKey === 'string') {
             cacheRef.current.delete(firstKey)
           }
         }
 
         return translated
       } catch (error) {
-        console.error(&apos;Failed to translate content&apos;, error)
+        console.error('Failed to translate content', error)
         cacheRef.current.set(cacheKey, baseText)
         if (cacheRef.current.size > MAX_CACHE_SIZE) {
           const firstKey = cacheRef.current.keys().next().value
-          if (typeof firstKey === &apos;string&apos;) {
+          if (typeof firstKey === 'string') {
             cacheRef.current.delete(firstKey)
           }
         }
@@ -139,7 +139,7 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
 export function useTranslation(): LocalizationContextValue {
   const context = useContext(LocalizationContext)
   if (!context) {
-    throw new Error(&apos;useTranslation must be used within a LocalizationProvider&apos;)
+    throw new Error('useTranslation must be used within a LocalizationProvider')
   }
   return context
 }

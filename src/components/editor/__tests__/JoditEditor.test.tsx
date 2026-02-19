@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from &apos;@jest/globals&apos;
-import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
-import userEvent from &apos;@testing-library/user-event&apos;
-import &apos;@testing-library/jest-dom&apos;
-import JoditEditor, { JoditEditorRef } from &apos;../JoditEditor&apos;
-import { createRef } from &apos;react&apos;
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+import JoditEditor, { JoditEditorRef } from '../JoditEditor'
+import { createRef } from 'react'
 
 // Mock Jodit React component
-jest.mock(&apos;jodit-react&apos;, () => {
+jest.mock('jodit-react', () => {
   return jest.fn().mockImplementation(({ value, onChange, onBlur, config }) => {
     const mockEditor = {
       focus: jest.fn(),
@@ -22,15 +22,15 @@ jest.mock(&apos;jodit-react&apos;, () => {
     }
 
     return (
-      <div data-testid=&quot;jodit-editor-mock&quot;>
-        <div className=&quot;jodit-toolbar__box&quot;>
-          <button data-testid=&quot;bold-button&quot;>Bold</button>
-          <button data-testid=&quot;italic-button&quot;>Italic</button>
-          <button data-testid=&quot;image-button&quot;>Image</button>
-          <button data-testid=&quot;link-button&quot;>Link</button>
+      <div data-testid="jodit-editor-mock">
+        <div className="jodit-toolbar__box">
+          <button data-testid="bold-button">Bold</button>
+          <button data-testid="italic-button">Italic</button>
+          <button data-testid="image-button">Image</button>
+          <button data-testid="link-button">Link</button>
         </div>
         <textarea
-          data-testid=&quot;jodit-textarea&quot;
+          data-testid="jodit-textarea"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={(e) => onBlur(e.target.value)}
@@ -50,21 +50,21 @@ jest.mock(&apos;jodit-react&apos;, () => {
 })
 
 // Mock dynamic import
-jest.mock(&apos;next/dynamic&apos;, () => {
+jest.mock('next/dynamic', () => {
   return jest.fn((loader) => {
     const MockedComponent = (props: any) => {
-      const JoditReactMock = require(&apos;jodit-react&apos;)
+      const JoditReactMock = require('jodit-react')
       return <JoditReactMock {...props} />
     }
-    MockedComponent.displayName = &apos;DynamicJoditEditor&apos;
+    MockedComponent.displayName = 'DynamicJoditEditor'
     return MockedComponent
   })
 })
 
-describe(&apos;JoditEditor Integration Tests&apos;, () => {
+describe('JoditEditor Integration Tests', () => {
   const mockOnChange = jest.fn()
   const defaultProps = {
-    value: &apos;',
+    value: '',
     onChange: mockOnChange
   }
 
@@ -76,57 +76,57 @@ describe(&apos;JoditEditor Integration Tests&apos;, () => {
     jest.clearAllMocks()
   })
 
-  describe(&apos;Basic Functionality&apos;, () => {
-    it(&apos;should render editor with default configuration&apos;, () => {
+  describe('Basic Functionality', () => {
+    it('should render editor with default configuration', () => {
       render(<JoditEditor {...defaultProps} />)
 
-      expect(screen.getByTestId(&apos;jodit-editor-mock&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;jodit-textarea&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId('jodit-editor-mock')).toBeInTheDocument()
+      expect(screen.getByTestId('jodit-textarea')).toBeInTheDocument()
     })
 
-    it(&apos;should display loading state initially&apos;, () => {
+    it('should display loading state initially', () => {
       // Re-mock dynamic to show loading
       const mockDynamic = jest.fn(() => {
         const LoadingComponent = () => (
-          <div className=&quot;min-h-[400px] bg-gray-50 rounded-md flex items-center justify-center&quot;>
-            <span className=&quot;text-gray-500&quot;>에디터 로딩 중...</span>
+          <div className="min-h-[400px] bg-gray-50 rounded-md flex items-center justify-center">
+            <span className="text-gray-500">에디터 로딩 중...</span>
           </div>
         )
         return LoadingComponent
       })
 
-      jest.doMock(&apos;next/dynamic&apos;, () => mockDynamic)
+      jest.doMock('next/dynamic', () => mockDynamic)
 
       render(<JoditEditor {...defaultProps} />)
 
-      expect(screen.getByText(&apos;에디터 로딩 중...&apos;)).toBeInTheDocument()
+      expect(screen.getByText('에디터 로딩 중...')).toBeInTheDocument()
     })
 
-    it(&apos;should handle value changes&apos;, async () => {
+    it('should handle value changes', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
-      await user.type(textarea, &apos;Hello World&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
+      await user.type(textarea, 'Hello World')
 
-      expect(mockOnChange).toHaveBeenCalledWith(&apos;Hello World&apos;)
+      expect(mockOnChange).toHaveBeenCalledWith('Hello World')
     })
 
-    it(&apos;should handle blur events&apos;, async () => {
+    it('should handle blur events', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
-      await user.type(textarea, &apos;Test content&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
+      await user.type(textarea, 'Test content')
       await user.tab() // Trigger blur
 
-      expect(mockOnChange).toHaveBeenCalledWith(&apos;Test content&apos;)
+      expect(mockOnChange).toHaveBeenCalledWith('Test content')
     })
   })
 
-  describe(&apos;Configuration and Props&apos;, () => {
-    it(&apos;should apply custom placeholder&apos;, () => {
-      const customPlaceholder = &apos;User 정의 플레이스홀더&apos;
+  describe('Configuration and Props', () => {
+    it('should apply custom placeholder', () => {
+      const customPlaceholder = 'User 정의 플레이스홀더'
       render(
         <JoditEditor
           {...defaultProps}
@@ -134,148 +134,148 @@ describe(&apos;JoditEditor Integration Tests&apos;, () => {
         />
       )
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
-      expect(textarea).toHaveAttribute(&apos;placeholder&apos;, customPlaceholder)
+      const textarea = screen.getByTestId('jodit-textarea')
+      expect(textarea).toHaveAttribute('placeholder', customPlaceholder)
     })
 
-    it(&apos;should handle disabled state&apos;, () => {
+    it('should handle disabled state', () => {
       render(<JoditEditor {...defaultProps} disabled={true} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
       expect(textarea).toBeDisabled()
     })
 
-    it(&apos;should apply custom height&apos;, () => {
+    it('should apply custom height', () => {
       const customHeight = 600
       render(<JoditEditor {...defaultProps} height={customHeight} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
       expect(textarea).toHaveStyle({ height: `${customHeight}px` })
     })
 
-    it(&apos;should apply initial value&apos;, () => {
-      const initialValue = &apos;<p>Initial content</p>&apos;
+    it('should apply initial value', () => {
+      const initialValue = '<p>Initial content</p>'
       render(<JoditEditor {...defaultProps} value={initialValue} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
       expect(textarea).toHaveValue(initialValue)
     })
   })
 
-  describe(&apos;Ref Methods&apos;, () => {
-    it(&apos;should expose focus method through ref&apos;, () => {
+  describe('Ref Methods', () => {
+    it('should expose focus method through ref', () => {
       const editorRef = createRef<JoditEditorRef>()
       render(<JoditEditor {...defaultProps} ref={editorRef} />)
 
       expect(editorRef.current?.focus).toBeDefined()
-      expect(typeof editorRef.current?.focus).toBe(&apos;function&apos;)
+      expect(typeof editorRef.current?.focus).toBe('function')
 
       // Test focus functionality
       editorRef.current?.focus()
       // Note: In a real test environment, you would verify focus state
     })
 
-    it(&apos;should expose getContent method through ref&apos;, () => {
+    it('should expose getContent method through ref', () => {
       const editorRef = createRef<JoditEditorRef>()
-      const testContent = &apos;<p>Test content</p>&apos;
+      const testContent = '<p>Test content</p>'
 
       render(<JoditEditor {...defaultProps} value={testContent} ref={editorRef} />)
 
       expect(editorRef.current?.getContent).toBeDefined()
-      expect(typeof editorRef.current?.getContent).toBe(&apos;function&apos;)
+      expect(typeof editorRef.current?.getContent).toBe('function')
 
       const content = editorRef.current?.getContent()
       expect(content).toBe(testContent)
     })
 
-    it(&apos;should expose setContent method through ref&apos;, () => {
+    it('should expose setContent method through ref', () => {
       const editorRef = createRef<JoditEditorRef>()
       render(<JoditEditor {...defaultProps} ref={editorRef} />)
 
       expect(editorRef.current?.setContent).toBeDefined()
-      expect(typeof editorRef.current?.setContent).toBe(&apos;function&apos;)
+      expect(typeof editorRef.current?.setContent).toBe('function')
 
       // Test setContent functionality
-      const newContent = &apos;<p>New content</p>&apos;
+      const newContent = '<p>New content</p>'
       editorRef.current?.setContent(newContent)
 
       expect(editorRef.current?.getContent()).toBe(newContent)
     })
 
-    it(&apos;should expose insertHTML method through ref&apos;, () => {
+    it('should expose insertHTML method through ref', () => {
       const editorRef = createRef<JoditEditorRef>()
-      const initialContent = &apos;<p>Initial</p>&apos;
+      const initialContent = '<p>Initial</p>'
 
       render(<JoditEditor {...defaultProps} value={initialContent} ref={editorRef} />)
 
       expect(editorRef.current?.insertHTML).toBeDefined()
-      expect(typeof editorRef.current?.insertHTML).toBe(&apos;function&apos;)
+      expect(typeof editorRef.current?.insertHTML).toBe('function')
 
       // Test insertHTML functionality
-      const htmlToInsert = &apos;<strong>Bold text</strong>&apos;
+      const htmlToInsert = '<strong>Bold text</strong>'
       editorRef.current?.insertHTML(htmlToInsert)
 
       expect(mockOnChange).toHaveBeenCalledWith(initialContent + htmlToInsert)
     })
 
-    it(&apos;should expose insertImage method through ref&apos;, () => {
+    it('should expose insertImage method through ref', () => {
       const editorRef = createRef<JoditEditorRef>()
-      const initialContent = &apos;<p>Initial</p>&apos;
+      const initialContent = '<p>Initial</p>'
 
       render(<JoditEditor {...defaultProps} value={initialContent} ref={editorRef} />)
 
       expect(editorRef.current?.insertImage).toBeDefined()
-      expect(typeof editorRef.current?.insertImage).toBe(&apos;function&apos;)
+      expect(typeof editorRef.current?.insertImage).toBe('function')
 
       // Test insertImage functionality
-      const imageUrl = &apos;https://example.com/image.jpg&apos;
-      const altText = &apos;Test image&apos;
+      const imageUrl = 'https://example.com/image.jpg'
+      const altText = 'Test image'
       editorRef.current?.insertImage(imageUrl, altText)
 
       expect(mockOnChange).toHaveBeenCalledWith(
-        expect.stringContaining(`src=&quot;${imageUrl}&quot;`)
+        expect.stringContaining(`src="${imageUrl}"`)
       )
       expect(mockOnChange).toHaveBeenCalledWith(
-        expect.stringContaining(`alt=&quot;${altText}&quot;`)
+        expect.stringContaining(`alt="${altText}"`)
       )
     })
 
-    it(&apos;should insert image with custom dimensions&apos;, () => {
+    it('should insert image with custom dimensions', () => {
       const editorRef = createRef<JoditEditorRef>()
 
       render(<JoditEditor {...defaultProps} ref={editorRef} />)
 
-      const imageUrl = &apos;https://example.com/image.jpg&apos;
-      const altText = &apos;Test image&apos;
-      const width = &apos;800&apos;
-      const height = &apos;600&apos;
+      const imageUrl = 'https://example.com/image.jpg'
+      const altText = 'Test image'
+      const width = '800'
+      const height = '600'
 
       editorRef.current?.insertImage(imageUrl, altText, width, height)
 
       expect(mockOnChange).toHaveBeenCalledWith(
-        expect.stringContaining(`width=&quot;${width}&quot;`)
+        expect.stringContaining(`width="${width}"`)
       )
       expect(mockOnChange).toHaveBeenCalledWith(
-        expect.stringContaining(`height=&quot;${height}&quot;`)
+        expect.stringContaining(`height="${height}"`)
       )
     })
   })
 
-  describe(&apos;Toolbar Integration&apos;, () => {
-    it(&apos;should render toolbar buttons&apos;, () => {
+  describe('Toolbar Integration', () => {
+    it('should render toolbar buttons', () => {
       render(<JoditEditor {...defaultProps} />)
 
-      expect(screen.getByTestId(&apos;bold-button&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;italic-button&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;image-button&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;link-button&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId('bold-button')).toBeInTheDocument()
+      expect(screen.getByTestId('italic-button')).toBeInTheDocument()
+      expect(screen.getByTestId('image-button')).toBeInTheDocument()
+      expect(screen.getByTestId('link-button')).toBeInTheDocument()
     })
 
-    it(&apos;should handle toolbar button interactions&apos;, async () => {
+    it('should handle toolbar button interactions', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
-      const boldButton = screen.getByTestId(&apos;bold-button&apos;)
+      const boldButton = screen.getByTestId('bold-button')
       await user.click(boldButton)
 
       // In a real scenario, this would trigger formatting
@@ -283,37 +283,37 @@ describe(&apos;JoditEditor Integration Tests&apos;, () => {
     })
   })
 
-  describe(&apos;Korean Language Support&apos;, () => {
-    it(&apos;should use Korean locale in configuration&apos;, () => {
+  describe('Korean Language Support', () => {
+    it('should use Korean locale in configuration', () => {
       render(<JoditEditor {...defaultProps} />)
 
       // Verify that Korean language support is configured
       // This is tested indirectly through the configuration being applied
-      expect(screen.getByTestId(&apos;jodit-editor-mock&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId('jodit-editor-mock')).toBeInTheDocument()
     })
 
-    it(&apos;should display Korean placeholder text&apos;, () => {
+    it('should display Korean placeholder text', () => {
       render(<JoditEditor {...defaultProps} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
-      expect(textarea).toHaveAttribute(&apos;placeholder&apos;, &apos;내용을 입력하세요...&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
+      expect(textarea).toHaveAttribute('placeholder', '내용을 입력하세요...')
     })
   })
 
-  describe(&apos;Image Upload Integration&apos;, () => {
-    it(&apos;should configure uploader settings&apos;, () => {
+  describe('Image Upload Integration', () => {
+    it('should configure uploader settings', () => {
       render(<JoditEditor {...defaultProps} />)
 
       // The uploader configuration is tested through the component rendering
       // In a real test, you would verify API calls when images are uploaded
-      expect(screen.getByTestId(&apos;jodit-editor-mock&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId('jodit-editor-mock')).toBeInTheDocument()
     })
 
-    it(&apos;should handle image paste events&apos;, async () => {
+    it('should handle image paste events', async () => {
       const editorRef = createRef<JoditEditorRef>()
       render(<JoditEditor {...defaultProps} ref={editorRef} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
 
       // Simulate image paste (in real scenario, this would be a paste event with image data)
       await userEvent.click(textarea)
@@ -323,97 +323,97 @@ describe(&apos;JoditEditor Integration Tests&apos;, () => {
     })
   })
 
-  describe(&apos;Responsive Behavior&apos;, () => {
-    it(&apos;should adapt toolbar for different screen sizes&apos;, () => {
+  describe('Responsive Behavior', () => {
+    it('should adapt toolbar for different screen sizes', () => {
       render(<JoditEditor {...defaultProps} />)
 
       // The responsive toolbar configuration is applied through Jodit config
       // This ensures the editor adapts to different screen sizes
-      expect(screen.getByTestId(&apos;jodit-editor-mock&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId('jodit-editor-mock')).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Error Handling&apos;, () => {
-    it(&apos;should handle ref methods when editor is not available&apos;, () => {
+  describe('Error Handling', () => {
+    it('should handle ref methods when editor is not available', () => {
       const editorRef = createRef<JoditEditorRef>()
       render(<JoditEditor {...defaultProps} ref={editorRef} />)
 
-      // Test that methods don&apos;t throw when editor is not ready
+      // Test that methods don't throw when editor is not ready
       expect(() => {
         editorRef.current?.focus()
         editorRef.current?.getContent()
-        editorRef.current?.setContent(&apos;test&apos;)
-        editorRef.current?.insertHTML(&apos;<p>test</p>&apos;)
-        editorRef.current?.insertImage(&apos;test.jpg&apos;)
+        editorRef.current?.setContent('test')
+        editorRef.current?.insertHTML('<p>test</p>')
+        editorRef.current?.insertImage('test.jpg')
       }).not.toThrow()
     })
 
-    it(&apos;should handle content changes gracefully&apos;, async () => {
+    it('should handle content changes gracefully', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
 
       // Test rapid content changes
-      await user.type(textarea, &apos;Fast&apos;)
+      await user.type(textarea, 'Fast')
       await user.clear(textarea)
-      await user.type(textarea, &apos;New content&apos;)
+      await user.type(textarea, 'New content')
 
-      expect(mockOnChange).toHaveBeenCalledWith(&apos;New content&apos;)
+      expect(mockOnChange).toHaveBeenCalledWith('New content')
     })
   })
 
-  describe(&apos;Accessibility&apos;, () => {
-    it(&apos;should be keyboard accessible&apos;, async () => {
+  describe('Accessibility', () => {
+    it('should be keyboard accessible', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
 
       // Test keyboard navigation
       await user.tab()
       expect(textarea).toHaveFocus()
 
-      await user.keyboard(&apos;Hello World&apos;)
-      expect(mockOnChange).toHaveBeenCalledWith(&apos;Hello World&apos;)
+      await user.keyboard('Hello World')
+      expect(mockOnChange).toHaveBeenCalledWith('Hello World')
     })
 
-    it(&apos;should support tab navigation through toolbar&apos;, async () => {
+    it('should support tab navigation through toolbar', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
       // Test that toolbar buttons are accessible via tab
       await user.tab() // Focus on first button
-      expect(screen.getByTestId(&apos;bold-button&apos;)).toHaveFocus()
+      expect(screen.getByTestId('bold-button')).toHaveFocus()
     })
   })
 
-  describe(&apos;Performance&apos;, () => {
-    it(&apos;should handle large content efficiently&apos;, async () => {
-      const largeContent = &apos;<p>&apos; + &apos;Large content &apos;.repeat(1000) + &apos;</p>&apos;
+  describe('Performance', () => {
+    it('should handle large content efficiently', async () => {
+      const largeContent = '<p>' + 'Large content '.repeat(1000) + '</p>'
       const user = userEvent.setup()
 
       render(<JoditEditor {...defaultProps} value={largeContent} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
       expect(textarea).toHaveValue(largeContent)
 
       // Test that the editor can handle additional content
-      await user.type(textarea, &apos; Additional content&apos;)
+      await user.type(textarea, ' Additional content')
 
-      expect(mockOnChange).toHaveBeenCalledWith(largeContent + &apos; Additional content&apos;)
+      expect(mockOnChange).toHaveBeenCalledWith(largeContent + ' Additional content')
     })
 
-    it(&apos;should debounce rapid changes appropriately&apos;, async () => {
+    it('should debounce rapid changes appropriately', async () => {
       const user = userEvent.setup()
       render(<JoditEditor {...defaultProps} />)
 
-      const textarea = screen.getByTestId(&apos;jodit-textarea&apos;)
+      const textarea = screen.getByTestId('jodit-textarea')
 
       // Rapid typing should still trigger onChange
-      await user.type(textarea, &apos;Quick&apos;, { delay: 1 })
+      await user.type(textarea, 'Quick', { delay: 1 })
 
-      expect(mockOnChange).toHaveBeenCalledWith(&apos;Quick&apos;)
+      expect(mockOnChange).toHaveBeenCalledWith('Quick')
     })
   })
 })

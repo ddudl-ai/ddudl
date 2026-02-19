@@ -1,17 +1,17 @@
 // T024: Implementation of FormValidation component
 // Following TDD GREEN phase - making tests pass
 
-'use client&apos;
+'use client'
 
-import React, { useEffect, useRef, useState, ReactNode } from &apos;react&apos;
-import { cn } from &apos;../../lib/utils&apos;
-import { useFormValidation, type UseFormValidationReturn } from &apos;../../hooks/useFormValidation&apos;
-import type { ValidationError, ValidationWarning, ValidationState } from &apos;../../types/forms&apos;
+import React, { useEffect, useRef, useState, ReactNode } from 'react'
+import { cn } from '../../lib/utils'
+import { useFormValidation, type UseFormValidationReturn } from '../../hooks/useFormValidation'
+import type { ValidationError, ValidationWarning, ValidationState } from '../../types/forms'
 
 export interface FormValidationProps {
   children?: ReactNode
   className?: string
-  mode?: &apos;onChange&apos; | &apos;onBlur&apos; | &apos;onSubmit&apos;
+  mode?: 'onChange' | 'onBlur' | 'onSubmit'
   debounceMs?: number
   showSummary?: boolean
   showWarnings?: boolean
@@ -41,19 +41,19 @@ interface ErrorIconProps {
 function ErrorIcon({ code, className }: ErrorIconProps) {
   const getIcon = (code: string) => {
     switch (code) {
-      case &apos;REQUIRED&apos;: return &apos;⚠️&apos;
-      case &apos;PATTERN&apos;: return &apos;🔤&apos;
-      case &apos;FILE_TOO_LARGE&apos;: return &apos;📁&apos;
-      case &apos;MIN_LENGTH&apos;:
-      case &apos;MAX_LENGTH&apos;: return &apos;📏&apos;
-      default: return &apos;❌&apos;
+      case 'REQUIRED': return '⚠️'
+      case 'PATTERN': return '🔤'
+      case 'FILE_TOO_LARGE': return '📁'
+      case 'MIN_LENGTH':
+      case 'MAX_LENGTH': return '📏'
+      default: return '❌'
     }
   }
 
   return (
     <span
-      className={cn(&apos;inline-flex items-center justify-center&apos;, className)}
-      data-testid={`error-icon-${code.toLowerCase().replace(&apos;_&apos;, &apos;-&apos;)}`}
+      className={cn('inline-flex items-center justify-center', className)}
+      data-testid={`error-icon-${code.toLowerCase().replace('_', '-')}`}
     >
       {getIcon(code)}
     </span>
@@ -63,8 +63,8 @@ function ErrorIcon({ code, className }: ErrorIconProps) {
 function SuccessIcon({ className }: { className?: string }) {
   return (
     <span
-      className={cn(&apos;inline-flex items-center justify-center text-green-600&apos;, className)}
-      data-testid=&quot;success-icon&quot;
+      className={cn('inline-flex items-center justify-center text-green-600', className)}
+      data-testid="success-icon"
     >
       ✅
     </span>
@@ -73,7 +73,7 @@ function SuccessIcon({ className }: { className?: string }) {
 
 function DefaultErrorComponent({ error }: { error: ValidationError }) {
   return (
-    <div className=&quot;text-red-600 text-sm flex items-center gap-2&quot;>
+    <div className="text-red-600 text-sm flex items-center gap-2">
       <ErrorIcon code={error.code} />
       <span>{error.message}</span>
     </div>
@@ -82,7 +82,7 @@ function DefaultErrorComponent({ error }: { error: ValidationError }) {
 
 function DefaultWarningComponent({ warning }: { warning: ValidationWarning }) {
   return (
-    <div className=&quot;text-amber-600 text-sm flex items-center gap-2&quot;>
+    <div className="text-amber-600 text-sm flex items-center gap-2">
       <span>⚠️</span>
       <span>{warning.message}</span>
     </div>
@@ -92,7 +92,7 @@ function DefaultWarningComponent({ warning }: { warning: ValidationWarning }) {
 export function FormValidation({
   children,
   className,
-  mode = &apos;onBlur&apos;,
+  mode = 'onBlur',
   debounceMs = 300,
   showSummary = false,
   showWarnings = false,
@@ -144,10 +144,10 @@ export function FormValidation({
   useEffect(() => {
     if (!preventSubmit) return
 
-    const form = document.querySelector(&apos;form&apos;)
+    const form = document.querySelector('form')
     if (!form) return
 
-    const submitButton = form.querySelector(&apos;button[type=&quot;submit&quot;]&apos;) as HTMLButtonElement
+    const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement
     if (!submitButton) return
 
     if (!validationState.isValid) {
@@ -162,7 +162,7 @@ export function FormValidation({
     if (!focusFirstError || validationState.errors.length === 0) return
 
     const firstError = validationState.errors[0]
-    const element = document.querySelector(`[name=&quot;${firstError.field}&quot;]`) as HTMLElement
+    const element = document.querySelector(`[name="${firstError.field}"]`) as HTMLElement
     element?.focus()
   }, [validationState.errors, focusFirstError])
 
@@ -173,31 +173,31 @@ export function FormValidation({
     if (validationState.errors.length > 0) {
       announceRef.current.textContent = validationState.errors[0].message
     } else {
-      announceRef.current.textContent = &apos;'
+      announceRef.current.textContent = ''
     }
   }, [validationState.errors, announceErrors])
 
   // Handle input events for real-time validation
   useEffect(() => {
-    if (!children || mode === &apos;onSubmit&apos;) return
+    if (!children || mode === 'onSubmit') return
 
     const handleInput = (e: Event) => {
       const target = e.target as HTMLInputElement | HTMLTextAreaElement
       if (target.name) {
         const eventType = e.type
-        if ((mode === &apos;onChange&apos; && eventType === &apos;input&apos;) ||
-            (mode === &apos;onBlur&apos; && eventType === &apos;blur&apos;)) {
+        if ((mode === 'onChange' && eventType === 'input') ||
+            (mode === 'onBlur' && eventType === 'blur')) {
           validationToUse.validateField(target.name, target.value)
         }
       }
     }
 
-    document.addEventListener(&apos;input&apos;, handleInput)
-    document.addEventListener(&apos;blur&apos;, handleInput, true)
+    document.addEventListener('input', handleInput)
+    document.addEventListener('blur', handleInput, true)
 
     return () => {
-      document.removeEventListener(&apos;input&apos;, handleInput)
-      document.removeEventListener(&apos;blur&apos;, handleInput, true)
+      document.removeEventListener('input', handleInput)
+      document.removeEventListener('blur', handleInput, true)
     }
   }, [mode, validationToUse])
 
@@ -235,27 +235,27 @@ export function FormValidation({
     : null
 
   return (
-    <div className={cn(&apos;form-validation&apos;, className)}>
+    <div className={cn('form-validation', className)}>
       {/* Screen reader announcement */}
       {announceErrors && (
         <div
           ref={announceRef}
-          role=&quot;status&quot;
-          aria-live=&quot;polite&quot;
-          className=&quot;sr-only&quot;
+          role="status"
+          aria-live="polite"
+          className="sr-only"
         />
       )}
 
       {/* Validation Summary */}
       {showSummary && (
-        <div className=&quot;mb-4&quot;>
+        <div className="mb-4">
           {validationState.isValid ? (
-            <div className=&quot;flex items-center gap-2 text-green-600 text-sm&quot;>
+            <div className="flex items-center gap-2 text-green-600 text-sm">
               <SuccessIcon />
               <span>폼이 유효합니다</span>
             </div>
           ) : (
-            <div className=&quot;text-red-600 text-sm&quot;>
+            <div className="text-red-600 text-sm">
               {filteredErrors.length > 0 && filteredWarnings.length > 0 ? (
                 <span>{filteredErrors.length}개의 오류, {filteredWarnings.length}개의 경고</span>
               ) : filteredErrors.length > 0 ? (
@@ -264,8 +264,8 @@ export function FormValidation({
               {dismissible && filteredErrors.length > 0 && (
                 <button
                   onClick={handleDismissAll}
-                  className=&quot;ml-2 text-blue-600 hover:text-blue-700 underline&quot;
-                  aria-label=&quot;모든 오류 닫기&quot;
+                  className="ml-2 text-blue-600 hover:text-blue-700 underline"
+                  aria-label="모든 오류 닫기"
                 >
                   모든 오류 닫기
                 </button>
@@ -277,34 +277,34 @@ export function FormValidation({
 
       {/* Grouped Errors */}
       {groupByField && groupedErrors && (
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {Object.entries(groupedErrors).map(([field, fieldErrors]) => (
             <div
               key={field}
               data-testid={`validation-field-${field}`}
-              className=&quot;border-l-4 border-red-500 pl-4&quot;
+              className="border-l-4 border-red-500 pl-4"
             >
-              <div className=&quot;font-medium text-sm text-gray-700 mb-1&quot;>
+              <div className="font-medium text-sm text-gray-700 mb-1">
                 {field}
               </div>
-              <ul className=&quot;space-y-1&quot; role=&quot;list&quot; aria-label=&quot;폼 검증 오류&quot;>
+              <ul className="space-y-1" role="list" aria-label="폼 검증 오류">
                 {fieldErrors.map((error, index) => (
                   <li
                     key={`${error.field}-${index}`}
                     className={cn(
-                      &apos;validation-error flex items-start justify-between&apos;,
-                      animated && &apos;error-enter&apos;,
+                      'validation-error flex items-start justify-between',
+                      animated && 'error-enter',
                       errorClassName
                     )}
                     style={animated ? { animationDelay: `${index * staggerDelay}ms` } : undefined}
-                    role=&quot;listitem&quot;
+                    role="listitem"
                   >
                     <ErrorComponent error={error} />
                     {dismissible && (
                       <button
                         onClick={() => handleDismissError(error.field)}
-                        className=&quot;ml-2 text-gray-400 hover:text-gray-600&quot;
-                        aria-label=&quot;닫기&quot;
+                        className="ml-2 text-gray-400 hover:text-gray-600"
+                        aria-label="닫기"
                       >
                         ✕
                       </button>
@@ -319,27 +319,27 @@ export function FormValidation({
 
       {/* Regular Error List */}
       {!groupByField && filteredErrors.length > 0 && (
-        <ul className=&quot;space-y-2 mb-4&quot; role=&quot;list&quot; aria-label=&quot;폼 검증 오류&quot;>
+        <ul className="space-y-2 mb-4" role="list" aria-label="폼 검증 오류">
           {filteredErrors.map((error, index) => (
             <li
               key={`${error.field}-${error.code}`}
               className={cn(
-                &apos;validation-error flex items-start justify-between&apos;,
-                animated && &apos;error-enter&apos;,
+                'validation-error flex items-start justify-between',
+                animated && 'error-enter',
                 errorClassName
               )}
               style={animated ? { animationDelay: `${index * staggerDelay}ms` } : undefined}
-              role=&quot;listitem&quot;
+              role="listitem"
               aria-describedby={`error-${error.field}-${error.code}`}
             >
-              <div role=&quot;alert&quot; id={`error-${error.field}-${error.code}`}>
+              <div role="alert" id={`error-${error.field}-${error.code}`}>
                 <ErrorComponent error={error} />
               </div>
               {dismissible && (
                 <button
                   onClick={() => handleDismissError(error.field)}
-                  className=&quot;ml-2 text-gray-400 hover:text-gray-600&quot;
-                  aria-label=&quot;닫기&quot;
+                  className="ml-2 text-gray-400 hover:text-gray-600"
+                  aria-label="닫기"
                   tabIndex={0}
                 >
                   ✕
@@ -352,17 +352,17 @@ export function FormValidation({
 
       {/* Warnings */}
       {showWarnings && filteredWarnings.length > 0 && (
-        <ul className=&quot;space-y-2 mb-4&quot; role=&quot;list&quot; aria-label=&quot;폼 검증 경고&quot;>
+        <ul className="space-y-2 mb-4" role="list" aria-label="폼 검증 경고">
           {filteredWarnings.map((warning, index) => (
             <li
               key={`${warning.field}-${index}`}
               className={cn(
-                &apos;validation-warning&apos;,
-                animated && &apos;warning-enter&apos;,
+                'validation-warning',
+                animated && 'warning-enter',
                 warningClassName
               )}
               style={animated ? { animationDelay: `${index * staggerDelay}ms` } : undefined}
-              role=&quot;listitem&quot;
+              role="listitem"
             >
               <WarningComponent warning={warning} />
             </li>
@@ -372,9 +372,9 @@ export function FormValidation({
 
       {/* Form children with validation context */}
       {children && (
-        <div className=&quot;form-fields&quot;>
+        <div className="form-fields">
           {React.Children.map(children, child => {
-            if (React.isValidElement(child) && typeof child.props === &apos;object&apos; && child.props !== null && &apos;name&apos; in child.props) {
+            if (React.isValidElement(child) && typeof child.props === 'object' && child.props !== null && 'name' in child.props) {
               const fieldName = child.props.name as string
               const hasError = validationState.errors.some(e => e.field === fieldName)
               const errorMessage = validationState.errors.find(e => e.field === fieldName)?.message
@@ -384,10 +384,10 @@ export function FormValidation({
                 ...childProps,
                 className: cn(
                   childProps.className,
-                  hasError && &apos;error&apos;
+                  hasError && 'error'
                 ),
-                &apos;aria-invalid&apos;: hasError,
-                &apos;aria-describedby&apos;: hasError ? `error-${fieldName}` : undefined
+                'aria-invalid': hasError,
+                'aria-describedby': hasError ? `error-${fieldName}` : undefined
               })
             }
             return child

@@ -1,11 +1,11 @@
-'use client&apos;
+'use client'
 
-import { useState, useEffect } from &apos;react&apos;
-import { Badge } from &apos;@/components/ui/badge&apos;
-import { Card, CardContent, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
-import { TrendingUp, Hash, Calendar, Filter } from &apos;lucide-react&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
-import { Button } from &apos;@/components/ui/button&apos;
+import { useState, useEffect } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { TrendingUp, Hash, Calendar, Filter } from 'lucide-react'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
+import { Button } from '@/components/ui/button'
 
 interface PopularTag {
   flair: string
@@ -57,20 +57,20 @@ export default function PopularTags({
       })
       
       if (channel) {
-        params.set(&apos;channel&apos;, channel)
+        params.set('channel', channel)
       }
 
       const response = await fetch(`/api/tags/popular?${params}`)
       
       if (!response.ok) {
-        throw new Error(&apos;Failed to fetch popular tags&apos;)
+        throw new Error('Failed to fetch popular tags')
       }
       
       const result = await response.json()
       setData(result)
     } catch (err) {
-      console.error(&apos;Error fetching popular tags:&apos;, err)
-      setError(&apos;Failed to load popular tags.&apos;)
+      console.error('Error fetching popular tags:', err)
+      setError('Failed to load popular tags.')
     } finally {
       setLoading(false)
     }
@@ -81,9 +81,9 @@ export default function PopularTags({
       onTagClick(tag)
     } else {
       // 기본 동작: URL에 flair 파라미터 추가
-      if (typeof window !== &apos;undefined&apos;) {
+      if (typeof window !== 'undefined') {
         const url = new URL(window.location.href)
-        url.searchParams.set(&apos;flair&apos;, tag)
+        url.searchParams.set('flair', tag)
         window.location.href = url.toString()
       }
     }
@@ -91,14 +91,14 @@ export default function PopularTags({
 
   const getTagColor = (index: number) => {
     const colors = [
-      &apos;bg-red-100 text-red-800 border-red-200&apos;,
-      &apos;bg-blue-100 text-blue-800 border-blue-200&apos;,
-      &apos;bg-green-100 text-green-800 border-green-200&apos;,
-      &apos;bg-yellow-100 text-yellow-800 border-yellow-200&apos;,
-      &apos;bg-purple-100 text-purple-800 border-purple-200&apos;,
-      &apos;bg-pink-100 text-pink-800 border-pink-200&apos;,
-      &apos;bg-indigo-100 text-indigo-800 border-indigo-200&apos;,
-      &apos;bg-gray-100 text-gray-800 border-gray-200&apos;
+      'bg-red-100 text-red-800 border-red-200',
+      'bg-blue-100 text-blue-800 border-blue-200',
+      'bg-green-100 text-green-800 border-green-200',
+      'bg-yellow-100 text-yellow-800 border-yellow-200',
+      'bg-purple-100 text-purple-800 border-purple-200',
+      'bg-pink-100 text-pink-800 border-pink-200',
+      'bg-indigo-100 text-indigo-800 border-indigo-200',
+      'bg-gray-100 text-gray-800 border-gray-200'
     ]
     return colors[index % colors.length]
   }
@@ -107,13 +107,13 @@ export default function PopularTags({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className=&quot;flex items-center space-x-2&quot;>
-            <TrendingUp className=&quot;w-5 h-5&quot; />
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5" />
             <span>Popular Tags</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <LoadingSpinner text=&quot;Loading tags...&quot; />
+          <LoadingSpinner text="Loading tags..." />
         </CardContent>
       </Card>
     )
@@ -123,13 +123,13 @@ export default function PopularTags({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className=&quot;flex items-center space-x-2&quot;>
-            <TrendingUp className=&quot;w-5 h-5&quot; />
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5" />
             <span>Popular Tags</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className=&quot;text-red-600 text-center&quot;>{error}</p>
+          <p className="text-red-600 text-center">{error}</p>
         </CardContent>
       </Card>
     )
@@ -139,14 +139,14 @@ export default function PopularTags({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className=&quot;flex items-center space-x-2&quot;>
-            <TrendingUp className=&quot;w-5 h-5&quot; />
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5" />
             <span>Popular Tags</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className=&quot;text-center py-4 text-gray-500&quot;>
-            <Hash className=&quot;w-8 h-8 mx-auto mb-2 opacity-50&quot; />
+          <div className="text-center py-4 text-gray-500">
+            <Hash className="w-8 h-8 mx-auto mb-2 opacity-50" />
             <p>No tagged posts yet.</p>
           </div>
         </CardContent>
@@ -157,20 +157,20 @@ export default function PopularTags({
   return (
     <Card>
       <CardHeader>
-        <div className=&quot;flex items-center justify-between&quot;>
-          <CardTitle className=&quot;flex items-center space-x-2&quot;>
-            <TrendingUp className=&quot;w-5 h-5&quot; />
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5" />
             <span>Popular Tags</span>
           </CardTitle>
           {showControls && (
-            <div className=&quot;flex space-x-2&quot;>
+            <div className="flex space-x-2">
               {[7, 30, 90].map(period => (
                 <Button
                   key={period}
-                  variant={selectedPeriod === period ? &apos;default&apos; : &apos;outline&apos;}
-                  size=&quot;sm&quot;
+                  variant={selectedPeriod === period ? 'default' : 'outline'}
+                  size="sm"
                   onClick={() => setSelectedPeriod(period)}
-                  className=&quot;text-xs&quot;
+                  className="text-xs"
                 >
                   {period}d
                 </Button>
@@ -178,62 +178,62 @@ export default function PopularTags({
             </div>
           )}
         </div>
-        <div className=&quot;flex items-center space-x-2 text-sm text-gray-500&quot;>
-          <Calendar className=&quot;w-4 h-4&quot; />
+        <div className="flex items-center space-x-2 text-sm text-gray-500">
+          <Calendar className="w-4 h-4" />
           <span>
             Last {data.period_days} days • {data.total_posts} posts
-            {data.channel !== &apos;all&apos; && ` • /${data.channel}`}
+            {data.channel !== 'all' && ` • /${data.channel}`}
           </span>
         </div>
       </CardHeader>
       
       <CardContent>
-        <div className=&quot;space-y-3&quot;>
+        <div className="space-y-3">
           {data.tags.map((tag, index) => (
             <div
               key={tag.flair}
               className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
-                onTagClick ? &apos;cursor-pointer hover:bg-gray-50&apos; : &apos;'
+                onTagClick ? 'cursor-pointer hover:bg-gray-50' : ''
               }`}
               onClick={() => handleTagClick(tag.flair)}
             >
-              <div className=&quot;flex items-center space-x-3&quot;>
-                <div className=&quot;flex items-center space-x-2&quot;>
-                  <span className=&quot;text-lg font-bold text-gray-400&quot;>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg font-bold text-gray-400">
                     #{index + 1}
                   </span>
                   <Badge 
-                    variant=&quot;outline&quot; 
+                    variant="outline" 
                     className={`${getTagColor(index)} font-medium`}
                   >
                     {tag.flair}
                   </Badge>
                 </div>
-                <div className=&quot;text-sm text-gray-600&quot;>
-                  <span className=&quot;font-medium&quot;>{tag.count}</span>
-                  <span className=&quot;ml-1&quot;>({tag.percentage}%)</span>
+                <div className="text-sm text-gray-600">
+                  <span className="font-medium">{tag.count}</span>
+                  <span className="ml-1">({tag.percentage}%)</span>
                 </div>
               </div>
               
-              <div className=&quot;flex items-center space-x-2&quot;>
+              <div className="flex items-center space-x-2">
                 {tag.recent_posts > 0 && (
-                  <div className=&quot;flex items-center space-x-1 bg-green-50 px-2 py-1 rounded text-xs&quot;>
-                    <TrendingUp className=&quot;w-3 h-3 text-green-600&quot; />
-                    <span className=&quot;text-green-700 font-medium&quot;>
+                  <div className="flex items-center space-x-1 bg-green-50 px-2 py-1 rounded text-xs">
+                    <TrendingUp className="w-3 h-3 text-green-600" />
+                    <span className="text-green-700 font-medium">
                       {tag.recent_posts}
                     </span>
                   </div>
                 )}
                 {onTagClick && (
-                  <Filter className=&quot;w-4 h-4 text-gray-400&quot; />
+                  <Filter className="w-4 h-4 text-gray-400" />
                 )}
               </div>
             </div>
           ))}
         </div>
         
-        <div className=&quot;mt-4 pt-3 border-t text-xs text-gray-500 text-center&quot;>
-          {new Date(data.generated_at).toLocaleString(&apos;en-US&apos;)} updated
+        <div className="mt-4 pt-3 border-t text-xs text-gray-500 text-center">
+          {new Date(data.generated_at).toLocaleString('en-US')} updated
         </div>
       </CardContent>
     </Card>

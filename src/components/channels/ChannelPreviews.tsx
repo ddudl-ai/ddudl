@@ -1,12 +1,12 @@
-'use client&apos;
+'use client'
 
-import { useEffect, useState } from &apos;react&apos;
-import Link from &apos;next/link&apos;
-import { createClient } from &apos;@/lib/supabase/client&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
-import { Card, CardContent, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { MessageCircle, TrendingUp } from &apos;lucide-react&apos;
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { MessageCircle, TrendingUp } from 'lucide-react'
 
 interface ChannelPreview {
   id: string
@@ -22,8 +22,8 @@ interface ChannelPreview {
 }
 
 const CHANNELS = [
-  &apos;tech&apos;, &apos;daily&apos;, &apos;questions&apos;, &apos;general&apos;, 
-  &apos;debates&apos;, &apos;creative&apos;, &apos;ai-thoughts&apos;, &apos;code-review&apos;
+  'tech', 'daily', 'questions', 'general', 
+  'debates', 'creative', 'ai-thoughts', 'code-review'
 ]
 
 export default function ChannelPreviews() {
@@ -46,9 +46,9 @@ export default function ChannelPreviews() {
       const channelPromises = CHANNELS.map(async (channelName) => {
         // 채널 정보 가져오기
         const { data: channel, error: channelError } = await supabase
-          .from(&apos;channels&apos;)
-          .select(&apos;id, name, display_name&apos;)
-          .eq(&apos;name&apos;, channelName)
+          .from('channels')
+          .select('id, name, display_name')
+          .eq('name', channelName)
           .single()
 
         if (channelError || !channel) {
@@ -57,12 +57,12 @@ export default function ChannelPreviews() {
 
         // 해당 채널의 최신 포스트 2개 가져오기
         const { data: posts, error: postsError } = await supabase
-          .from(&apos;posts&apos;)
-          .select(&apos;id, title, vote_score, comment_count, created_at&apos;)
-          .eq(&apos;channel_id&apos;, channel.id)
-          .eq(&apos;moderation_status&apos;, &apos;approved&apos;)
-          .or(&apos;is_deleted.is.null,is_deleted.eq.false&apos;)
-          .order(&apos;created_at&apos;, { ascending: false })
+          .from('posts')
+          .select('id, title, vote_score, comment_count, created_at')
+          .eq('channel_id', channel.id)
+          .eq('moderation_status', 'approved')
+          .or('is_deleted.is.null,is_deleted.eq.false')
+          .order('created_at', { ascending: false })
           .limit(2)
 
         if (postsError) {
@@ -84,8 +84,8 @@ export default function ChannelPreviews() {
       
       setChannels(validChannels)
     } catch (err) {
-      setError(&apos;Failed to load channel previews&apos;)
-      console.error(&apos;Error:&apos;, err)
+      setError('Failed to load channel previews')
+      console.error('Error:', err)
     } finally {
       setLoading(false)
     }
@@ -97,7 +97,7 @@ export default function ChannelPreviews() {
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
     
     if (diffInHours < 1) {
-      return &apos;just now&apos;
+      return 'just now'
     } else if (diffInHours < 24) {
       return `${Math.floor(diffInHours)}h`
     } else {
@@ -107,15 +107,15 @@ export default function ChannelPreviews() {
 
   if (loading) {
     return (
-      <Card className=&quot;bg-slate-900 border-slate-800&quot;>
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className=&quot;text-slate-100 flex items-center gap-2&quot;>
-            <TrendingUp className=&quot;w-5 h-5&quot; />
+          <CardTitle className="text-slate-100 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" />
             Channel Activity
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className=&quot;flex justify-center p-8&quot;>
+          <div className="flex justify-center p-8">
             <LoadingSpinner />
           </div>
         </CardContent>
@@ -125,15 +125,15 @@ export default function ChannelPreviews() {
 
   if (error) {
     return (
-      <Card className=&quot;bg-slate-900 border-slate-800&quot;>
-        <CardContent className=&quot;p-6&quot;>
-          <p className=&quot;text-slate-400 text-center&quot;>{error}</p>
-          <div className=&quot;text-center mt-4&quot;>
+      <Card className="bg-slate-900 border-slate-800">
+        <CardContent className="p-6">
+          <p className="text-slate-400 text-center">{error}</p>
+          <div className="text-center mt-4">
             <Button 
               onClick={fetchChannelPreviews} 
-              variant=&quot;outline&quot; 
-              className=&quot;border-slate-700 text-slate-300 hover:bg-slate-800&quot;
-              size=&quot;sm&quot;
+              variant="outline" 
+              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              size="sm"
             >
               Try Again
             </Button>
@@ -144,48 +144,48 @@ export default function ChannelPreviews() {
   }
 
   return (
-    <Card className=&quot;bg-slate-900 border-slate-800&quot;>
+    <Card className="bg-slate-900 border-slate-800">
       <CardHeader>
-        <CardTitle className=&quot;text-slate-100 flex items-center gap-2&quot;>
-          <TrendingUp className=&quot;w-5 h-5&quot; />
+        <CardTitle className="text-slate-100 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5" />
           Channel Activity
         </CardTitle>
       </CardHeader>
-      <CardContent className=&quot;space-y-4&quot;>
+      <CardContent className="space-y-4">
         {channels.map((channel) => (
-          <div key={channel.id} className=&quot;space-y-2&quot;>
-            <div className=&quot;flex items-center justify-between&quot;>
+          <div key={channel.id} className="space-y-2">
+            <div className="flex items-center justify-between">
               <Link 
                 href={`/c/${channel.name}`}
-                className=&quot;font-medium text-emerald-400 hover:text-emerald-300 transition-colors&quot;
+                className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
               >
                 {channel.display_name}
               </Link>
-              <span className=&quot;text-xs text-slate-500&quot;>
+              <span className="text-xs text-slate-500">
                 {channel.posts.length} recent
               </span>
             </div>
             
             {channel.posts.length === 0 ? (
-              <p className=&quot;text-xs text-slate-500 pl-2&quot;>No recent posts</p>
+              <p className="text-xs text-slate-500 pl-2">No recent posts</p>
             ) : (
-              <div className=&quot;space-y-1 pl-2&quot;>
+              <div className="space-y-1 pl-2">
                 {channel.posts.map((post) => (
                   <Link
                     key={post.id}
                     href={`/c/${channel.name}/${post.id}`}
-                    className=&quot;block group&quot;
+                    className="block group"
                   >
-                    <div className=&quot;text-sm text-slate-300 group-hover:text-slate-100 transition-colors line-clamp-1&quot;>
+                    <div className="text-sm text-slate-300 group-hover:text-slate-100 transition-colors line-clamp-1">
                       {post.title}
                     </div>
-                    <div className=&quot;flex items-center gap-3 text-xs text-slate-500 mt-1&quot;>
-                      <span className=&quot;flex items-center gap-1&quot;>
-                        <TrendingUp className=&quot;w-3 h-3&quot; />
+                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                      <span className="flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3" />
                         {post.vote_score || 0}
                       </span>
-                      <span className=&quot;flex items-center gap-1&quot;>
-                        <MessageCircle className=&quot;w-3 h-3&quot; />
+                      <span className="flex items-center gap-1">
+                        <MessageCircle className="w-3 h-3" />
                         {post.comment_count || 0}
                       </span>
                       <span>{formatTimeAgo(post.created_at)}</span>
@@ -197,12 +197,12 @@ export default function ChannelPreviews() {
           </div>
         ))}
         
-        <div className=&quot;pt-2 border-t border-slate-800&quot;>
-          <Link href=&quot;/c&quot;>
+        <div className="pt-2 border-t border-slate-800">
+          <Link href="/c">
             <Button 
-              variant=&quot;ghost&quot; 
-              size=&quot;sm&quot; 
-              className=&quot;w-full text-slate-400 hover:text-slate-300 hover:bg-slate-800&quot;
+              variant="ghost" 
+              size="sm" 
+              className="w-full text-slate-400 hover:text-slate-300 hover:bg-slate-800"
             >
               View All Channels
             </Button>

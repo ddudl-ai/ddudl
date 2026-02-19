@@ -1,14 +1,14 @@
-'use client&apos;
+'use client'
 
-import { useEffect, useState } from &apos;react&apos;
-import { useSearchParams } from &apos;next/navigation&apos;
-import PostCard from &apos;@/components/posts/PostCard&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from &apos;@/components/ui/select&apos;
-import { Card, CardContent, CardHeader } from &apos;@/components/ui/card&apos;
-import { Badge } from &apos;@/components/ui/badge&apos;
-import { Plus, TrendingUp, Clock, BarChart3, Users, X } from &apos;lucide-react&apos;
-import { useTranslation } from &apos;@/providers/LocalizationProvider&apos;
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import PostCard from '@/components/posts/PostCard'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Plus, TrendingUp, Clock, BarChart3, Users, X } from 'lucide-react'
+import { useTranslation } from '@/providers/LocalizationProvider'
 
 interface Post {
   id: string
@@ -42,7 +42,7 @@ interface Channel {
   is_nsfw: boolean
 }
 
-type SortOption = &apos;hot&apos; | &apos;new&apos; | &apos;top&apos; | &apos;best&apos;
+type SortOption = 'hot' | 'new' | 'top' | 'best'
 
 interface ChannelContentProps {
   channelName: string
@@ -50,23 +50,23 @@ interface ChannelContentProps {
 
 export default function ChannelContent({ channelName }: ChannelContentProps) {
   const searchParams = useSearchParams()
-  const urlSort = searchParams.get(&apos;sort&apos;) as SortOption
+  const urlSort = searchParams.get('sort') as SortOption
 
   const { translateContent, autoTranslate } = useTranslation()
   const [posts, setPosts] = useState<Post[]>([])
   const [channel, setChannel] = useState<Channel | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [sortBy, setSortBy] = useState<SortOption>(urlSort || &apos;hot&apos;)
+  const [sortBy, setSortBy] = useState<SortOption>(urlSort || 'hot')
   const [selectedFlair, setSelectedFlair] = useState<string | null>(null)
   const [translatedChannelName, setTranslatedChannelName] = useState<string | null>(null)
   const [translatedDescription, setTranslatedDescription] = useState<string | null>(null)
 
   // URL에서 flair 파라미터 읽기
   useEffect(() => {
-    if (typeof window !== &apos;undefined&apos;) {
+    if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search)
-      const flairParam = urlParams.get(&apos;flair&apos;)
+      const flairParam = urlParams.get('flair')
       if (flairParam) {
         setSelectedFlair(flairParam)
       }
@@ -86,7 +86,7 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
       const foundChannel = channels.find((s: Channel) => s.name === channelName)
       setChannel(foundChannel || null)
     } catch (err) {
-      console.error(&apos;Error fetching channel info:&apos;, err)
+      console.error('Error fetching channel info:', err)
     }
   }
 
@@ -102,14 +102,14 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
       const response = await fetch(url)
 
       if (!response.ok) {
-        throw new Error(&apos;Failed to fetch posts&apos;)
+        throw new Error('Failed to fetch posts')
       }
 
       const { posts } = await response.json()
       setPosts(posts || [])
     } catch (err) {
-      setError(&apos;Failed to load posts.&apos;)
-      console.error(&apos;Error:&apos;, err)
+      setError('Failed to load posts.')
+      console.error('Error:', err)
     } finally {
       setLoading(false)
     }
@@ -134,13 +134,13 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
       const namePromise = translateContent(channel.display_name, {
         fallback: channel.display_name
       }).catch((error) => {
-        console.error(&apos;Failed to translate community name:&apos;, error)
+        console.error('Failed to translate community name:', error)
         return channel.display_name
       })
 
       const descriptionPromise = channel.description
         ? translateContent(channel.description, { fallback: channel.description }).catch((error) => {
-          console.error(&apos;Failed to translate community description:&apos;, error)
+          console.error('Failed to translate community description:', error)
           return channel.description
         })
         : Promise.resolve<string | null>(null)
@@ -171,35 +171,35 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
 
   const getSortIcon = (sort: SortOption) => {
     switch (sort) {
-      case &apos;hot&apos;:
-        return <TrendingUp className=&quot;w-4 h-4&quot; />
-      case &apos;new&apos;:
-        return <Clock className=&quot;w-4 h-4&quot; />
-      case &apos;top&apos;:
-        return <BarChart3 className=&quot;w-4 h-4&quot; />
-      case &apos;best&apos;:
-        return <Users className=&quot;w-4 h-4&quot; />
+      case 'hot':
+        return <TrendingUp className="w-4 h-4" />
+      case 'new':
+        return <Clock className="w-4 h-4" />
+      case 'top':
+        return <BarChart3 className="w-4 h-4" />
+      case 'best':
+        return <Users className="w-4 h-4" />
     }
   }
 
   const getSortLabel = (sort: SortOption) => {
     switch (sort) {
-      case &apos;hot&apos;:
-        return &apos;Hot&apos;
-      case &apos;new&apos;:
-        return &apos;New&apos;
-      case &apos;top&apos;:
-        return &apos;Top&apos;
-      case &apos;best&apos;:
-        return &apos;Best&apos;
+      case 'hot':
+        return 'Hot'
+      case 'new':
+        return 'New'
+      case 'top':
+        return 'Top'
+      case 'best':
+        return 'Best'
     }
   }
 
   if (error) {
     return (
-      <div className=&quot;bg-white rounded-lg border p-8 text-center&quot;>
-        <p className=&quot;text-red-600 mb-4&quot;>{error}</p>
-        <Button onClick={() => { fetchChannelInfo(); fetchPosts(); }} variant=&quot;outline&quot;>
+      <div className="bg-white rounded-lg border p-8 text-center">
+        <p className="text-red-600 mb-4">{error}</p>
+        <Button onClick={() => { fetchChannelInfo(); fetchPosts(); }} variant="outline">
           Try Again
         </Button>
       </div>
@@ -210,43 +210,43 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
     ? autoTranslate && translatedChannelName
       ? translatedChannelName
       : channel.display_name
-    : &apos;'
+    : ''
 
   const displayDescription = channel
     ? autoTranslate && translatedDescription
       ? translatedDescription
       : channel.description
-    : &apos;'
+    : ''
 
   return (
-    <div className=&quot;space-y-4&quot;>
+    <div className="space-y-4">
       {/* 채널 헤더 */}
       {channel && (
         <Card>
           <CardHeader>
-            <div className=&quot;flex items-start justify-between&quot;>
+            <div className="flex items-start justify-between">
               <div>
-                <div className=&quot;flex items-center space-x-2&quot;>
-                  <h1 className=&quot;text-3xl font-bold&quot;>{displayChannelName}</h1>
+                <div className="flex items-center space-x-2">
+                  <h1 className="text-3xl font-bold">{displayChannelName}</h1>
                   {channel.is_nsfw && (
-                    <Badge variant=&quot;destructive&quot;>NSFW</Badge>
+                    <Badge variant="destructive">NSFW</Badge>
                   )}
                 </div>
-                <p className=&quot;text-sm text-gray-500 mt-1&quot;>c/{channel.name}</p>
+                <p className="text-sm text-gray-500 mt-1">c/{channel.name}</p>
                 {channel.description && (
-                  <p className=&quot;text-gray-700 mt-2&quot;>{displayDescription}</p>
+                  <p className="text-gray-700 mt-2">{displayDescription}</p>
                 )}
               </div>
-              <Button className=&quot;flex items-center space-x-2&quot;>
-                <Plus className=&quot;w-4 h-4&quot; />
+              <Button className="flex items-center space-x-2">
+                <Plus className="w-4 h-4" />
                 <span>Join</span>
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className=&quot;flex items-center space-x-4 text-sm text-gray-500&quot;>
-              <div className=&quot;flex items-center space-x-1&quot;>
-                <Users className=&quot;w-4 h-4&quot; />
+            <div className="flex items-center space-x-4 text-sm text-gray-500">
+              <div className="flex items-center space-x-1">
+                <Users className="w-4 h-4" />
                 <span>{(channel.member_count || 0).toLocaleString()} members</span>
               </div>
             </div>
@@ -255,37 +255,37 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
       )}
 
       {/* 게시물 목록 헤더 */}
-      <div className=&quot;bg-white rounded-lg border p-4&quot;>
-        <div className=&quot;flex items-center justify-between&quot;>
-          <div className=&quot;flex items-center space-x-4&quot;>
-            <h2 className=&quot;text-xl font-bold&quot;>Posts</h2>
+      <div className="bg-white rounded-lg border p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-xl font-bold">Posts</h2>
             <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
-              <SelectTrigger className=&quot;w-32&quot;>
+              <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=&quot;hot&quot;>
-                  <div className=&quot;flex items-center space-x-2&quot;>
-                    {getSortIcon(&apos;hot&apos;)}
-                    <span>{getSortLabel(&apos;hot&apos;)}</span>
+                <SelectItem value="hot">
+                  <div className="flex items-center space-x-2">
+                    {getSortIcon('hot')}
+                    <span>{getSortLabel('hot')}</span>
                   </div>
                 </SelectItem>
-                <SelectItem value=&quot;new&quot;>
-                  <div className=&quot;flex items-center space-x-2&quot;>
-                    {getSortIcon(&apos;new&apos;)}
-                    <span>{getSortLabel(&apos;new&apos;)}</span>
+                <SelectItem value="new">
+                  <div className="flex items-center space-x-2">
+                    {getSortIcon('new')}
+                    <span>{getSortLabel('new')}</span>
                   </div>
                 </SelectItem>
-                <SelectItem value=&quot;top&quot;>
-                  <div className=&quot;flex items-center space-x-2&quot;>
-                    {getSortIcon(&apos;top&apos;)}
-                    <span>{getSortLabel(&apos;top&apos;)}</span>
+                <SelectItem value="top">
+                  <div className="flex items-center space-x-2">
+                    {getSortIcon('top')}
+                    <span>{getSortLabel('top')}</span>
                   </div>
                 </SelectItem>
-                <SelectItem value=&quot;best&quot;>
-                  <div className=&quot;flex items-center space-x-2&quot;>
-                    {getSortIcon(&apos;best&apos;)}
-                    <span>{getSortLabel(&apos;best&apos;)}</span>
+                <SelectItem value="best">
+                  <div className="flex items-center space-x-2">
+                    {getSortIcon('best')}
+                    <span>{getSortLabel('best')}</span>
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -293,33 +293,33 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
           </div>
 
           <Button
-            className=&quot;flex items-center space-x-2&quot;
+            className="flex items-center space-x-2"
             onClick={() => window.location.href = `/c/${channelName}/write`}
           >
-            <Plus className=&quot;w-4 h-4&quot; />
+            <Plus className="w-4 h-4" />
             <span>Write Post</span>
           </Button>
         </div>
 
         {/* 선택된 태그 필터 표시 */}
         {selectedFlair && (
-          <div className=&quot;mt-4 pt-4 border-t&quot;>
-            <div className=&quot;flex items-center space-x-2&quot;>
-              <span className=&quot;text-sm text-gray-600&quot;>Filter:</span>
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">Filter:</span>
               <Badge
-                variant=&quot;outline&quot;
-                className=&quot;flex items-center space-x-2 bg-blue-50 text-blue-700 border-blue-200&quot;
+                variant="outline"
+                className="flex items-center space-x-2 bg-blue-50 text-blue-700 border-blue-200"
               >
                 <span>{selectedFlair}</span>
                 <button
                   onClick={clearFlairFilter}
-                  className=&quot;hover:bg-blue-100 rounded-full p-0.5&quot;
+                  className="hover:bg-blue-100 rounded-full p-0.5"
                 >
-                  <X className=&quot;w-3 h-3&quot; />
+                  <X className="w-3 h-3" />
                 </button>
               </Badge>
-              <span className=&quot;text-xs text-gray-500&quot;>
-                Showing posts with &quot;{selectedFlair}&quot; flair only
+              <span className="text-xs text-gray-500">
+                Showing posts with "{selectedFlair}" flair only
               </span>
             </div>
           </div>
@@ -328,15 +328,15 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
 
       {/* Loading State */}
       {loading && (
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className=&quot;bg-white rounded-lg border p-4 animate-pulse&quot;>
-              <div className=&quot;flex space-x-4&quot;>
-                <div className=&quot;w-16 h-16 bg-gray-200 rounded&quot;></div>
-                <div className=&quot;flex-1 space-y-2&quot;>
-                  <div className=&quot;h-4 bg-gray-200 rounded w-3/4&quot;></div>
-                  <div className=&quot;h-3 bg-gray-200 rounded w-1/2&quot;></div>
-                  <div className=&quot;h-3 bg-gray-200 rounded w-1/4&quot;></div>
+            <div key={i} className="bg-white rounded-lg border p-4 animate-pulse">
+              <div className="flex space-x-4">
+                <div className="w-16 h-16 bg-gray-200 rounded"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                 </div>
               </div>
             </div>
@@ -346,12 +346,12 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
 
       {/* 게시물이 없는 경우 */}
       {!loading && posts.length === 0 && (
-        <div className=&quot;bg-white rounded-lg border p-8 text-center&quot;>
-          <p className=&quot;text-gray-500 mb-4&quot;>
+        <div className="bg-white rounded-lg border p-8 text-center">
+          <p className="text-gray-500 mb-4">
             No posts in /{channelName} channel yet.
           </p>
           <Button onClick={() => window.location.href = `/c/${channelName}/write`}>
-            <Plus className=&quot;w-4 h-4 mr-2&quot; />
+            <Plus className="w-4 h-4 mr-2" />
             Write the First Post
           </Button>
         </div>
@@ -364,8 +364,8 @@ export default function ChannelContent({ channelName }: ChannelContentProps) {
 
       {/* Load More */}
       {!loading && posts.length > 0 && (
-        <div className=&quot;text-center py-4&quot;>
-          <Button variant=&quot;outline&quot; onClick={fetchPosts}>
+        <div className="text-center py-4">
+          <Button variant="outline" onClick={fetchPosts}>
             Load More Posts
           </Button>
         </div>

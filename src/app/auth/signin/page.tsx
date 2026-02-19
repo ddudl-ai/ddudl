@@ -1,20 +1,20 @@
-'use client&apos;
+'use client'
 
-import { useState } from &apos;react&apos;
-import { useRouter } from &apos;next/navigation&apos;
-import Link from &apos;next/link&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Input } from &apos;@/components/ui/input&apos;
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
-import { Alert, AlertDescription } from &apos;@/components/ui/alert&apos;
-import { Label } from &apos;@/components/ui/label&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
-import { useAuthStore } from &apos;@/stores/authStore&apos;
-import { AlertTriangle, Eye, EyeOff } from &apos;lucide-react&apos;
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Label } from '@/components/ui/label'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
+import { useAuthStore } from '@/stores/authStore'
+import { AlertTriangle, Eye, EyeOff } from 'lucide-react'
 
 export default function SignInPage() {
-  const [email, setEmail] = useState(&apos;')
-  const [password, setPassword] = useState(&apos;')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,13 +24,13 @@ export default function SignInPage() {
 
   const validateForm = () => {
     if (!email || !password) {
-      setError(&apos;Please enter your email and password.&apos;)
+      setError('Please enter your email and password.')
       return false
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setError(&apos;Please enter a valid email address.&apos;)
+      setError('Please enter a valid email address.')
       return false
     }
 
@@ -51,125 +51,125 @@ export default function SignInPage() {
       const result = await signIn(email, password)
       
       if (result.success) {
-        router.push(&apos;/&apos;)
+        router.push('/')
       } else {
-        setError(result.error || &apos;Login failed.&apos;)
+        setError(result.error || 'Login failed.')
       }
     } catch (err) {
-      setError(&apos;An unknown error occurred.&apos;)
+      setError('An unknown error occurred.')
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleAnonymousAccess = () => {
-    router.push(&apos;/&apos;)
+    router.push('/')
   }
 
   return (
-    <div className=&quot;min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8&quot;>
-      <Card className=&quot;w-full max-w-md&quot;>
-        <CardHeader className=&quot;text-center&quot;>
-          <div className=&quot;flex items-center justify-center mb-4&quot;>
-            <div className=&quot;w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center&quot;>
-              <span className=&quot;text-white font-bold text-lg&quot;>D</span>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-lg">D</span>
             </div>
           </div>
-          <CardTitle className=&quot;text-2xl font-bold&quot;>Login to ddudl</CardTitle>
+          <CardTitle className="text-2xl font-bold">Login to ddudl</CardTitle>
           <CardDescription>
             Sign in to your account to access more features
           </CardDescription>
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSubmit} className=&quot;space-y-4&quot;>
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <Alert variant=&quot;destructive&quot;>
-                <AlertTriangle className=&quot;h-4 w-4&quot; />
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <div className=&quot;space-y-2&quot;>
-              <Label htmlFor=&quot;email&quot;>Email</Label>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
-                id=&quot;email&quot;
-                type=&quot;email&quot;
-                placeholder=&quot;Email address&quot;
+                id="email"
+                type="email"
+                placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                autoComplete=&quot;email&quot;
+                autoComplete="email"
               />
             </div>
 
-            <div className=&quot;space-y-2&quot;>
-              <Label htmlFor=&quot;password&quot;>Password</Label>
-              <div className=&quot;relative&quot;>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
                 <Input
-                  id=&quot;password&quot;
-                  type={showPassword ? &quot;text&quot; : &quot;password&quot;}
-                  placeholder=&quot;Password&quot;
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
-                  autoComplete=&quot;current-password&quot;
+                  autoComplete="current-password"
                 />
                 <Button
-                  type=&quot;button&quot;
-                  variant=&quot;ghost&quot;
-                  size=&quot;sm&quot;
-                  className=&quot;absolute right-0 top-0 h-full px-3&quot;
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
                 >
-                  {showPassword ? <EyeOff className=&quot;h-4 w-4&quot; /> : <Eye className=&quot;h-4 w-4&quot; />}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
 
             <Button
-              type=&quot;submit&quot;
-              className=&quot;w-full&quot;
+              type="submit"
+              className="w-full"
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <LoadingSpinner size=&quot;sm&quot; />
-                  <span className=&quot;ml-2&quot;>Signing in...</span>
+                  <LoadingSpinner size="sm" />
+                  <span className="ml-2">Signing in...</span>
                 </>
               ) : (
-                &apos;Sign In&apos;
+                'Sign In'
               )}
             </Button>
           </form>
 
-          <div className=&quot;mt-6&quot;>
-            <div className=&quot;relative&quot;>
-              <div className=&quot;absolute inset-0 flex items-center&quot;>
-                <div className=&quot;w-full border-t border-gray-300&quot; />
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
               </div>
-              <div className=&quot;relative flex justify-center text-sm&quot;>
-                <span className=&quot;px-2 bg-white text-gray-500&quot;>or</span>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">or</span>
               </div>
             </div>
 
           </div>
 
-          <div className=&quot;mt-6 text-center&quot;>
-            <p className=&quot;text-sm text-gray-600&quot;>
-              New here?{&apos; &apos;}
-              <Link href=&quot;/join&quot; className=&quot;text-orange-600 hover:text-orange-500 font-medium&quot;>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              New here?{' '}
+              <Link href="/join" className="text-orange-600 hover:text-orange-500 font-medium">
                 Join now
               </Link>
             </p>
-            <p className=&quot;text-xs text-gray-500 mt-1&quot;>
+            <p className="text-xs text-gray-500 mt-1">
               Both humans and AI agents welcome
             </p>
           </div>
 
-          <div className=&quot;mt-4 text-center&quot;>
-            <Link href=&quot;/&quot; className=&quot;text-sm text-gray-500 hover:text-gray-700&quot;>
+          <div className="mt-4 text-center">
+            <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
               ← Back to home
             </Link>
           </div>

@@ -1,10 +1,10 @@
-'use client&apos;
+'use client'
 
-import { useEffect, useMemo, useState } from &apos;react&apos;
-import { useRouter } from &apos;next/navigation&apos;
-import { formatDistanceToNow } from &apos;date-fns&apos;
-import type { Locale } from &apos;date-fns&apos;
-import { ko, enUS, ja } from &apos;date-fns/locale&apos;
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { formatDistanceToNow } from 'date-fns'
+import type { Locale } from 'date-fns'
+import { ko, enUS, ja } from 'date-fns/locale'
 import { 
   ArrowUp, 
   ArrowDown, 
@@ -13,19 +13,19 @@ import {
   Bot,
   Send,
   User
-} from &apos;lucide-react&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Badge } from &apos;@/components/ui/badge&apos;
-import { Card, CardContent, CardHeader } from &apos;@/components/ui/card&apos;
-import { Textarea } from &apos;@/components/ui/textarea&apos;
-import { Input } from &apos;@/components/ui/input&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
-import { HtmlRenderer } from &apos;@/components/common/HtmlRenderer&apos;
-import LinkPreview from &apos;@/components/common/LinkPreview&apos;
-import { createClient } from &apos;@/lib/supabase/client&apos;
-import { useAuthStore } from &apos;@/stores/authStore&apos;
-import { useTranslation } from &apos;@/providers/LocalizationProvider&apos;
-import ShareButtons from &apos;@/components/posts/ShareButtons&apos;
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
+import { HtmlRenderer } from '@/components/common/HtmlRenderer'
+import LinkPreview from '@/components/common/LinkPreview'
+import { createClient } from '@/lib/supabase/client'
+import { useAuthStore } from '@/stores/authStore'
+import { useTranslation } from '@/providers/LocalizationProvider'
+import ShareButtons from '@/components/posts/ShareButtons'
 
 interface Post {
   id: string
@@ -75,15 +75,15 @@ interface PostDetailClientProps {
   channel: string
 }
 
-type TranslateFn = ReturnType<typeof useTranslation>[&apos;t&apos;]
+type TranslateFn = ReturnType<typeof useTranslation>['t']
 
 export default function PostDetailClient({ postId, channel }: PostDetailClientProps) {
   const [post, setPost] = useState<Post | null>(null)
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [newComment, setNewComment] = useState(&apos;')
-  const [commentAuthor, setCommentAuthor] = useState(&apos;')
+  const [newComment, setNewComment] = useState('')
+  const [commentAuthor, setCommentAuthor] = useState('')
   const [submittingComment, setSubmittingComment] = useState(false)
   const router = useRouter()
 
@@ -110,9 +110,9 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
 
   useEffect(() => {
     if (user) {
-      setCommentAuthor(user.user_metadata?.username || &apos;User&apos;)
+      setCommentAuthor(user.user_metadata?.username || 'User')
     } else {
-      setCommentAuthor(&apos;') // Login required
+      setCommentAuthor('') // Login required
     }
   }, [user])
 
@@ -136,20 +136,20 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
 
     const translatePost = async () => {
       const titlePromise = translateContent(post.title, { fallback: post.title }).catch((error) => {
-        console.error(&apos;Failed to translate post title:&apos;, error)
+        console.error('Failed to translate post title:', error)
         return post.title
       })
 
       const contentPromise = post.content
         ? translateContent(post.content, { fallback: post.content }).catch((error) => {
-            console.error(&apos;Failed to translate post content:&apos;, error)
+            console.error('Failed to translate post content:', error)
             return post.content as string
           })
         : Promise.resolve<string | null>(null)
 
       const channelPromise = post.channels?.display_name
         ? translateContent(post.channels.display_name, { fallback: post.channels.display_name }).catch((error) => {
-            console.error(&apos;Failed to translate community name:&apos;, error)
+            console.error('Failed to translate community name:', error)
             return post.channels.display_name
           })
         : Promise.resolve<string | null>(null)
@@ -181,10 +181,10 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
   // Realtime comments subscription
   useEffect(() => {
     const channelSub = supabase
-      .channel(&apos;comments-stream&apos;)
+      .channel('comments-stream')
       .on(
-        &apos;postgres_changes&apos;,
-        { event: &apos;INSERT&apos;, schema: &apos;public&apos;, table: &apos;comments&apos;, filter: `post_id=eq.${postId}` },
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'comments', filter: `post_id=eq.${postId}` },
         (payload: any) => {
           setComments((prev) => [...prev, payload.new])
         }
@@ -201,25 +201,25 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
   }
 
   const handleDelete = async () => {
-    if (!confirm(&apos;Are you sure you want to delete this post? This action cannot be undone.&apos;)) {
+    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
       return
     }
 
     try {
       const response = await fetch(`/api/posts/${postId}`, {
-        method: &apos;DELETE&apos;,
+        method: 'DELETE',
       })
 
       if (!response.ok) {
-        throw new Error(&apos;Failed to delete post&apos;)
+        throw new Error('Failed to delete post')
       }
 
-      alert(&apos;Post has been deleted.&apos;)
+      alert('Post has been deleted.')
       router.push(`/${channel}`)
       router.refresh() // 페이지 새로고침으로 목록 업데이트
     } catch (err) {
-      console.error(&apos;Error deleting post:&apos;, err)
-      alert(&apos;Failed to delete post.&apos;)
+      console.error('Error deleting post:', err)
+      alert('Failed to delete post.')
     }
   }
 
@@ -249,7 +249,7 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
           const translated = await translateContent(comment.content, { fallback: comment.content })
           updates[comment.id] = translated
         } catch (error) {
-          console.error(&apos;Failed to translate comment:&apos;, error)
+          console.error('Failed to translate comment:', error)
           updates[comment.id] = comment.content
         }
 
@@ -276,15 +276,15 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
       const response = await fetch(`/api/posts/${postId}`)
       
       if (!response.ok) {
-        throw new Error(&apos;Failed to fetch post&apos;)
+        throw new Error('Failed to fetch post')
       }
       
       const { post, comments } = await response.json()
       setPost(post)
       setComments(comments || [])
     } catch (err) {
-      setError(&apos;Failed to load post.&apos;)
-      console.error(&apos;Error:&apos;, err)
+      setError('Failed to load post.')
+      console.error('Error:', err)
     } finally {
       setLoading(false)
     }
@@ -292,17 +292,17 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
 
   async function handleSubmitComment() {
     if (!newComment.trim() || !commentAuthor.trim() || !user) {
-      alert(&apos;You need to sign in to write comments.&apos;)
+      alert('You need to sign in to write comments.')
       return
     }
     
     try {
       setSubmittingComment(true)
       
-      const response = await fetch(&apos;/api/comments&apos;, {
-        method: &apos;POST&apos;,
+      const response = await fetch('/api/comments', {
+        method: 'POST',
         headers: {
-          &apos;Content-Type&apos;: &apos;application/json&apos;,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           content: newComment,
@@ -312,12 +312,12 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
       })
       
       if (!response.ok) {
-        throw new Error(&apos;Failed to submit comment&apos;)
+        throw new Error('Failed to submit comment')
       }
       
       const { comment } = await response.json()
       setComments([...comments, comment])
-      setNewComment(&apos;')
+      setNewComment('')
       
       // 게시물의 댓글 수 업데이트
       if (post) {
@@ -327,8 +327,8 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
         })
       }
     } catch (err) {
-      console.error(&apos;Error submitting comment:&apos;, err)
-      alert(&apos;Failed to write comment.&apos;)
+      console.error('Error submitting comment:', err)
+      alert('Failed to write comment.')
     } finally {
       setSubmittingComment(false)
     }
@@ -350,13 +350,13 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
   }
 
   if (loading) {
-    return <LoadingSpinner text=&quot;Loading post...&quot; />
+    return <LoadingSpinner text="Loading post..." />
   }
 
   if (error || !post) {
     return (
-      <div className=&quot;text-center py-8&quot;>
-        <p className=&quot;text-red-600&quot;>{error || &apos;Post not found.&apos;}</p>
+      <div className="text-center py-8">
+        <p className="text-red-600">{error || 'Post not found.'}</p>
       </div>
     )
   }
@@ -382,11 +382,11 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
       Object.keys(commentTranslations).length > 0)
 
   return (
-    <div className=&quot;space-y-6&quot;>
+    <div className="space-y-6">
       {/* 게시물 상세 */}
       <Card>
         <CardHeader>
-          <div className=&quot;flex flex-wrap items-center gap-x-2 text-sm text-gray-500 mb-2&quot;>
+          <div className="flex flex-wrap items-center gap-x-2 text-sm text-gray-500 mb-2">
             <span>/{post.channels.name}</span>
             {post.channels.display_name && (
               <>
@@ -396,8 +396,8 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
             )}
             <span>•</span>
             <span>
-              {t(&apos;postCard.authorWrote&apos;, &apos;{{username}}님이 작성&apos;, {
-                username: post.users?.username || t(&apos;postCard.unknownUser&apos;, &apos;알 수 없는 User&apos;)
+              {t('postCard.authorWrote', '{{username}}님이 작성', {
+                username: post.users?.username || t('postCard.unknownUser', '알 수 없는 User')
               })}
             </span>
             <span>•</span>
@@ -405,44 +405,44 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
             {post.ai_generated && (
               <>
                 <span>•</span>
-                <Badge variant=&quot;secondary&quot; className=&quot;flex items-center space-x-1&quot;>
-                  <Bot className=&quot;w-3 h-3&quot; />
-                  <span>{t(&apos;postCard.aiGenerated&apos;, &apos;AI 생성&apos;)}</span>
+                <Badge variant="secondary" className="flex items-center space-x-1">
+                  <Bot className="w-3 h-3" />
+                  <span>{t('postCard.aiGenerated', 'AI 생성')}</span>
                 </Badge>
               </>
             )}
           </div>
 
-          <div className=&quot;flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between&quot;>
-            <div className=&quot;flex-1&quot;>
-              <div className=&quot;flex items-start space-x-2&quot;>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex-1">
+              <div className="flex items-start space-x-2">
                 {post.flair && (
-                  <Badge variant=&quot;outline&quot; className=&quot;text-xs&quot;>
+                  <Badge variant="outline" className="text-xs">
                     {post.flair}
                   </Badge>
                 )}
-                <h1 className=&quot;text-2xl font-bold text-gray-900&quot;>
+                <h1 className="text-2xl font-bold text-gray-900">
                   {displayTitle}
                 </h1>
               </div>
             </div>
 
             {(canToggleOriginal || profile?.id === post.author_id) && (
-              <div className=&quot;flex items-center space-x-2&quot;>
+              <div className="flex items-center space-x-2">
                 {canToggleOriginal && (
-                  <Button variant=&quot;outline&quot; size=&quot;sm&quot; onClick={() => setShowOriginal((prev) => !prev)}>
+                  <Button variant="outline" size="sm" onClick={() => setShowOriginal((prev) => !prev)}>
                     {showOriginal
-                      ? t(&apos;postDetail.viewTranslation&apos;, &apos;번역 보기&apos;)
-                      : t(&apos;postDetail.viewOriginal&apos;, &apos;원문 보기&apos;)}
+                      ? t('postDetail.viewTranslation', '번역 보기')
+                      : t('postDetail.viewOriginal', '원문 보기')}
                   </Button>
                 )}
                 {profile?.id === post.author_id && (
                   <>
-                    <Button variant=&quot;outline&quot; size=&quot;sm&quot; onClick={handleEdit}>
-                      {t(&apos;postCard.edit&apos;, &apos;수정&apos;)}
+                    <Button variant="outline" size="sm" onClick={handleEdit}>
+                      {t('postCard.edit', '수정')}
                     </Button>
-                    <Button variant=&quot;destructive&quot; size=&quot;sm&quot; onClick={handleDelete}>
-                      {t(&apos;postCard.delete&apos;, &apos;삭제&apos;)}
+                    <Button variant="destructive" size="sm" onClick={handleDelete}>
+                      {t('postCard.delete', '삭제')}
                     </Button>
                   </>
                 )}
@@ -453,37 +453,37 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
         
         <CardContent>
           {post.content && (
-            <div className=&quot;mb-6 space-y-3&quot;>
+            <div className="mb-6 space-y-3">
               <HtmlRenderer content={displayContent ?? post.content} />
               <LinkPreview content={post.content} />
             </div>
           )}
           
           {/* 투표 및 액션 버튼 */}
-          <div className=&quot;flex items-center space-x-4 pt-4 border-t&quot;>
-            <div className=&quot;flex items-center space-x-2&quot;>
-              <Button variant=&quot;ghost&quot; size=&quot;sm&quot; className=&quot;text-gray-500 hover:text-orange-500&quot;>
-                <ArrowUp className=&quot;w-4 h-4&quot; />
+          <div className="flex items-center space-x-4 pt-4 border-t">
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="sm" className="text-gray-500 hover:text-orange-500">
+                <ArrowUp className="w-4 h-4" />
               </Button>
-              <span className=&quot;font-medium&quot;>{post.vote_score || ((post.upvote_count || 0) - (post.downvote_count || 0))}</span>
-              <Button variant=&quot;ghost&quot; size=&quot;sm&quot; className=&quot;text-gray-500 hover:text-blue-500&quot;>
-                <ArrowDown className=&quot;w-4 h-4&quot; />
+              <span className="font-medium">{post.vote_score || ((post.upvote_count || 0) - (post.downvote_count || 0))}</span>
+              <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-500">
+                <ArrowDown className="w-4 h-4" />
               </Button>
             </div>
             
-            <Button variant=&quot;ghost&quot; size=&quot;sm&quot; className=&quot;flex items-center space-x-1 text-gray-500&quot;>
-              <MessageSquare className=&quot;w-4 h-4&quot; />
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-500">
+              <MessageSquare className="w-4 h-4" />
               <span>{post.comment_count || 0} Comments</span>
             </Button>
             
             <ShareButtons
               title={displayTitle}
               url={`https://ddudl.com/c/${channel}/posts/${postId}`}
-              description={displayContent ? displayContent.substring(0, 160) : &apos;'}
+              description={displayContent ? displayContent.substring(0, 160) : ''}
             />
             
-            <Button variant=&quot;ghost&quot; size=&quot;sm&quot; className=&quot;flex items-center space-x-1 text-gray-500&quot;>
-              <BookmarkPlus className=&quot;w-4 h-4&quot; />
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-500">
+              <BookmarkPlus className="w-4 h-4" />
               <span>Save</span>
             </Button>
           </div>
@@ -494,18 +494,18 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
       {user ? (
         <Card>
           <CardHeader>
-            <h3 className=&quot;text-lg font-semibold&quot;>Write Comment</h3>
+            <h3 className="text-lg font-semibold">Write Comment</h3>
           </CardHeader>
           <CardContent>
-            <div className=&quot;space-y-4&quot;>
-              <div className=&quot;flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md&quot;>
-                <User className=&quot;w-4 h-4 text-green-600&quot; />
-                <span className=&quot;text-green-800 font-medium&quot;>{commentAuthor}</span>
-                <Badge variant=&quot;secondary&quot; className=&quot;text-xs&quot;>Verified</Badge>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                <User className="w-4 h-4 text-green-600" />
+                <span className="text-green-800 font-medium">{commentAuthor}</span>
+                <Badge variant="secondary" className="text-xs">Verified</Badge>
               </div>
 
               <Textarea
-                placeholder=&quot;Enter your comment...&quot;
+                placeholder="Enter your comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 rows={3}
@@ -518,12 +518,12 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
                   !commentAuthor.trim() ||
                   submittingComment
                 }
-                className=&quot;flex items-center space-x-2&quot;
+                className="flex items-center space-x-2"
               >
                 {submittingComment ? (
-                  <LoadingSpinner size=&quot;sm&quot; />
+                  <LoadingSpinner size="sm" />
                 ) : (
-                  <Send className=&quot;w-4 h-4&quot; />
+                  <Send className="w-4 h-4" />
                 )}
                 <span>Post Comment</span>
               </Button>
@@ -532,12 +532,12 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
         </Card>
       ) : (
         <Card>
-          <CardContent className=&quot;text-center py-6&quot;>
-            <p className=&quot;text-sm text-gray-600&quot;>You need to sign in to write comments.</p>
+          <CardContent className="text-center py-6">
+            <p className="text-sm text-gray-600">You need to sign in to write comments.</p>
             <Button 
-              variant=&quot;default&quot; 
-              className=&quot;mt-3&quot;
-              onClick={() => router.push(&apos;/auth/login&apos;)}
+              variant="default" 
+              className="mt-3"
+              onClick={() => router.push('/auth/login')}
             >
               Sign In
             </Button>
@@ -546,14 +546,14 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
       )}
 
       {/* 댓글 목록 */}
-      <div className=&quot;space-y-4&quot;>
-        <h3 className=&quot;text-lg font-semibold&quot;>
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">
           {comments.length} Comments
         </h3>
         
         {comments.length === 0 ? (
           <Card>
-            <CardContent className=&quot;text-center py-8 text-gray-500&quot;>
+            <CardContent className="text-center py-8 text-gray-500">
               No comments yet. Be the first to write a comment!
             </CardContent>
           </Card>
@@ -568,13 +568,13 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
             onReply={async (parentId, content, author) => {
               // reuse comment submission with parentId
               if (!user) {
-                alert(&apos;You need to sign in to write comments.&apos;)
+                alert('You need to sign in to write comments.')
                 return false
               }
               try {
-                const response = await fetch(&apos;/api/comments&apos;, {
-                  method: &apos;POST&apos;,
-                  headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
+                const response = await fetch('/api/comments', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     content,
                     postId,
@@ -582,13 +582,13 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
                     parentId
                   })
                 })
-                if (!response.ok) throw new Error(&apos;Failed reply&apos;)
+                if (!response.ok) throw new Error('Failed reply')
                 const { comment } = await response.json()
                 setComments((prev) => [...prev, comment])
                 return true
               } catch (e) {
                 console.error(e)
-                alert(&apos;Failed to write reply.&apos;)
+                alert('Failed to write reply.')
                 return false
               }
             }}
@@ -618,8 +618,8 @@ function CommentTree({
   onReply: (parentId: string, content: string, author: string) => Promise<boolean>
 }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
-  const [replyText, setReplyText] = useState(&apos;')
-  const [replyAuthor, setReplyAuthor] = useState(&apos;')
+  const [replyText, setReplyText] = useState('')
+  const [replyAuthor, setReplyAuthor] = useState('')
 
   const byParent = useMemo(() => {
     const map = new Map<string | null, Comment[]>()
@@ -634,7 +634,7 @@ function CommentTree({
   const roots = byParent.get(null) || []
 
   return (
-    <div className=&quot;space-y-3&quot;>
+    <div className="space-y-3">
       {roots.map((c) => (
         <CommentItem
           key={c.id}
@@ -698,7 +698,7 @@ function CommentItem({
     if (!replyText.trim() || !replyAuthor.trim()) return
     const ok = await onReply(comment.id, replyText, replyAuthor)
     if (ok) {
-      setReplyText(&apos;')
+      setReplyText('')
       setReplyingTo(null)
     }
   }
@@ -707,61 +707,61 @@ function CommentItem({
     !autoTranslate || showOriginal ? comment.content : translations[comment.id] ?? comment.content
 
   return (
-    <div className=&quot;space-y-2&quot;>
+    <div className="space-y-2">
       <Card>
-        <CardContent className=&quot;pt-4&quot;>
-          <div className=&quot;flex items-center space-x-2 text-sm text-gray-500 mb-2&quot;>
-            <span className=&quot;font-medium&quot;>
-              {comment.users?.username || t(&apos;postCard.unknownUser&apos;, &apos;알 수 없는 User&apos;)}
+        <CardContent className="pt-4">
+          <div className="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+            <span className="font-medium">
+              {comment.users?.username || t('postCard.unknownUser', '알 수 없는 User')}
             </span>
             <span>•</span>
             <span>{formatTimeAgo(comment.created_at)}</span>
             {comment.ai_generated && (
               <>
                 <span>•</span>
-                <Badge variant=&quot;secondary&quot; className=&quot;text-xs&quot;>AI</Badge>
+                <Badge variant="secondary" className="text-xs">AI</Badge>
               </>
             )}
           </div>
-          <div className=&quot;text-gray-700 mb-3 prose max-w-none prose-p:my-2&quot;>
+          <div className="text-gray-700 mb-3 prose max-w-none prose-p:my-2">
             <HtmlRenderer content={contentToRender} />
           </div>
-          <div className=&quot;flex items-center space-x-2&quot;>
-            <Button variant=&quot;ghost&quot; size=&quot;sm&quot; className=&quot;text-gray-500 hover:text-orange-500 p-1&quot;>
-              <ArrowUp className=&quot;w-3 h-3&quot; />
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-orange-500 p-1">
+              <ArrowUp className="w-3 h-3" />
             </Button>
-            <span className=&quot;text-sm&quot;>{comment.vote_score || ((comment.upvotes || comment.upvote_count || 0) - (comment.downvotes || comment.downvote_count || 0))}</span>
-            <Button variant=&quot;ghost&quot; size=&quot;sm&quot; className=&quot;text-gray-500 hover:text-blue-500 p-1&quot;>
-              <ArrowDown className=&quot;w-3 h-3&quot; />
+            <span className="text-sm">{comment.vote_score || ((comment.upvotes || comment.upvote_count || 0) - (comment.downvotes || comment.downvote_count || 0))}</span>
+            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-500 p-1">
+              <ArrowDown className="w-3 h-3" />
             </Button>
             <Button 
-              variant=&quot;ghost&quot; 
-              size=&quot;sm&quot; 
-              className=&quot;text-gray-500&quot;
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-500"
               onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
             >
               Reply
             </Button>
           </div>
           {replyingTo === comment.id && (
-            <div className=&quot;mt-3 space-y-2&quot;>
-              <div className=&quot;flex items-center space-x-2&quot;>
+            <div className="mt-3 space-y-2">
+              <div className="flex items-center space-x-2">
                 <Input
-                  placeholder=&quot;Nickname&quot;
+                  placeholder="Nickname"
                   value={replyAuthor}
                   onChange={(e) => setReplyAuthor(e.target.value)}
-                  className=&quot;w-32&quot;
+                  className="w-32"
                 />
               </div>
               <Textarea
-                placeholder=&quot;Enter your reply...&quot;
+                placeholder="Enter your reply..."
                 rows={3}
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
               />
-              <div className=&quot;flex justify-end&quot;>
-                <Button size=&quot;sm&quot; onClick={submitReply} className=&quot;flex items-center space-x-1&quot;>
-                  <Send className=&quot;w-4 h-4&quot; />
+              <div className="flex justify-end">
+                <Button size="sm" onClick={submitReply} className="flex items-center space-x-1">
+                  <Send className="w-4 h-4" />
                   <span>Post Reply</span>
                 </Button>
               </div>
@@ -770,7 +770,7 @@ function CommentItem({
         </CardContent>
       </Card>
       {children.length > 0 && (
-        <div className=&quot;pl-4 border-l ml-2 space-y-2&quot;>
+        <div className="pl-4 border-l ml-2 space-y-2">
           {children.map((ch) => (
             <CommentItem
               key={ch.id}

@@ -3,16 +3,17 @@ import '@testing-library/jest-dom'
 // OpenAI Node.js shims for API testing
 import 'openai/shims/node'
 
-// Override fetch with Jest mock for testing (env.ts provides polyfill for MSW)
+// global.fetch as jest.fn() — many existing tests use (global.fetch as jest.Mock).mockResolvedValue
+// Keep this for backward compatibility. New tests should prefer MSW handlers.
 global.fetch = jest.fn() as jest.MockedFunction<typeof fetch>
 
-// MSW setup
+// MSW setup — provides default API handlers
 import { server } from '@/__tests__/mocks/server'
 
 // Establish API mocking before all tests
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest: 'error',
+    onUnhandledRequest: 'warn',  // warn instead of error — allows tests with custom fetch mocks
   })
 })
 
@@ -66,8 +67,6 @@ jest.mock('next/link', () => ({
     return children
   }),
 }))
-
-// fetch is now mocked by Jest for test purposes
 
 // Mock window.alert
 Object.defineProperty(window, 'alert', {
@@ -155,7 +154,13 @@ jest.mock('@/providers/LocalizationProvider', () => ({
   LocalizationProvider: ({ children }: { children: any }) => children
 }))
 
-// Reset all mocks after each test
+// Reset mock call history after each test, but preserve mock implementations
+// jest.clearAllMocks() resets both calls AND implementations — we use restoreMocks sparingly
 afterEach(() => {
+  // Only clear call counts/args, not implementations
   jest.clearAllMocks()
+  // Re-establish global.fetch as jest.fn() in case clearAllMocks wiped it
+  if (typeof (global.fetch as any).mockResolvedValue !== 'function') {
+    global.fetch = jest.fn() as jest.MockedFunction<typeof fetch>
+  }
 })

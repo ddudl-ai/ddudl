@@ -1,9 +1,9 @@
-'use client&apos;
+'use client'
 
-import { useState, useEffect } from &apos;react&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Input } from &apos;@/components/ui/input&apos;
-import { RefreshCw } from &apos;lucide-react&apos;
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { RefreshCw } from 'lucide-react'
 
 interface SimpleCaptchaProps {
   onVerify: (isValid: boolean) => void
@@ -11,9 +11,9 @@ interface SimpleCaptchaProps {
 }
 
 export default function SimpleCaptcha({ onVerify, className }: SimpleCaptchaProps) {
-  const [question, setQuestion] = useState(&apos;')
-  const [answer, setAnswer] = useState(&apos;')
-  const [userAnswer, setUserAnswer] = useState(&apos;')
+  const [question, setQuestion] = useState('')
+  const [answer, setAnswer] = useState('')
+  const [userAnswer, setUserAnswer] = useState('')
   const [isVerified, setIsVerified] = useState(false)
 
   const generateQuestion = () => {
@@ -40,7 +40,7 @@ export default function SimpleCaptcha({ onVerify, className }: SimpleCaptchaProp
     
     setQuestion(result.question)
     setAnswer(result.answer.toString())
-    setUserAnswer(&apos;')
+    setUserAnswer('')
     setIsVerified(false)
     onVerify(false)
   }
@@ -58,31 +58,31 @@ export default function SimpleCaptcha({ onVerify, className }: SimpleCaptchaProp
 
   return (
     <div className={`space-y-3 ${className}`}>
-      <div className=&quot;flex items-center space-x-2&quot;>
-        <div className=&quot;bg-gray-100 border-2 border-dashed border-gray-300 p-3 rounded-lg font-mono text-lg font-bold&quot;>
+      <div className="flex items-center space-x-2">
+        <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-3 rounded-lg font-mono text-lg font-bold">
           {question}
         </div>
         <Button
-          type=&quot;button&quot;
-          variant=&quot;ghost&quot;
-          size=&quot;sm&quot;
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={generateQuestion}
-          className=&quot;p-2&quot;
+          className="p-2"
         >
-          <RefreshCw className=&quot;w-4 h-4&quot; />
+          <RefreshCw className="w-4 h-4" />
         </Button>
       </div>
       
-      <div className=&quot;flex items-center space-x-2&quot;>
+      <div className="flex items-center space-x-2">
         <Input
-          type=&quot;text&quot;
-          placeholder=&quot;Enter your answer&quot;
+          type="text"
+          placeholder="Enter your answer"
           value={userAnswer}
           onChange={(e) => handleAnswerChange(e.target.value)}
-          className={`w-24 ${isVerified ? &apos;border-green-500 bg-green-50&apos; : &apos;'}`}
+          className={`w-24 ${isVerified ? 'border-green-500 bg-green-50' : ''}`}
         />
         {isVerified && (
-          <span className=&quot;text-green-600 text-sm&quot;>✓ Verified</span>
+          <span className="text-green-600 text-sm">✓ Verified</span>
         )}
       </div>
     </div>

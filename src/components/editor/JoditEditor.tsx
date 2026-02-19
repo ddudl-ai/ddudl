@@ -1,15 +1,15 @@
-'use client&apos;
+'use client'
 
-import { useRef, useMemo, forwardRef, useImperativeHandle } from &apos;react&apos;
-import dynamic from &apos;next/dynamic&apos;
-import { Jodit } from &apos;jodit&apos;
+import { useRef, useMemo, forwardRef, useImperativeHandle } from 'react'
+import dynamic from 'next/dynamic'
+import { Jodit } from 'jodit'
 
 // Jodit React를 동적으로 불러오기 (SSR 비활성화)
-const JoditReact = dynamic(() => import(&apos;jodit-react&apos;), {
+const JoditReact = dynamic(() => import('jodit-react'), {
   ssr: false,
   loading: () => (
-    <div className=&quot;min-h-[400px] bg-gray-50 rounded-md flex items-center justify-center&quot;>
-      <span className=&quot;text-gray-400&quot;>Loading editor...</span>
+    <div className="min-h-[400px] bg-gray-50 rounded-md flex items-center justify-center">
+      <span className="text-gray-400">Loading editor...</span>
     </div>
   ),
 })
@@ -32,7 +32,7 @@ export interface JoditEditorRef {
 }
 
 const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
-  ({ value, onChange, placeholder = &apos;Write something...&apos;, disabled = false, height = 500 }, ref) => {
+  ({ value, onChange, placeholder = 'Write something...', disabled = false, height = 500 }, ref) => {
     const editor = useRef<any>(null)
 
     // Jodit 설정
@@ -45,42 +45,42 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
         maxHeight: 800,
         // 툴바 설정
         buttons: [
-          &apos;bold&apos;, &apos;italic&apos;, &apos;underline&apos;, &apos;strikethrough&apos;, &apos;|&apos;,
-          &apos;ul&apos;, &apos;ol&apos;, &apos;|&apos;,
-          &apos;outdent&apos;, &apos;indent&apos;, &apos;|&apos;,
-          &apos;font&apos;, &apos;fontsize&apos;, &apos;paragraph&apos;, &apos;|&apos;,
-          &apos;image&apos;, &apos;link&apos;, &apos;table&apos;, &apos;|&apos;,
-          &apos;align&apos;, &apos;|&apos;,
-          &apos;undo&apos;, &apos;redo&apos;, &apos;|&apos;,
-          &apos;hr&apos;, &apos;eraser&apos;, &apos;fullsize&apos;, &apos;preview&apos;
+          'bold', 'italic', 'underline', 'strikethrough', '|',
+          'ul', 'ol', '|',
+          'outdent', 'indent', '|',
+          'font', 'fontsize', 'paragraph', '|',
+          'image', 'link', 'table', '|',
+          'align', '|',
+          'undo', 'redo', '|',
+          'hr', 'eraser', 'fullsize', 'preview'
         ],
         buttonsMD: [
-          &apos;bold&apos;, &apos;italic&apos;, &apos;underline&apos;, &apos;|&apos;,
-          &apos;ul&apos;, &apos;ol&apos;, &apos;|&apos;,
-          &apos;image&apos;, &apos;link&apos;, &apos;|&apos;,
-          &apos;align&apos;, &apos;|&apos;,
-          &apos;undo&apos;, &apos;redo&apos;, &apos;|&apos;,
-          &apos;preview&apos;
+          'bold', 'italic', 'underline', '|',
+          'ul', 'ol', '|',
+          'image', 'link', '|',
+          'align', '|',
+          'undo', 'redo', '|',
+          'preview'
         ],
         buttonsSM: [
-          &apos;bold&apos;, &apos;italic&apos;, &apos;|&apos;,
-          &apos;ul&apos;, &apos;ol&apos;, &apos;|&apos;,
-          &apos;image&apos;, &apos;link&apos;, &apos;|&apos;,
-          &apos;undo&apos;, &apos;redo&apos;
+          'bold', 'italic', '|',
+          'ul', 'ol', '|',
+          'image', 'link', '|',
+          'undo', 'redo'
         ],
         buttonsXS: [
-          &apos;bold&apos;, &apos;italic&apos;,
-          &apos;image&apos;, &apos;link&apos;
+          'bold', 'italic',
+          'image', 'link'
         ],
         // English (Jodit default)
-        language: &apos;en&apos;,
+        language: 'en',
         // 이미지 업로드 설정
         uploader: {
           insertImageAsBase64URI: false,
-          url: &apos;/api/upload&apos;,
-          format: &apos;json&apos;,
-          pathVariableName: &apos;path&apos;,
-          filesVariableName: () => &apos;files&apos;,
+          url: '/api/upload',
+          format: 'json',
+          pathVariableName: 'path',
+          filesVariableName: () => 'files',
           prepareData: function (formData: FormData) {
             return formData
           },
@@ -88,25 +88,25 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
             return !resp.error
           },
           getMessage: function (resp: any) {
-            return resp.error?.message || &apos;Upload failed&apos;
+            return resp.error?.message || 'Upload failed'
           },
           process: function (resp: any) {
             // 서버의 응답을 그대로 반환 (success 필드 포함)
             return resp
           },
           error: function (e: Error) {
-            console.error(&apos;Upload error:&apos;, e.message)
+            console.error('Upload error:', e.message)
           }
         },
         // 에디터 스타일
         style: {
-          font: &apos;16px/1.6 &quot;Noto Sans KR&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, sans-serif&apos;,
-          color: &apos;#333&apos;
+          font: '16px/1.6 "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          color: '#333'
         },
         // 추가 설정
         askBeforePasteHTML: false,
         askBeforePasteFromWord: false,
-        defaultActionOnPaste: &apos;insert_clear_html&apos; as const,
+        defaultActionOnPaste: 'insert_clear_html' as const,
         beautyHTML: true,
         toolbarAdaptive: false,
         showCharsCounter: false,
@@ -117,7 +117,7 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
         // 드래그 앤 드롭 허용
         draggable: true,
         // Enter 키 동작
-        enter: &apos;p&apos; as const,
+        enter: 'p' as const,
         // 탭 크기
         tabIndex: 0,
         // 이미지 리사이징 허용
@@ -202,31 +202,31 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
         if (editor.current) {
           try {
             // Jodit 에디터의 blur 처리
-            if (typeof editor.current.blur === &apos;function&apos;) {
+            if (typeof editor.current.blur === 'function') {
               editor.current.blur()
-            } else if (editor.current.editor && typeof editor.current.editor.blur === &apos;function&apos;) {
+            } else if (editor.current.editor && typeof editor.current.editor.blur === 'function') {
               editor.current.editor.blur()
             } else {
               // 직접 DOM 요소에서 focus 제거
               const editorElement = editor.current.editor || editor.current
-              if (editorElement && typeof editorElement.blur === &apos;function&apos;) {
+              if (editorElement && typeof editorElement.blur === 'function') {
                 editorElement.blur()
               }
             }
 
             // onChange 이벤트를 수동으로 트리거
-            const currentContent = editor.current.value || &apos;'
+            const currentContent = editor.current.value || ''
             onChange(currentContent)
           } catch (error) {
-            console.warn(&apos;⚠️ Blur 처리 중 오류:&apos;, error)
+            console.warn('⚠️ Blur 처리 중 오류:', error)
             // 오류 발생 시에도 최소한 onChange는 호출
-            const currentContent = editor.current.value || &apos;'
+            const currentContent = editor.current.value || ''
             onChange(currentContent)
           }
         }
       },
       getContent: () => {
-        return editor.current?.value || &apos;'
+        return editor.current?.value || ''
       },
       setContent: (content: string) => {
         if (editor.current) {
@@ -239,12 +239,12 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
           editor.current.selection.insertHTML(html)
         }
       },
-      insertImage: (url: string, alt: string = &apos;', width?: string, height?: string) => {
+      insertImage: (url: string, alt: string = '', width?: string, height?: string) => {
 
         if (editor.current) {
           try {
             // 현재 커서 위치에 이미지 삽입
-            const imageHtml = `<p><img src=&quot;${url}&quot; alt=&quot;${alt}&quot; style=&quot;max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;&quot; ${width ? `width=&quot;${width}&quot;` : &apos;'} ${height ? `height=&quot;${height}&quot;` : &apos;'} /></p><p><br /></p>`
+            const imageHtml = `<p><img src="${url}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} /></p><p><br /></p>`
 
 
             // Jodit의 selection API 사용하여 이미지 삽입
@@ -252,25 +252,25 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
               editor.current.selection.insertHTML(imageHtml)
             } else {
               // selection API가 없는 경우 직접 value에 추가
-              const currentValue = editor.current.value || &apos;'
+              const currentValue = editor.current.value || ''
               editor.current.value = currentValue + imageHtml
             }
 
             // 변경사항 트리거
-            editor.current.events?.fire(&apos;change&apos;, editor.current.value)
+            editor.current.events?.fire('change', editor.current.value)
 
 
           } catch (error) {
-            console.error(&apos;❌ JoditEditor insertImage 에러:&apos;, error)
+            console.error('❌ JoditEditor insertImage 에러:', error)
           }
         } else {
-          console.warn(&apos;⚠️ editor.current가 null입니다&apos;)
+          console.warn('⚠️ editor.current가 null입니다')
         }
       }
     }))
 
     return (
-      <div className=&quot;jodit-wrapper&quot;>
+      <div className="jodit-wrapper">
         <JoditReact
           ref={editor}
           value={value}
@@ -312,6 +312,6 @@ const JoditEditor = forwardRef<JoditEditorRef, JoditEditorProps>(
   }
 )
 
-JoditEditor.displayName = &apos;JoditEditor&apos;
+JoditEditor.displayName = 'JoditEditor'
 
 export default JoditEditor

@@ -1,30 +1,30 @@
 // T015: Unit test for PostEditor module - TDD Phase
 // This test MUST FAIL before implementation
 
-import React from &apos;react&apos;
-import { render, screen, fireEvent, waitFor, act } from &apos;@testing-library/react&apos;
-import userEvent from &apos;@testing-library/user-event&apos;
-import { PostEditor } from &apos;../PostEditor&apos;
-import type { LinkPreviewData } from &apos;../../../types/forms&apos;
+import React from 'react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { PostEditor } from '../PostEditor'
+import type { LinkPreviewData } from '../../../types/forms'
 
 // Mock hooks
-jest.mock(&apos;../../../hooks/useLinkPreview&apos;, () => ({
+jest.mock('../../../hooks/useLinkPreview', () => ({
   useLinkPreview: jest.fn()
 }))
 
-jest.mock(&apos;../../../hooks/useFormValidation&apos;, () => ({
+jest.mock('../../../hooks/useFormValidation', () => ({
   useFormValidation: jest.fn()
 }))
 
-const mockUseLinkPreview = require(&apos;../../../hooks/useLinkPreview&apos;).useLinkPreview
-const mockUseFormValidation = require(&apos;../../../hooks/useFormValidation&apos;).useFormValidation
+const mockUseLinkPreview = require('../../../hooks/useLinkPreview').useLinkPreview
+const mockUseFormValidation = require('../../../hooks/useFormValidation').useFormValidation
 
-describe(&apos;PostEditor&apos;, () => {
+describe('PostEditor', () => {
   const defaultLinkPreviewReturn = {
     preview: null,
     loading: false,
     error: null,
-    url: &apos;',
+    url: '',
     detectUrls: jest.fn(),
     generatePreview: jest.fn(),
     clearPreview: jest.fn(),
@@ -55,86 +55,86 @@ describe(&apos;PostEditor&apos;, () => {
     jest.restoreAllMocks()
   })
 
-  describe(&apos;Rendering&apos;, () => {
-    it(&apos;should render title and content inputs&apos;, () => {
+  describe('Rendering', () => {
+    it('should render title and content inputs', () => {
       render(<PostEditor />)
 
       expect(screen.getByLabelText(/제목/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/내용/i)).toBeInTheDocument()
     })
 
-    it(&apos;should render with initial values&apos;, () => {
+    it('should render with initial values', () => {
       const initialData = {
-        title: &apos;초기 제목&apos;,
-        content: &apos;초기 내용&apos;
+        title: '초기 제목',
+        content: '초기 내용'
       }
 
       render(<PostEditor initialData={initialData} />)
 
-      expect(screen.getByDisplayValue(&apos;초기 제목&apos;)).toBeInTheDocument()
-      expect(screen.getByDisplayValue(&apos;초기 내용&apos;)).toBeInTheDocument()
+      expect(screen.getByDisplayValue('초기 제목')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('초기 내용')).toBeInTheDocument()
     })
 
-    it(&apos;should show character count for title&apos;, () => {
+    it('should show character count for title', () => {
       render(<PostEditor />)
 
       const titleInput = screen.getByLabelText(/제목/i)
-      fireEvent.change(titleInput, { target: { value: &apos;Test Title&apos; } })
+      fireEvent.change(titleInput, { target: { value: 'Test Title' } })
 
-      expect(screen.getByText(&apos;10/300&apos;)).toBeInTheDocument()
+      expect(screen.getByText('10/300')).toBeInTheDocument()
     })
 
-    it(&apos;should show character count for content&apos;, () => {
+    it('should show character count for content', () => {
       render(<PostEditor />)
 
       const contentTextarea = screen.getByLabelText(/내용/i)
-      fireEvent.change(contentTextarea, { target: { value: &apos;Test content&apos; } })
+      fireEvent.change(contentTextarea, { target: { value: 'Test content' } })
 
-      expect(screen.getByText(&apos;12자&apos;)).toBeInTheDocument()
+      expect(screen.getByText('12자')).toBeInTheDocument()
     })
 
-    it(&apos;should render toolbar when enabled&apos;, () => {
+    it('should render toolbar when enabled', () => {
       render(<PostEditor showToolbar />)
 
-      expect(screen.getByRole(&apos;toolbar&apos;)).toBeInTheDocument()
-      expect(screen.getByRole(&apos;button&apos;, { name: /굵게/i })).toBeInTheDocument()
-      expect(screen.getByRole(&apos;button&apos;, { name: /기울임/i })).toBeInTheDocument()
-      expect(screen.getByRole(&apos;button&apos;, { name: /링크/i })).toBeInTheDocument()
+      expect(screen.getByRole('toolbar')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /굵게/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /기울임/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /링크/i })).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Text Input Handling&apos;, () => {
-    it(&apos;should handle title input changes&apos;, async () => {
+  describe('Text Input Handling', () => {
+    it('should handle title input changes', async () => {
       const onChange = jest.fn()
       const user = userEvent.setup()
 
       render(<PostEditor onChange={onChange} />)
 
       const titleInput = screen.getByLabelText(/제목/i)
-      await user.type(titleInput, &apos;New Title&apos;)
+      await user.type(titleInput, 'New Title')
 
       expect(onChange).toHaveBeenCalledWith({
-        title: &apos;New Title&apos;,
-        content: &apos;'
+        title: 'New Title',
+        content: ''
       })
     })
 
-    it(&apos;should handle content textarea changes&apos;, async () => {
+    it('should handle content textarea changes', async () => {
       const onChange = jest.fn()
       const user = userEvent.setup()
 
       render(<PostEditor onChange={onChange} />)
 
       const contentTextarea = screen.getByLabelText(/내용/i)
-      await user.type(contentTextarea, &apos;New content&apos;)
+      await user.type(contentTextarea, 'New content')
 
       expect(onChange).toHaveBeenCalledWith({
-        title: &apos;',
-        content: &apos;New content&apos;
+        title: '',
+        content: 'New content'
       })
     })
 
-    it(&apos;should auto-resize textarea based on content&apos;, async () => {
+    it('should auto-resize textarea based on content', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor autoResize />)
@@ -142,12 +142,12 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
       const initialHeight = contentTextarea.style.height
 
-      await user.type(contentTextarea, &apos;\n\n\n\nLots of new lines&apos;)
+      await user.type(contentTextarea, '\n\n\n\nLots of new lines')
 
       expect(contentTextarea.style.height).not.toBe(initialHeight)
     })
 
-    it(&apos;should handle tab key for indentation&apos;, async () => {
+    it('should handle tab key for indentation', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor enableTabIndent />)
@@ -155,12 +155,12 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i)
       contentTextarea.focus()
 
-      await user.keyboard(&apos;{Tab}&apos;)
+      await user.keyboard('{Tab}')
 
-      expect(contentTextarea).toHaveValue(&apos;    &apos;)
+      expect(contentTextarea).toHaveValue('    ')
     })
 
-    it(&apos;should prevent tab key from leaving field when disabled&apos;, async () => {
+    it('should prevent tab key from leaving field when disabled', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor enableTabIndent={false} />)
@@ -168,15 +168,15 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i)
       contentTextarea.focus()
 
-      await user.keyboard(&apos;{Tab}&apos;)
+      await user.keyboard('{Tab}')
 
       expect(contentTextarea).not.toHaveFocus()
     })
   })
 
-  describe(&apos;Link Preview Integration&apos;, () => {
-    it(&apos;should detect URLs in content and trigger preview&apos;, async () => {
-      const mockDetectUrls = jest.fn().mockReturnValue([&apos;https://example.com&apos;])
+  describe('Link Preview Integration', () => {
+    it('should detect URLs in content and trigger preview', async () => {
+      const mockDetectUrls = jest.fn().mockReturnValue(['https://example.com'])
       const mockOnTextChange = jest.fn()
 
       mockUseLinkPreview.mockReturnValue({
@@ -190,18 +190,18 @@ describe(&apos;PostEditor&apos;, () => {
       render(<PostEditor enableLinkPreview />)
 
       const contentTextarea = screen.getByLabelText(/내용/i)
-      await user.type(contentTextarea, &apos;Check this: https://example.com&apos;)
+      await user.type(contentTextarea, 'Check this: https://example.com')
 
-      expect(mockOnTextChange).toHaveBeenCalledWith(&apos;Check this: https://example.com&apos;)
+      expect(mockOnTextChange).toHaveBeenCalledWith('Check this: https://example.com')
     })
 
-    it(&apos;should display link preview when available&apos;, () => {
+    it('should display link preview when available', () => {
       const mockPreview: LinkPreviewData = {
-        url: &apos;https://example.com&apos;,
-        title: &apos;Example Site&apos;,
-        description: &apos;An example website&apos;,
-        image: &apos;https://example.com/image.jpg&apos;,
-        siteName: &apos;Example&apos;
+        url: 'https://example.com',
+        title: 'Example Site',
+        description: 'An example website',
+        image: 'https://example.com/image.jpg',
+        siteName: 'Example'
       }
 
       mockUseLinkPreview.mockReturnValue({
@@ -211,12 +211,12 @@ describe(&apos;PostEditor&apos;, () => {
 
       render(<PostEditor enableLinkPreview />)
 
-      expect(screen.getByText(&apos;Example Site&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;An example website&apos;)).toBeInTheDocument()
-      expect(screen.getByAltText(&apos;Link preview&apos;)).toBeInTheDocument()
+      expect(screen.getByText('Example Site')).toBeInTheDocument()
+      expect(screen.getByText('An example website')).toBeInTheDocument()
+      expect(screen.getByAltText('Link preview')).toBeInTheDocument()
     })
 
-    it(&apos;should show loading state for link preview&apos;, () => {
+    it('should show loading state for link preview', () => {
       mockUseLinkPreview.mockReturnValue({
         ...defaultLinkPreviewReturn,
         loading: true
@@ -227,13 +227,13 @@ describe(&apos;PostEditor&apos;, () => {
       expect(screen.getByText(/링크 미리보기 로딩 중.../i)).toBeInTheDocument()
     })
 
-    it(&apos;should allow dismissing link preview&apos;, async () => {
+    it('should allow dismissing link preview', async () => {
       const user = userEvent.setup()
       const mockClearPreview = jest.fn()
 
       const mockPreview: LinkPreviewData = {
-        url: &apos;https://example.com&apos;,
-        title: &apos;Example Site&apos;
+        url: 'https://example.com',
+        title: 'Example Site'
       }
 
       mockUseLinkPreview.mockReturnValue({
@@ -244,16 +244,16 @@ describe(&apos;PostEditor&apos;, () => {
 
       render(<PostEditor enableLinkPreview />)
 
-      const dismissButton = screen.getByRole(&apos;button&apos;, { name: /미리보기 닫기/i })
+      const dismissButton = screen.getByRole('button', { name: /미리보기 닫기/i })
       await user.click(dismissButton)
 
       expect(mockClearPreview).toHaveBeenCalled()
     })
 
-    it(&apos;should show link preview error&apos;, () => {
+    it('should show link preview error', () => {
       mockUseLinkPreview.mockReturnValue({
         ...defaultLinkPreviewReturn,
-        error: &apos;Failed to load preview&apos;
+        error: 'Failed to load preview'
       })
 
       render(<PostEditor enableLinkPreview />)
@@ -262,57 +262,57 @@ describe(&apos;PostEditor&apos;, () => {
     })
   })
 
-  describe(&apos;Formatting Toolbar&apos;, () => {
-    it(&apos;should apply bold formatting&apos;, async () => {
+  describe('Formatting Toolbar', () => {
+    it('should apply bold formatting', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar />)
 
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
-      await user.type(contentTextarea, &apos;Some text&apos;)
+      await user.type(contentTextarea, 'Some text')
 
       // Select text
       contentTextarea.setSelectionRange(0, 4)
 
-      const boldButton = screen.getByRole(&apos;button&apos;, { name: /굵게/i })
+      const boldButton = screen.getByRole('button', { name: /굵게/i })
       await user.click(boldButton)
 
-      expect(contentTextarea.value).toBe(&apos;**Some** text&apos;)
+      expect(contentTextarea.value).toBe('**Some** text')
     })
 
-    it(&apos;should apply italic formatting&apos;, async () => {
+    it('should apply italic formatting', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar />)
 
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
-      await user.type(contentTextarea, &apos;Some text&apos;)
+      await user.type(contentTextarea, 'Some text')
 
       contentTextarea.setSelectionRange(0, 4)
 
-      const italicButton = screen.getByRole(&apos;button&apos;, { name: /기울임/i })
+      const italicButton = screen.getByRole('button', { name: /기울임/i })
       await user.click(italicButton)
 
-      expect(contentTextarea.value).toBe(&apos;*Some* text&apos;)
+      expect(contentTextarea.value).toBe('*Some* text')
     })
 
-    it(&apos;should create link formatting&apos;, async () => {
+    it('should create link formatting', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar />)
 
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
-      await user.type(contentTextarea, &apos;Click here&apos;)
+      await user.type(contentTextarea, 'Click here')
 
       contentTextarea.setSelectionRange(0, 10)
 
-      const linkButton = screen.getByRole(&apos;button&apos;, { name: /링크/i })
+      const linkButton = screen.getByRole('button', { name: /링크/i })
       await user.click(linkButton)
 
-      expect(contentTextarea.value).toBe(&apos;[Click here]()&apos;)
+      expect(contentTextarea.value).toBe('[Click here]()')
     })
 
-    it(&apos;should insert list formatting&apos;, async () => {
+    it('should insert list formatting', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar />)
@@ -320,13 +320,13 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
       contentTextarea.focus()
 
-      const listButton = screen.getByRole(&apos;button&apos;, { name: /목록/i })
+      const listButton = screen.getByRole('button', { name: /목록/i })
       await user.click(listButton)
 
-      expect(contentTextarea.value).toBe(&apos;- &apos;)
+      expect(contentTextarea.value).toBe('- ')
     })
 
-    it(&apos;should insert code block&apos;, async () => {
+    it('should insert code block', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar />)
@@ -334,63 +334,63 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
       contentTextarea.focus()
 
-      const codeButton = screen.getByRole(&apos;button&apos;, { name: /코드/i })
+      const codeButton = screen.getByRole('button', { name: /코드/i })
       await user.click(codeButton)
 
-      expect(contentTextarea.value).toBe(&apos;```\n\n```&apos;)
+      expect(contentTextarea.value).toBe('```\n\n```')
     })
 
-    it(&apos;should toggle toolbar visibility&apos;, async () => {
+    it('should toggle toolbar visibility', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar collapsibleToolbar />)
 
-      expect(screen.getByRole(&apos;toolbar&apos;)).toBeVisible()
+      expect(screen.getByRole('toolbar')).toBeVisible()
 
-      const toggleButton = screen.getByRole(&apos;button&apos;, { name: /도구모음 접기/i })
+      const toggleButton = screen.getByRole('button', { name: /도구모음 접기/i })
       await user.click(toggleButton)
 
-      expect(screen.getByRole(&apos;toolbar&apos;)).not.toBeVisible()
+      expect(screen.getByRole('toolbar')).not.toBeVisible()
     })
   })
 
-  describe(&apos;Validation Integration&apos;, () => {
-    it(&apos;should show title validation error&apos;, () => {
+  describe('Validation Integration', () => {
+    it('should show title validation error', () => {
       mockUseFormValidation.mockReturnValue({
         ...defaultValidationReturn,
         validationState: {
           isValid: false,
-          errors: [{ field: &apos;title&apos;, message: &apos;제목은 필수입니다&apos;, code: &apos;REQUIRED&apos; }],
+          errors: [{ field: 'title', message: '제목은 필수입니다', code: 'REQUIRED' }],
           warnings: [],
-          touched: new Set([&apos;title&apos;])
+          touched: new Set(['title'])
         },
-        getFieldError: jest.fn().mockReturnValue(&apos;제목은 필수입니다&apos;),
+        getFieldError: jest.fn().mockReturnValue('제목은 필수입니다'),
         isFieldValid: jest.fn().mockReturnValue(false)
       })
 
       render(<PostEditor />)
 
-      expect(screen.getByText(&apos;제목은 필수입니다&apos;)).toBeInTheDocument()
-      expect(screen.getByLabelText(/제목/i)).toHaveClass(&apos;error&apos;)
+      expect(screen.getByText('제목은 필수입니다')).toBeInTheDocument()
+      expect(screen.getByLabelText(/제목/i)).toHaveClass('error')
     })
 
-    it(&apos;should show content validation warning&apos;, () => {
+    it('should show content validation warning', () => {
       mockUseFormValidation.mockReturnValue({
         ...defaultValidationReturn,
         validationState: {
           isValid: true,
           errors: [],
-          warnings: [{ field: &apos;content&apos;, message: &apos;내용이 너무 짧습니다&apos; }],
-          touched: new Set([&apos;content&apos;])
+          warnings: [{ field: 'content', message: '내용이 너무 짧습니다' }],
+          touched: new Set(['content'])
         }
       })
 
       render(<PostEditor />)
 
-      expect(screen.getByText(&apos;내용이 너무 짧습니다&apos;)).toBeInTheDocument()
+      expect(screen.getByText('내용이 너무 짧습니다')).toBeInTheDocument()
     })
 
-    it(&apos;should validate on blur&apos;, async () => {
+    it('should validate on blur', async () => {
       const user = userEvent.setup()
       const mockValidateField = jest.fn()
 
@@ -405,10 +405,10 @@ describe(&apos;PostEditor&apos;, () => {
       await user.click(titleInput)
       await user.tab()
 
-      expect(mockValidateField).toHaveBeenCalledWith(&apos;title&apos;, &apos;')
+      expect(mockValidateField).toHaveBeenCalledWith('title', '')
     })
 
-    it(&apos;should validate on change when enabled&apos;, async () => {
+    it('should validate on change when enabled', async () => {
       const user = userEvent.setup()
       const mockValidateField = jest.fn()
 
@@ -420,56 +420,56 @@ describe(&apos;PostEditor&apos;, () => {
       render(<PostEditor validateOnChange />)
 
       const titleInput = screen.getByLabelText(/제목/i)
-      await user.type(titleInput, &apos;T&apos;)
+      await user.type(titleInput, 'T')
 
-      expect(mockValidateField).toHaveBeenCalledWith(&apos;title&apos;, &apos;T&apos;)
+      expect(mockValidateField).toHaveBeenCalledWith('title', 'T')
     })
   })
 
-  describe(&apos;Keyboard Shortcuts&apos;, () => {
-    it(&apos;should support Ctrl+B for bold&apos;, async () => {
+  describe('Keyboard Shortcuts', () => {
+    it('should support Ctrl+B for bold', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar enableKeyboardShortcuts />)
 
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
-      await user.type(contentTextarea, &apos;text&apos;)
+      await user.type(contentTextarea, 'text')
       contentTextarea.setSelectionRange(0, 4)
 
-      await user.keyboard(&apos;{Control>}b{/Control}&apos;)
+      await user.keyboard('{Control>}b{/Control}')
 
-      expect(contentTextarea.value).toBe(&apos;**text**&apos;)
+      expect(contentTextarea.value).toBe('**text**')
     })
 
-    it(&apos;should support Ctrl+I for italic&apos;, async () => {
+    it('should support Ctrl+I for italic', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar enableKeyboardShortcuts />)
 
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
-      await user.type(contentTextarea, &apos;text&apos;)
+      await user.type(contentTextarea, 'text')
       contentTextarea.setSelectionRange(0, 4)
 
-      await user.keyboard(&apos;{Control>}i{/Control}&apos;)
+      await user.keyboard('{Control>}i{/Control}')
 
-      expect(contentTextarea.value).toBe(&apos;*text*&apos;)
+      expect(contentTextarea.value).toBe('*text*')
     })
 
-    it(&apos;should support Ctrl+K for link&apos;, async () => {
+    it('should support Ctrl+K for link', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor showToolbar enableKeyboardShortcuts />)
 
       const contentTextarea = screen.getByLabelText(/내용/i) as HTMLTextAreaElement
-      await user.type(contentTextarea, &apos;link&apos;)
+      await user.type(contentTextarea, 'link')
       contentTextarea.setSelectionRange(0, 4)
 
-      await user.keyboard(&apos;{Control>}k{/Control}&apos;)
+      await user.keyboard('{Control>}k{/Control}')
 
-      expect(contentTextarea.value).toBe(&apos;[link]()&apos;)
+      expect(contentTextarea.value).toBe('[link]()')
     })
 
-    it(&apos;should support Ctrl+S for save&apos;, async () => {
+    it('should support Ctrl+S for save', async () => {
       const user = userEvent.setup()
       const onSave = jest.fn()
 
@@ -478,14 +478,14 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i)
       contentTextarea.focus()
 
-      await user.keyboard(&apos;{Control>}s{/Control}&apos;)
+      await user.keyboard('{Control>}s{/Control}')
 
       expect(onSave).toHaveBeenCalled()
     })
   })
 
-  describe(&apos;Draft Auto-Save&apos;, () => {
-    it(&apos;should auto-save draft periodically&apos;, async () => {
+  describe('Draft Auto-Save', () => {
+    it('should auto-save draft periodically', async () => {
       jest.useFakeTimers()
       const onDraftSave = jest.fn()
 
@@ -494,21 +494,21 @@ describe(&apos;PostEditor&apos;, () => {
       render(<PostEditor onDraftSave={onDraftSave} autoSaveInterval={5000} />)
 
       const titleInput = screen.getByLabelText(/제목/i)
-      await user.type(titleInput, &apos;Draft title&apos;)
+      await user.type(titleInput, 'Draft title')
 
       act(() => {
         jest.advanceTimersByTime(5000)
       })
 
       expect(onDraftSave).toHaveBeenCalledWith({
-        title: &apos;Draft title&apos;,
-        content: &apos;'
+        title: 'Draft title',
+        content: ''
       })
 
       jest.useRealTimers()
     })
 
-    it(&apos;should show draft save status&apos;, async () => {
+    it('should show draft save status', async () => {
       jest.useFakeTimers()
 
       const user = userEvent.setup({ delay: null })
@@ -516,7 +516,7 @@ describe(&apos;PostEditor&apos;, () => {
       render(<PostEditor showDraftStatus autoSaveInterval={3000} />)
 
       const titleInput = screen.getByLabelText(/제목/i)
-      await user.type(titleInput, &apos;Draft&apos;)
+      await user.type(titleInput, 'Draft')
 
       act(() => {
         jest.advanceTimersByTime(3000)
@@ -527,22 +527,22 @@ describe(&apos;PostEditor&apos;, () => {
       jest.useRealTimers()
     })
 
-    it(&apos;should restore from draft&apos;, () => {
+    it('should restore from draft', () => {
       const draftData = {
-        title: &apos;임시저장된 제목&apos;,
-        content: &apos;임시저장된 내용&apos;
+        title: '임시저장된 제목',
+        content: '임시저장된 내용'
       }
 
       render(<PostEditor draftData={draftData} />)
 
-      expect(screen.getByDisplayValue(&apos;임시저장된 제목&apos;)).toBeInTheDocument()
-      expect(screen.getByDisplayValue(&apos;임시저장된 내용&apos;)).toBeInTheDocument()
+      expect(screen.getByDisplayValue('임시저장된 제목')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('임시저장된 내용')).toBeInTheDocument()
       expect(screen.getByText(/임시저장에서 복원됨/i)).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Paste Handling&apos;, () => {
-    it(&apos;should handle plain text paste&apos;, async () => {
+  describe('Paste Handling', () => {
+    it('should handle plain text paste', async () => {
       const user = userEvent.setup()
 
       render(<PostEditor />)
@@ -550,33 +550,33 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i)
       contentTextarea.focus()
 
-      const pasteData = &apos;Pasted content&apos;
+      const pasteData = 'Pasted content'
       await user.paste(pasteData)
 
-      expect(contentTextarea).toHaveValue(&apos;Pasted content&apos;)
+      expect(contentTextarea).toHaveValue('Pasted content')
     })
 
-    it(&apos;should convert HTML paste to markdown&apos;, async () => {
+    it('should convert HTML paste to markdown', async () => {
       render(<PostEditor convertPastedHtml />)
 
       const contentTextarea = screen.getByLabelText(/내용/i)
       contentTextarea.focus()
 
-      const htmlContent = &apos;<strong>Bold</strong> and <em>italic</em> text&apos;
-      const pasteEvent = new ClipboardEvent(&apos;paste&apos;, {
+      const htmlContent = '<strong>Bold</strong> and <em>italic</em> text'
+      const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer()
       })
 
-      pasteEvent.clipboardData?.setData(&apos;text/html&apos;, htmlContent)
+      pasteEvent.clipboardData?.setData('text/html', htmlContent)
 
       fireEvent(contentTextarea, pasteEvent)
 
       await waitFor(() => {
-        expect(contentTextarea).toHaveValue(&apos;**Bold** and *italic* text&apos;)
+        expect(contentTextarea).toHaveValue('**Bold** and *italic* text')
       })
     })
 
-    it(&apos;should handle image paste&apos;, async () => {
+    it('should handle image paste', async () => {
       const onImagePaste = jest.fn()
 
       render(<PostEditor onImagePaste={onImagePaste} />)
@@ -584,8 +584,8 @@ describe(&apos;PostEditor&apos;, () => {
       const contentTextarea = screen.getByLabelText(/내용/i)
       contentTextarea.focus()
 
-      const file = new File([&apos;image&apos;], &apos;image.png&apos;, { type: &apos;image/png&apos; })
-      const pasteEvent = new ClipboardEvent(&apos;paste&apos;, {
+      const file = new File(['image'], 'image.png', { type: 'image/png' })
+      const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer()
       })
 
@@ -597,47 +597,47 @@ describe(&apos;PostEditor&apos;, () => {
     })
   })
 
-  describe(&apos;Accessibility&apos;, () => {
-    it(&apos;should have proper ARIA labels&apos;, () => {
+  describe('Accessibility', () => {
+    it('should have proper ARIA labels', () => {
       render(<PostEditor />)
 
-      expect(screen.getByLabelText(/제목/i)).toHaveAttribute(&apos;aria-required&apos;, &apos;true&apos;)
-      expect(screen.getByLabelText(/내용/i)).toHaveAttribute(&apos;aria-describedby&apos;)
+      expect(screen.getByLabelText(/제목/i)).toHaveAttribute('aria-required', 'true')
+      expect(screen.getByLabelText(/내용/i)).toHaveAttribute('aria-describedby')
     })
 
-    it(&apos;should announce validation errors to screen readers&apos;, () => {
+    it('should announce validation errors to screen readers', () => {
       mockUseFormValidation.mockReturnValue({
         ...defaultValidationReturn,
         validationState: {
           isValid: false,
-          errors: [{ field: &apos;title&apos;, message: &apos;제목은 필수입니다&apos;, code: &apos;REQUIRED&apos; }],
+          errors: [{ field: 'title', message: '제목은 필수입니다', code: 'REQUIRED' }],
           warnings: [],
-          touched: new Set([&apos;title&apos;])
+          touched: new Set(['title'])
         },
-        getFieldError: jest.fn().mockReturnValue(&apos;제목은 필수입니다&apos;)
+        getFieldError: jest.fn().mockReturnValue('제목은 필수입니다')
       })
 
       render(<PostEditor />)
 
-      const errorMessage = screen.getByText(&apos;제목은 필수입니다&apos;)
-      expect(errorMessage).toHaveAttribute(&apos;role&apos;, &apos;alert&apos;)
+      const errorMessage = screen.getByText('제목은 필수입니다')
+      expect(errorMessage).toHaveAttribute('role', 'alert')
     })
 
-    it(&apos;should support screen reader navigation of toolbar&apos;, () => {
+    it('should support screen reader navigation of toolbar', () => {
       render(<PostEditor showToolbar />)
 
-      const toolbar = screen.getByRole(&apos;toolbar&apos;)
-      expect(toolbar).toHaveAttribute(&apos;aria-label&apos;, &apos;편집 도구&apos;)
+      const toolbar = screen.getByRole('toolbar')
+      expect(toolbar).toHaveAttribute('aria-label', '편집 도구')
 
-      const buttons = screen.getAllByRole(&apos;button&apos;)
+      const buttons = screen.getAllByRole('button')
       buttons.forEach(button => {
-        expect(button).toHaveAttribute(&apos;aria-label&apos;)
+        expect(button).toHaveAttribute('aria-label')
       })
     })
   })
 
-  describe(&apos;Performance&apos;, () => {
-    it(&apos;should debounce onChange events&apos;, async () => {
+  describe('Performance', () => {
+    it('should debounce onChange events', async () => {
       jest.useFakeTimers()
       const onChange = jest.fn()
 
@@ -647,7 +647,7 @@ describe(&apos;PostEditor&apos;, () => {
 
       const titleInput = screen.getByLabelText(/제목/i)
 
-      await user.type(titleInput, &apos;abc&apos;)
+      await user.type(titleInput, 'abc')
 
       expect(onChange).not.toHaveBeenCalled()
 
@@ -660,7 +660,7 @@ describe(&apos;PostEditor&apos;, () => {
       jest.useRealTimers()
     })
 
-    it(&apos;should memoize expensive operations&apos;, () => {
+    it('should memoize expensive operations', () => {
       const { rerender } = render(<PostEditor />)
 
       // Same props should not trigger re-computation

@@ -1,12 +1,12 @@
 // T023: Implementation of ImageUpload component
 // Following TDD GREEN phase - making tests pass
 
-'use client&apos;
+'use client'
 
-import React, { useCallback, useRef, useState, useEffect } from &apos;react&apos;
-import { cn } from &apos;../../lib/utils&apos;
-import { useImageUpload, type UseImageUploadOptions } from &apos;../../hooks/useImageUpload&apos;
-import type { UploadedImage } from &apos;../../types/forms&apos;
+import React, { useCallback, useRef, useState, useEffect } from 'react'
+import { cn } from '../../lib/utils'
+import { useImageUpload, type UseImageUploadOptions } from '../../hooks/useImageUpload'
+import type { UploadedImage } from '../../types/forms'
 
 export interface ImageUploadProps extends UseImageUploadOptions {
   className?: string
@@ -24,7 +24,7 @@ export function ImageUpload({
   className,
   maxImages = 10,
   maxFileSize = 5 * 1024 * 1024,
-  allowedTypes = [&apos;image/jpeg&apos;, &apos;image/png&apos;, &apos;image/gif&apos;, &apos;image/webp&apos;],
+  allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
   onChange,
   onUploadStart,
   onUploadComplete,
@@ -193,7 +193,7 @@ export function ImageUpload({
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i]
-        if (item.kind === &apos;file&apos; && item.type.startsWith(&apos;image/&apos;)) {
+        if (item.kind === 'file' && item.type.startsWith('image/')) {
           const file = item.getAsFile()
           if (file) {
             handleFileSelect([file])
@@ -202,14 +202,14 @@ export function ImageUpload({
       }
     }
 
-    document.addEventListener(&apos;paste&apos;, handlePaste)
-    return () => document.removeEventListener(&apos;paste&apos;, handlePaste)
+    document.addEventListener('paste', handlePaste)
+    return () => document.removeEventListener('paste', handlePaste)
   }, [enablePaste, handleFileSelect])
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return &apos;0 B&apos;
+    if (bytes === 0) return '0 B'
     const k = 1024
-    const sizes = [&apos;B&apos;, &apos;KB&apos;, &apos;MB&apos;, &apos;GB&apos;]
+    const sizes = ['B', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
   }
@@ -217,54 +217,54 @@ export function ImageUpload({
   const getFileTypeText = (types: string[]): string => {
     const typeNames = types.map(type => {
       switch (type) {
-        case &apos;image/jpeg&apos;: return &apos;JPEG&apos;
-        case &apos;image/png&apos;: return &apos;PNG&apos;
-        case &apos;image/gif&apos;: return &apos;GIF&apos;
-        case &apos;image/webp&apos;: return &apos;WebP&apos;
-        default: return type.split(&apos;/&apos;)[1]?.toUpperCase() || type
+        case 'image/jpeg': return 'JPEG'
+        case 'image/png': return 'PNG'
+        case 'image/gif': return 'GIF'
+        case 'image/webp': return 'WebP'
+        default: return type.split('/')[1]?.toUpperCase() || type
       }
     })
-    return `Only ${typeNames.join(&apos;, &apos;)} supported`
+    return `Only ${typeNames.join(', ')} supported`
   }
 
   return (
-    <div className={cn(&apos;space-y-4&apos;, className)}>
+    <div className={cn('space-y-4', className)}>
       {/* Upload Area */}
       {canAddMore && (
         <div
           ref={dropZoneRef}
           className={cn(
-            &apos;border-2 border-dashed rounded-lg p-8 text-center transition-colors&apos;,
-            dragActive ? &apos;border-blue-500 bg-blue-500/10&apos; : &apos;border-gray-600 hover:border-gray-400&apos;,
-            !canAddMore && &apos;opacity-50 cursor-not-allowed&apos;
+            'border-2 border-dashed rounded-lg p-8 text-center transition-colors',
+            dragActive ? 'border-blue-500 bg-blue-500/10' : 'border-gray-600 hover:border-gray-400',
+            !canAddMore && 'opacity-50 cursor-not-allowed'
           )}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          role=&quot;button&quot;
-          aria-label=&quot;Image upload area&quot;
+          role="button"
+          aria-label="Image upload area"
           tabIndex={0}
         >
-          <div className=&quot;space-y-2&quot;>
-            <div className=&quot;text-lg&quot;>📁</div>
-            <div className=&quot;text-sm text-gray-300&quot;>
+          <div className="space-y-2">
+            <div className="text-lg">📁</div>
+            <div className="text-sm text-gray-300">
               Drag & drop images here, or click to select
             </div>
             <button
-              type=&quot;button&quot;
+              type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={!canAddMore}
-              className=&quot;px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50&quot;
-              aria-label=&quot;Choose files&quot;
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+              aria-label="Choose files"
             >
               Choose Files
             </button>
-            <div className=&quot;text-xs text-gray-400&quot;>
+            <div className="text-xs text-gray-400">
               Up to {maxImages} files, max {formatFileSize(maxFileSize)} each
             </div>
             {allowedTypes.length < 4 && (
-              <div className=&quot;text-xs text-gray-500&quot;>
+              <div className="text-xs text-gray-500">
                 {getFileTypeText(allowedTypes)}
               </div>
             )}
@@ -272,67 +272,67 @@ export function ImageUpload({
 
           <input
             ref={fileInputRef}
-            type=&quot;file&quot;
-            accept={allowedTypes.join(&apos;,&apos;)}
+            type="file"
+            accept={allowedTypes.join(',')}
             multiple
             onChange={handleInputChange}
-            className=&quot;hidden&quot;
-            aria-label=&quot;File input&quot;
+            className="hidden"
+            aria-label="File input"
           />
         </div>
       )}
 
       {/* Max Images Warning */}
       {!canAddMore && (
-        <div className=&quot;text-sm text-amber-600 bg-amber-50 p-3 rounded&quot;>
+        <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded">
           Maximum images reached ({images.length}/{maxImages})
         </div>
       )}
 
       {/* Upload Progress */}
       {uploading && (
-        <div className=&quot;space-y-2&quot;>
-          <div className=&quot;flex items-center justify-between&quot;>
-            <span className=&quot;text-sm text-gray-300&quot;>Uploading...</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-300">Uploading...</span>
             <button
               onClick={abortUpload}
-              className=&quot;text-sm text-red-400 hover:text-red-300&quot;
-              aria-label=&quot;Cancel upload&quot;
+              className="text-sm text-red-400 hover:text-red-300"
+              aria-label="Cancel upload"
             >
               Cancel
             </button>
           </div>
-          <div className=&quot;w-full bg-gray-200 rounded-full h-2&quot;>
+          <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className=&quot;bg-blue-600 h-2 rounded-full transition-all&quot;
+              className="bg-blue-600 h-2 rounded-full transition-all"
               style={{ width: `${uploadProgress}%` }}
-              role=&quot;progressbar&quot;
+              role="progressbar"
               aria-valuenow={uploadProgress}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label=&quot;Upload progress&quot;
+              aria-label="Upload progress"
             />
           </div>
-          <div className=&quot;text-sm text-gray-400&quot;>{uploadProgress}%</div>
+          <div className="text-sm text-gray-400">{uploadProgress}%</div>
         </div>
       )}
 
       {/* Success Message */}
       {showSuccess && (
-        <div className=&quot;text-sm text-green-600 bg-green-50 p-3 rounded&quot;>
+        <div className="text-sm text-green-600 bg-green-50 p-3 rounded">
           Upload complete!
         </div>
       )}
 
       {/* Error Display */}
       {error && (
-        <div className=&quot;text-sm text-red-600 bg-red-50 p-3 rounded&quot; role=&quot;alert&quot;>
+        <div className="text-sm text-red-600 bg-red-50 p-3 rounded" role="alert">
           {error}
           {lastFailedFile && (
             <button
               onClick={handleRetry}
-              className=&quot;ml-2 text-blue-600 hover:text-blue-700 underline&quot;
-              aria-label=&quot;Retry&quot;
+              className="ml-2 text-blue-600 hover:text-blue-700 underline"
+              aria-label="Retry"
             >
               Retry
             </button>
@@ -342,23 +342,23 @@ export function ImageUpload({
 
       {/* External Images Info */}
       {externalImages.length > 0 && (
-        <div className=&quot;text-sm text-blue-600 bg-blue-50 p-3 rounded&quot;>
-{externalImages.length} external image{externalImages.length !== 1 ? &apos;s&apos; : &apos;'}
+        <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded">
+{externalImages.length} external image{externalImages.length !== 1 ? 's' : ''}
         </div>
       )}
 
       {/* Images Grid */}
       {images.length > 0 && (
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {images.length > 1 && (
-            <div className=&quot;flex items-center justify-between&quot;>
-              <span className=&quot;text-sm text-gray-300&quot;>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-300">
                 Uploaded images ({images.length})
               </span>
               <button
                 onClick={clearImages}
-                className=&quot;text-sm text-red-400 hover:text-red-300&quot;
-                aria-label=&quot;Remove all images&quot;
+                className="text-sm text-red-400 hover:text-red-300"
+                aria-label="Remove all images"
               >
                 Remove All
               </button>
@@ -366,28 +366,28 @@ export function ImageUpload({
           )}
 
           <ul
-            className=&quot;grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4&quot;
-            role=&quot;list&quot;
-            aria-label=&quot;Uploaded images&quot;
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+            role="list"
+            aria-label="Uploaded images"
           >
             {images.map((image, index) => (
               <li
                 key={image.url}
-                className=&quot;relative group aspect-square bg-gray-100 rounded-lg overflow-hidden&quot;
-                role=&quot;listitem&quot;
+                className="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden"
+                role="listitem"
               >
                 <img
                   src={image.url}
                   alt={image.fileName}
-                  className=&quot;w-full h-full object-cover&quot;
-                  loading=&quot;lazy&quot;
+                  className="w-full h-full object-cover"
+                  loading="lazy"
                 />
 
                 {/* Overlay with controls */}
-                <div className=&quot;absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center&quot;>
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button
                     onClick={() => handleRemove(image.url)}
-                    className=&quot;bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors&quot;
+                    className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                     aria-label={`Remove ${image.fileName}`}
                     tabIndex={0}
                   >
@@ -396,9 +396,9 @@ export function ImageUpload({
                 </div>
 
                 {/* Image Info */}
-                <div className=&quot;absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity&quot;>
+                <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div>{formatFileSize(image.size)}</div>
-                  <div>{image.mimeType.split(&apos;/&apos;)[1]?.toUpperCase()}</div>
+                  <div>{image.mimeType.split('/')[1]?.toUpperCase()}</div>
                   {image.width && image.height && (
                     <div>{image.width}×{image.height}</div>
                   )}
@@ -407,11 +407,11 @@ export function ImageUpload({
                 {/* Drag Handle for reordering */}
                 {enableReordering && (
                   <div
-                    className=&quot;absolute top-2 left-2 bg-white/90 p-1 rounded cursor-move opacity-0 group-hover:opacity-100&quot;
+                    className="absolute top-2 left-2 bg-white/90 p-1 rounded cursor-move opacity-0 group-hover:opacity-100"
                     draggable
                     onDragStart={() => {/* drag start logic */}}
                     onDragEnd={() => handleReorder(index, index)} // Simplified for demo
-                    aria-label=&quot;Reorder image&quot;
+                    aria-label="Reorder image"
                   >
                     ⋮⋮
                   </div>

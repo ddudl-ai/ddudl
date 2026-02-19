@@ -1,9 +1,9 @@
 // Component test for WritePostForm image upload flow
 
-import React from &apos;react&apos;
-import { render, screen, fireEvent, waitFor, act } from &apos;@testing-library/react&apos;
-import userEvent from &apos;@testing-library/user-event&apos;
-import { WritePostForm } from &apos;../WritePostForm&apos;
+import React from 'react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { WritePostForm } from '../WritePostForm'
 import {
   mockFetch,
   mockUploadResponse,
@@ -12,36 +12,36 @@ import {
   createMockFileList,
   createMockFileInputEvent,
   cleanupMocks
-} from &apos;@/__tests__/utils/upload-mocks&apos;
+} from '@/__tests__/utils/upload-mocks'
 
 // Mock the useImageUpload hook
-jest.mock(&apos;@/hooks/useImageUpload&apos;, () => ({
+jest.mock('@/hooks/useImageUpload', () => ({
   useImageUpload: jest.fn()
 }))
 
 // Mock Jodit Editor component
-jest.mock(&apos;@/components/editor/JoditEditor&apos;, () => {
+jest.mock('@/components/editor/JoditEditor', () => {
   return function MockJoditEditor({ value, onChange, onBlur }: any) {
     return (
       <textarea
-        data-testid=&quot;jodit-editor&quot;
+        data-testid="jodit-editor"
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         onBlur={() => onBlur?.()}
-        placeholder=&quot;Write your post content...&quot;
+        placeholder="Write your post content..."
       />
     )
   }
 })
 
 // Mock next/navigation
-jest.mock(&apos;next/navigation&apos;, () => ({
+jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
     back: jest.fn()
   }),
   useParams: () => ({
-    channel: &apos;ai&apos;
+    channel: 'ai'
   })
 }))
 
@@ -55,14 +55,14 @@ const mockUseImageUpload = {
   clearError: jest.fn()
 }
 
-describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
+describe('WritePostForm - Image Upload Flow', () => {
   const user = userEvent.setup()
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     // Reset mock implementation
-    const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+    const { useImageUpload } = require('@/hooks/useImageUpload')
     useImageUpload.mockReturnValue(mockUseImageUpload)
 
     // Mock global fetch
@@ -73,24 +73,24 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
     cleanupMocks()
   })
 
-  describe(&apos;File Input and Selection&apos;, () => {
-    test(&apos;should render image upload button&apos;, () => {
+  describe('File Input and Selection', () => {
+    test('should render image upload button', () => {
       // Act
       render(<WritePostForm />)
 
       // Assert
-      const uploadButton = screen.getByRole(&apos;button&apos;, { name: /이미지 업로드|image upload/i })
+      const uploadButton = screen.getByRole('button', { name: /이미지 업로드|image upload/i })
       expect(uploadButton).toBeInTheDocument()
     })
 
-    test(&apos;should trigger file input when upload button is clicked&apos;, async () => {
+    test('should trigger file input when upload button is clicked', async () => {
       // Arrange
       render(<WritePostForm />)
-      const uploadButton = screen.getByRole(&apos;button&apos;, { name: /이미지 업로드|image upload/i })
+      const uploadButton = screen.getByRole('button', { name: /이미지 업로드|image upload/i })
 
       // Mock file input click
-      const fileInput = document.querySelector(&apos;input[type=&quot;file&quot;]&apos;) as HTMLInputElement
-      const clickSpy = jest.spyOn(fileInput, &apos;click&apos;).mockImplementation(() => {})
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+      const clickSpy = jest.spyOn(fileInput, 'click').mockImplementation(() => {})
 
       // Act
       await user.click(uploadButton)
@@ -101,19 +101,19 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       clickSpy.mockRestore()
     })
 
-    test(&apos;should handle FileList timing bug correctly&apos;, async () => {
+    test('should handle FileList timing bug correctly', async () => {
       // This test specifically targets the FileList timing issue
       // Arrange
       render(<WritePostForm />)
 
       const mockFiles = [
-        createMockImageFile(&apos;test1.jpg&apos;, 1024 * 1024),
-        createMockImageFile(&apos;test2.png&apos;, 2 * 1024 * 1024)
+        createMockImageFile('test1.jpg', 1024 * 1024),
+        createMockImageFile('test2.png', 2 * 1024 * 1024)
       ]
 
-      const fileInput = document.querySelector(&apos;input[type=&quot;file&quot;]&apos;) as HTMLInputElement
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
 
-      const consoleSpy = jest.spyOn(console, &apos;log&apos;).mockImplementation()
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
 
       // Create a proper file input change event
       const fileInputEvent = createMockFileInputEvent(mockFiles)
@@ -131,26 +131,26 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
         )
       })
 
-      // Assert - should not log &quot;FileList is empty&quot; errors
+      // Assert - should not log "FileList is empty" errors
       const emptyFileListLogs = consoleSpy.mock.calls.filter(call =>
-        call[0]?.includes(&apos;FileList is empty&apos;) || call[0]?.includes(&apos;files received: 0&apos;)
+        call[0]?.includes('FileList is empty') || call[0]?.includes('files received: 0')
       )
       expect(emptyFileListLogs).toHaveLength(0)
 
       consoleSpy.mockRestore()
     })
 
-    test(&apos;should process multiple file selection correctly&apos;, async () => {
+    test('should process multiple file selection correctly', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const mockFiles = [
-        createMockImageFile(&apos;image1.jpg&apos;, 1024 * 1024),
-        createMockImageFile(&apos;image2.png&apos;, 2 * 1024 * 1024),
-        createMockImageFile(&apos;image3.gif&apos;, 500 * 1024)
+        createMockImageFile('image1.jpg', 1024 * 1024),
+        createMockImageFile('image2.png', 2 * 1024 * 1024),
+        createMockImageFile('image3.gif', 500 * 1024)
       ]
 
-      const fileInput = document.querySelector(&apos;input[type=&quot;file&quot;]&apos;) as HTMLInputElement
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
       const fileInputEvent = createMockFileInputEvent(mockFiles)
 
       // Act
@@ -161,21 +161,21 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
         expect(mockUseImageUpload.uploadImages).toHaveBeenCalledWith(
           expect.objectContaining({
             length: 3,
-            0: expect.objectContaining({ name: &apos;image1.jpg&apos; }),
-            1: expect.objectContaining({ name: &apos;image2.png&apos; }),
-            2: expect.objectContaining({ name: &apos;image3.gif&apos; })
+            0: expect.objectContaining({ name: 'image1.jpg' }),
+            1: expect.objectContaining({ name: 'image2.png' }),
+            2: expect.objectContaining({ name: 'image3.gif' })
           })
         )
       })
     })
 
-    test(&apos;should reset file input value after processing&apos;, async () => {
+    test('should reset file input value after processing', async () => {
       // This verifies the fix for the FileList timing bug
       // Arrange
       render(<WritePostForm />)
 
-      const mockFile = createMockImageFile(&apos;test.jpg&apos;, 1024 * 1024)
-      const fileInput = document.querySelector(&apos;input[type=&quot;file&quot;]&apos;) as HTMLInputElement
+      const mockFile = createMockImageFile('test.jpg', 1024 * 1024)
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
       const fileInputEvent = createMockFileInputEvent([mockFile])
 
       // Act
@@ -183,15 +183,15 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
 
       // Assert - file input value should be reset AFTER processing
       await waitFor(() => {
-        expect(fileInput.value).toBe(&apos;')
+        expect(fileInput.value).toBe('')
       })
     })
   })
 
-  describe(&apos;Upload Progress and States&apos;, () => {
-    test(&apos;should show upload progress during file upload&apos;, async () => {
+  describe('Upload Progress and States', () => {
+    test('should show upload progress during file upload', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
         uploading: true,
@@ -201,14 +201,14 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       render(<WritePostForm />)
 
       // Assert
-      const progressIndicator = screen.getByTestId(&apos;upload-progress&apos;)
+      const progressIndicator = screen.getByTestId('upload-progress')
       expect(progressIndicator).toBeInTheDocument()
-      expect(progressIndicator).toHaveAttribute(&apos;aria-valuenow&apos;, &apos;45&apos;)
+      expect(progressIndicator).toHaveAttribute('aria-valuenow', '45')
     })
 
-    test(&apos;should disable upload button during upload&apos;, async () => {
+    test('should disable upload button during upload', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
         uploading: true
@@ -217,16 +217,16 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       render(<WritePostForm />)
 
       // Assert
-      const uploadButton = screen.getByRole(&apos;button&apos;, { name: /이미지 업로드|image upload/i })
+      const uploadButton = screen.getByRole('button', { name: /이미지 업로드|image upload/i })
       expect(uploadButton).toBeDisabled()
     })
 
-    test(&apos;should show upload error messages&apos;, async () => {
+    test('should show upload error messages', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
-        error: &apos;파일 크기는 10MB를 초과할 수 없습니다&apos;
+        error: '파일 크기는 10MB를 초과할 수 없습니다'
       })
 
       render(<WritePostForm />)
@@ -236,19 +236,19 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       expect(errorMessage).toBeInTheDocument()
     })
 
-    test(&apos;should allow clearing upload errors&apos;, async () => {
+    test('should allow clearing upload errors', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
-        error: &apos;업로드 실패&apos;,
+        error: '업로드 실패',
         clearError: jest.fn()
       })
 
       render(<WritePostForm />)
 
       // Act
-      const clearErrorButton = screen.getByRole(&apos;button&apos;, { name: /clear|close|dismiss/i })
+      const clearErrorButton = screen.getByRole('button', { name: /clear|close|dismiss/i })
       await user.click(clearErrorButton)
 
       // Assert
@@ -256,22 +256,22 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
     })
   })
 
-  describe(&apos;Upload Gallery Display&apos;, () => {
-    test(&apos;should display uploaded images in gallery&apos;, async () => {
+  describe('Upload Gallery Display', () => {
+    test('should display uploaded images in gallery', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;,
-          file_name: &apos;image1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image1.webp',
+          file_name: 'image1.jpg',
+          upload_status: 'completed'
         },
         {
-          id: &apos;2&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image2.webp&apos;,
-          file_name: &apos;image2.png&apos;,
-          upload_status: &apos;completed&apos;
+          id: '2',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image2.webp',
+          file_name: 'image2.png',
+          upload_status: 'completed'
         }
       ]
 
@@ -283,25 +283,25 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       render(<WritePostForm />)
 
       // Assert
-      const gallery = screen.getByTestId(&apos;upload-gallery&apos;)
+      const gallery = screen.getByTestId('upload-gallery')
       expect(gallery).toBeInTheDocument()
 
-      const thumbnails = screen.getAllByTestId(&apos;upload-thumbnail&apos;)
+      const thumbnails = screen.getAllByTestId('upload-thumbnail')
       expect(thumbnails).toHaveLength(2)
 
-      expect(screen.getByAltText(&apos;image1.jpg&apos;)).toBeInTheDocument()
-      expect(screen.getByAltText(&apos;image2.png&apos;)).toBeInTheDocument()
+      expect(screen.getByAltText('image1.jpg')).toBeInTheDocument()
+      expect(screen.getByAltText('image2.png')).toBeInTheDocument()
     })
 
-    test(&apos;should allow removing images from gallery&apos;, async () => {
+    test('should allow removing images from gallery', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;,
-          file_name: &apos;image1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image1.webp',
+          file_name: 'image1.jpg',
+          upload_status: 'completed'
         }
       ]
 
@@ -314,22 +314,22 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       render(<WritePostForm />)
 
       // Act
-      const removeButton = screen.getByRole(&apos;button&apos;, { name: /remove|delete.*image1/i })
+      const removeButton = screen.getByRole('button', { name: /remove|delete.*image1/i })
       await user.click(removeButton)
 
       // Assert
-      expect(mockUseImageUpload.removeImage).toHaveBeenCalledWith(&apos;1&apos;)
+      expect(mockUseImageUpload.removeImage).toHaveBeenCalledWith('1')
     })
 
-    test(&apos;should allow inserting images into editor&apos;, async () => {
+    test('should allow inserting images into editor', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;,
-          file_name: &apos;image1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image1.webp',
+          file_name: 'image1.jpg',
+          upload_status: 'completed'
         }
       ]
 
@@ -341,26 +341,26 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       render(<WritePostForm />)
 
       // Act
-      const insertButton = screen.getByRole(&apos;button&apos;, { name: /insert.*image1/i })
+      const insertButton = screen.getByRole('button', { name: /insert.*image1/i })
       await user.click(insertButton)
 
       // Assert
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;) as HTMLTextAreaElement
-      expect(editor.value).toContain(&apos;<img&apos;)
-      expect(editor.value).toContain(&apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;)
+      const editor = screen.getByTestId('jodit-editor') as HTMLTextAreaElement
+      expect(editor.value).toContain('<img')
+      expect(editor.value).toContain('https://storage.supabase.co/v1/object/public/post-images/image1.webp')
     })
   })
 
-  describe(&apos;Form Integration&apos;, () => {
-    test(&apos;should maintain uploaded images in form state&apos;, async () => {
+  describe('Form Integration', () => {
+    test('should maintain uploaded images in form state', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;,
-          file_name: &apos;image1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image1.webp',
+          file_name: 'image1.jpg',
+          upload_status: 'completed'
         }
       ]
 
@@ -375,31 +375,31 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Test Post with Images&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Test Post with Images')
+      await user.type(authorInput, 'Test Author')
 
       // Insert image into editor
-      const insertButton = screen.getByRole(&apos;button&apos;, { name: /insert.*image1/i })
+      const insertButton = screen.getByRole('button', { name: /insert.*image1/i })
       await user.click(insertButton)
 
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;) as HTMLTextAreaElement
+      const editor = screen.getByTestId('jodit-editor') as HTMLTextAreaElement
 
       // Assert - form should include both text content and images
-      expect(titleInput).toHaveValue(&apos;Test Post with Images&apos;)
-      expect(authorInput).toHaveValue(&apos;Test Author&apos;)
-      expect(editor.value).toContain(&apos;<img&apos;)
-      expect(editor.value).toContain(&apos;image1.webp&apos;)
+      expect(titleInput).toHaveValue('Test Post with Images')
+      expect(authorInput).toHaveValue('Test Author')
+      expect(editor.value).toContain('<img')
+      expect(editor.value).toContain('image1.webp')
     })
 
-    test(&apos;should validate form with uploaded images&apos;, async () => {
+    test('should validate form with uploaded images', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;,
-          file_name: &apos;image1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image1.webp',
+          file_name: 'image1.jpg',
+          upload_status: 'completed'
         }
       ]
 
@@ -414,31 +414,31 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Test Post&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Test Post')
+      await user.type(authorInput, 'Test Author')
 
       // Try to submit
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
 
       // Should be able to submit with images
       expect(submitButton).toBeEnabled()
     })
 
-    test(&apos;should handle form submission with images&apos;, async () => {
+    test('should handle form submission with images', async () => {
       // Arrange
       mockFetch(
-        { success: true, id: &apos;new-post-id&apos;, url: &apos;/ai/posts/new-post-id&apos; },
+        { success: true, id: 'new-post-id', url: '/ai/posts/new-post-id' },
         true,
         200
       )
 
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/image1.webp&apos;,
-          file_name: &apos;image1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/image1.webp',
+          file_name: 'image1.jpg',
+          upload_status: 'completed'
         }
       ]
 
@@ -452,46 +452,46 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       // Fill form
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      const editor = screen.getByTestId('jodit-editor')
 
-      await user.type(titleInput, &apos;Test Post with Images&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
-      await user.type(editor, &apos;Post content with <img src=&quot;https://storage.supabase.co/v1/object/public/post-images/image1.webp&quot; alt=&quot;image1.jpg&quot; />&apos;)
+      await user.type(titleInput, 'Test Post with Images')
+      await user.type(authorInput, 'Test Author')
+      await user.type(editor, 'Post content with <img src="https://storage.supabase.co/v1/object/public/post-images/image1.webp" alt="image1.jpg" />')
 
       // Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - should submit with image content
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          expect.stringContaining(&apos;/api/posts&apos;),
+          expect.stringContaining('/api/posts'),
           expect.objectContaining({
-            method: &apos;POST&apos;,
-            body: expect.stringContaining(&apos;image1.webp&apos;)
+            method: 'POST',
+            body: expect.stringContaining('image1.webp')
           })
         )
       })
     })
   })
 
-  describe(&apos;Error Handling&apos;, () => {
-    test(&apos;should handle upload validation errors gracefully&apos;, async () => {
+  describe('Error Handling', () => {
+    test('should handle upload validation errors gracefully', async () => {
       // Arrange
       render(<WritePostForm />)
 
-      const oversizedFile = createMockImageFile(&apos;large.jpg&apos;, 15 * 1024 * 1024) // 15MB
-      const fileInput = document.querySelector(&apos;input[type=&quot;file&quot;]&apos;) as HTMLInputElement
+      const oversizedFile = createMockImageFile('large.jpg', 15 * 1024 * 1024) // 15MB
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
       const fileInputEvent = createMockFileInputEvent([oversizedFile])
 
       // Mock upload error
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
-        error: &apos;파일 크기는 10MB를 초과할 수 없습니다&apos;,
+        error: '파일 크기는 10MB를 초과할 수 없습니다',
         uploadImages: jest.fn().mockResolvedValue({
           success: false,
-          error: &apos;파일 크기는 10MB를 초과할 수 없습니다&apos;
+          error: '파일 크기는 10MB를 초과할 수 없습니다'
         })
       })
 
@@ -505,12 +505,12 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       })
     })
 
-    test(&apos;should recover from upload errors&apos;, async () => {
+    test('should recover from upload errors', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
-        error: &apos;네트워크 오류&apos;,
+        error: '네트워크 오류',
         clearError: jest.fn()
       })
 
@@ -520,7 +520,7 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       expect(screen.getByText(/네트워크 오류/)).toBeInTheDocument()
 
       // Act - try new upload after clearing error
-      const clearButton = screen.getByRole(&apos;button&apos;, { name: /clear|close|dismiss/i })
+      const clearButton = screen.getByRole('button', { name: /clear|close|dismiss/i })
       await user.click(clearButton)
 
       // Assert
@@ -528,22 +528,22 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
     })
   })
 
-  describe(&apos;Accessibility&apos;, () => {
-    test(&apos;should provide proper ARIA labels for upload elements&apos;, () => {
+  describe('Accessibility', () => {
+    test('should provide proper ARIA labels for upload elements', () => {
       // Arrange
       render(<WritePostForm />)
 
       // Assert
-      const uploadButton = screen.getByRole(&apos;button&apos;, { name: /이미지 업로드|image upload/i })
-      expect(uploadButton).toHaveAttribute(&apos;aria-label&apos;)
+      const uploadButton = screen.getByRole('button', { name: /이미지 업로드|image upload/i })
+      expect(uploadButton).toHaveAttribute('aria-label')
 
-      const fileInput = document.querySelector(&apos;input[type=&quot;file&quot;]&apos;)
-      expect(fileInput).toHaveAttribute(&apos;aria-label&apos;)
+      const fileInput = document.querySelector('input[type="file"]')
+      expect(fileInput).toHaveAttribute('aria-label')
     })
 
-    test(&apos;should announce upload progress to screen readers&apos;, () => {
+    test('should announce upload progress to screen readers', () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
         uploading: true,
@@ -553,10 +553,10 @@ describe(&apos;WritePostForm - Image Upload Flow&apos;, () => {
       render(<WritePostForm />)
 
       // Assert
-      const progressBar = screen.getByRole(&apos;progressbar&apos;)
-      expect(progressBar).toHaveAttribute(&apos;aria-valuenow&apos;, &apos;65&apos;)
-      expect(progressBar).toHaveAttribute(&apos;aria-valuemin&apos;, &apos;0&apos;)
-      expect(progressBar).toHaveAttribute(&apos;aria-valuemax&apos;, &apos;100&apos;)
+      const progressBar = screen.getByRole('progressbar')
+      expect(progressBar).toHaveAttribute('aria-valuenow', '65')
+      expect(progressBar).toHaveAttribute('aria-valuemin', '0')
+      expect(progressBar).toHaveAttribute('aria-valuemax', '100')
     })
   })
 })

@@ -1,23 +1,23 @@
 // Integration test for editor content sync before submit
 
-import React from &apos;react&apos;
-import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
-import userEvent from &apos;@testing-library/user-event&apos;
-import { WritePostForm } from &apos;../WritePostForm&apos;
+import React from 'react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { WritePostForm } from '../WritePostForm'
 
 // Mock the useImageUpload hook
-jest.mock(&apos;@/hooks/useImageUpload&apos;, () => ({
+jest.mock('@/hooks/useImageUpload', () => ({
   useImageUpload: jest.fn()
 }))
 
 // Mock next/navigation
-jest.mock(&apos;next/navigation&apos;, () => ({
+jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
     back: jest.fn()
   }),
   useParams: () => ({
-    channel: &apos;ai&apos;
+    channel: 'ai'
   })
 }))
 
@@ -31,22 +31,22 @@ const mockJoditEditor = {
   }
 }
 
-jest.mock(&apos;@/components/editor/JoditEditor&apos;, () => {
+jest.mock('@/components/editor/JoditEditor', () => {
   return function MockJoditEditor({ value, onChange, onBlur, ref }: any) {
     // Simulate the real Jodit editor behavior
     React.useImperativeHandle(ref, () => mockJoditEditor)
 
     // Mock editor content state
-    const [editorContent, setEditorContent] = React.useState(value || &apos;')
+    const [editorContent, setEditorContent] = React.useState(value || '')
 
     React.useEffect(() => {
-      setEditorContent(value || &apos;')
+      setEditorContent(value || '')
     }, [value])
 
     return (
-      <div data-testid=&quot;jodit-editor-container&quot;>
+      <div data-testid="jodit-editor-container">
         <textarea
-          data-testid=&quot;jodit-editor&quot;
+          data-testid="jodit-editor"
           value={editorContent}
           onChange={(e) => {
             setEditorContent(e.target.value)
@@ -57,7 +57,7 @@ jest.mock(&apos;@/components/editor/JoditEditor&apos;, () => {
             const actualEditorContent = mockJoditEditor.getContent() || editorContent
             onBlur?.(actualEditorContent)
           }}
-          placeholder=&quot;Write your post content...&quot;
+          placeholder="Write your post content..."
         />
       </div>
     )
@@ -77,18 +77,18 @@ const mockUseImageUpload = {
 // Mock global fetch for form submission
 global.fetch = jest.fn()
 
-describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
+describe('WritePostForm - Editor Content Sync', () => {
   const user = userEvent.setup()
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     // Reset mock implementations
-    const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+    const { useImageUpload } = require('@/hooks/useImageUpload')
     useImageUpload.mockReturnValue(mockUseImageUpload)
 
     // Reset Jodit mock
-    mockJoditEditor.getContent.mockReturnValue(&apos;')
+    mockJoditEditor.getContent.mockReturnValue('')
     mockJoditEditor.setContent.mockClear()
     mockJoditEditor.insertHTML.mockClear()
 
@@ -97,8 +97,8 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       ok: true,
       json: () => Promise.resolve({
         success: true,
-        id: &apos;new-post-id&apos;,
-        url: &apos;/ai/posts/new-post-id&apos;
+        id: 'new-post-id',
+        url: '/ai/posts/new-post-id'
       })
     })
   })
@@ -107,26 +107,26 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
     jest.restoreAllMocks()
   })
 
-  describe(&apos;Content Synchronization Before Submit&apos;, () => {
-    test(&apos;should sync editor content to form state before submission&apos;, async () => {
+  describe('Content Synchronization Before Submit', () => {
+    test('should sync editor content to form state before submission', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;) as HTMLTextAreaElement
+      const editor = screen.getByTestId('jodit-editor') as HTMLTextAreaElement
 
       // Fill form fields
-      await user.type(titleInput, &apos;Test Post Title&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
-      await user.type(editor, &apos;Initial content&apos;)
+      await user.type(titleInput, 'Test Post Title')
+      await user.type(authorInput, 'Test Author')
+      await user.type(editor, 'Initial content')
 
       // Mock Jodit editor having different content than the textarea
-      const actualEditorContent = &apos;Initial content with <img src=&quot;https://example.com/image.jpg&quot; alt=&quot;image&quot; /> and more text&apos;
+      const actualEditorContent = 'Initial content with <img src="https://example.com/image.jpg" alt="image" /> and more text'
       mockJoditEditor.getContent.mockReturnValue(actualEditorContent)
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Form should call editor.getContent() before submitting
@@ -135,35 +135,35 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
         expect(global.fetch).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({
-            method: &apos;POST&apos;,
+            method: 'POST',
             body: expect.stringContaining(actualEditorContent)
           })
         )
       })
     })
 
-    test(&apos;should handle content sync timing correctly&apos;, async () => {
+    test('should handle content sync timing correctly', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      const editor = screen.getByTestId('jodit-editor')
 
-      await user.type(titleInput, &apos;Sync Test Post&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
-      await user.type(editor, &apos;Content to sync&apos;)
+      await user.type(titleInput, 'Sync Test Post')
+      await user.type(authorInput, 'Test Author')
+      await user.type(editor, 'Content to sync')
 
       // Mock the timing issue - editor content not immediately available
       mockJoditEditor.getContent.mockImplementation(() => {
         // Simulate async content retrieval with delay
         return new Promise(resolve => {
-          setTimeout(() => resolve(&apos;Content to sync with media <img src=&quot;test.jpg&quot; />&apos;), 100)
+          setTimeout(() => resolve('Content to sync with media <img src="test.jpg" />'), 100)
         })
       })
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should wait for content sync before submitting
@@ -171,27 +171,27 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
         expect(global.fetch).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({
-            body: expect.stringContaining(&apos;<img src=&quot;test.jpg&quot; />&apos;)
+            body: expect.stringContaining('<img src="test.jpg" />')
           })
         )
       }, { timeout: 5000 })
     })
 
-    test(&apos;should preserve media content during sync&apos;, async () => {
+    test('should preserve media content during sync', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       const mockImages = [
         {
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/test1.webp&apos;,
-          file_name: &apos;test1.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/test1.webp',
+          file_name: 'test1.jpg',
+          upload_status: 'completed'
         },
         {
-          id: &apos;2&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/test2.webp&apos;,
-          file_name: &apos;test2.png&apos;,
-          upload_status: &apos;completed&apos;
+          id: '2',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/test2.webp',
+          file_name: 'test2.png',
+          upload_status: 'completed'
         }
       ]
 
@@ -205,12 +205,12 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Media Test Post&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Media Test Post')
+      await user.type(authorInput, 'Test Author')
 
       // Simulate inserting images into editor
-      const insertButton1 = screen.getAllByRole(&apos;button&apos;, { name: /insert/i })[0]
-      const insertButton2 = screen.getAllByRole(&apos;button&apos;, { name: /insert/i })[1]
+      const insertButton1 = screen.getAllByRole('button', { name: /insert/i })[0]
+      const insertButton2 = screen.getAllByRole('button', { name: /insert/i })[1]
 
       await user.click(insertButton1)
       await user.click(insertButton2)
@@ -218,15 +218,15 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       // Mock editor content with media
       const editorContentWithMedia = `
         <p>Post with images:</p>
-        <img src=&quot;https://storage.supabase.co/v1/object/public/post-images/test1.webp&quot; alt=&quot;test1.jpg&quot; />
+        <img src="https://storage.supabase.co/v1/object/public/post-images/test1.webp" alt="test1.jpg" />
         <p>Some text between images</p>
-        <img src=&quot;https://storage.supabase.co/v1/object/public/post-images/test2.webp&quot; alt=&quot;test2.png&quot; />
+        <img src="https://storage.supabase.co/v1/object/public/post-images/test2.webp" alt="test2.png" />
         <p>Final paragraph</p>
       `
       mockJoditEditor.getContent.mockReturnValue(editorContentWithMedia)
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should preserve all media content
@@ -246,26 +246,26 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       })
     })
 
-    test(&apos;should handle YouTube embed preservation&apos;, async () => {
+    test('should handle YouTube embed preservation', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Video Test Post&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Video Test Post')
+      await user.type(authorInput, 'Test Author')
 
       // Mock editor content with YouTube embed
       const contentWithYouTube = `
         <p>Check out this video:</p>
-        <iframe src=&quot;https://www.youtube.com/embed/dQw4w9WgXcQ&quot; width=&quot;560&quot; height=&quot;315&quot; frameborder=&quot;0&quot;></iframe>
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" width="560" height="315" frameborder="0"></iframe>
         <p>End of post</p>
       `
       mockJoditEditor.getContent.mockReturnValue(contentWithYouTube)
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - YouTube embed should be preserved
@@ -280,26 +280,26 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
     })
   })
 
-  describe(&apos;Content Sync Error Handling&apos;, () => {
-    test(&apos;should handle editor content retrieval failure&apos;, async () => {
+  describe('Content Sync Error Handling', () => {
+    test('should handle editor content retrieval failure', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      const editor = screen.getByTestId('jodit-editor')
 
-      await user.type(titleInput, &apos;Error Test Post&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
-      await user.type(editor, &apos;Basic content&apos;)
+      await user.type(titleInput, 'Error Test Post')
+      await user.type(authorInput, 'Test Author')
+      await user.type(editor, 'Basic content')
 
       // Mock editor content retrieval failure
       mockJoditEditor.getContent.mockImplementation(() => {
-        throw new Error(&apos;Editor content not available&apos;)
+        throw new Error('Editor content not available')
       })
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should fallback to textarea content
@@ -307,27 +307,27 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
         expect(global.fetch).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({
-            body: expect.stringContaining(&apos;Basic content&apos;)
+            body: expect.stringContaining('Basic content')
           })
         )
       })
     })
 
-    test(&apos;should show error message when content sync fails&apos;, async () => {
+    test('should show error message when content sync fails', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Sync Error Test&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Sync Error Test')
+      await user.type(authorInput, 'Test Author')
 
       // Mock persistent sync failure
-      mockJoditEditor.getContent.mockRejectedValue(new Error(&apos;Sync failed&apos;))
+      mockJoditEditor.getContent.mockRejectedValue(new Error('Sync failed'))
 
       // Act - Try to submit
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should show error message
@@ -340,27 +340,27 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       expect(global.fetch).not.toHaveBeenCalled()
     })
 
-    test(&apos;should retry content sync on failure&apos;, async () => {
+    test('should retry content sync on failure', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Retry Test Post&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Retry Test Post')
+      await user.type(authorInput, 'Test Author')
 
       let attemptCount = 0
       mockJoditEditor.getContent.mockImplementation(() => {
         attemptCount++
         if (attemptCount === 1) {
-          throw new Error(&apos;First attempt failed&apos;)
+          throw new Error('First attempt failed')
         }
-        return &apos;Content retrieved on retry&apos;
+        return 'Content retrieved on retry'
       })
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should retry and succeed
@@ -369,28 +369,28 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
         expect(global.fetch).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({
-            body: expect.stringContaining(&apos;Content retrieved on retry&apos;)
+            body: expect.stringContaining('Content retrieved on retry')
           })
         )
       })
     })
   })
 
-  describe(&apos;Editor Event Handling&apos;, () => {
-    test(&apos;should sync content on editor blur before submit&apos;, async () => {
+  describe('Editor Event Handling', () => {
+    test('should sync content on editor blur before submit', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      const editor = screen.getByTestId('jodit-editor')
 
-      await user.type(titleInput, &apos;Blur Sync Test&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
-      await user.type(editor, &apos;Editor content&apos;)
+      await user.type(titleInput, 'Blur Sync Test')
+      await user.type(authorInput, 'Test Author')
+      await user.type(editor, 'Editor content')
 
       // Mock different content in editor
-      mockJoditEditor.getContent.mockReturnValue(&apos;Editor content with unsaved changes&apos;)
+      mockJoditEditor.getContent.mockReturnValue('Editor content with unsaved changes')
 
       // Act - Blur editor then submit
       await user.click(editor)
@@ -398,10 +398,10 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
 
       await waitFor(() => {
         // Content should be synced after blur
-        expect(editor).toHaveValue(&apos;Editor content with unsaved changes&apos;)
+        expect(editor).toHaveValue('Editor content with unsaved changes')
       })
 
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Synced content should be submitted
@@ -409,31 +409,31 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
         expect(global.fetch).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({
-            body: expect.stringContaining(&apos;Editor content with unsaved changes&apos;)
+            body: expect.stringContaining('Editor content with unsaved changes')
           })
         )
       })
     })
 
-    test(&apos;should prevent submission if content sync is in progress&apos;, async () => {
+    test('should prevent submission if content sync is in progress', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Sync In Progress Test&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Sync In Progress Test')
+      await user.type(authorInput, 'Test Author')
 
       // Mock slow content sync
       mockJoditEditor.getContent.mockImplementation(() => {
         return new Promise(resolve => {
-          setTimeout(() => resolve(&apos;Slowly synced content&apos;), 2000)
+          setTimeout(() => resolve('Slowly synced content'), 2000)
         })
       })
 
       // Act - Try to submit immediately
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Submit button should be disabled during sync
@@ -446,24 +446,24 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
     })
   })
 
-  describe(&apos;Form Validation with Content Sync&apos;, () => {
-    test(&apos;should validate synced content before submission&apos;, async () => {
+  describe('Form Validation with Content Sync', () => {
+    test('should validate synced content before submission', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
-      const editor = screen.getByTestId(&apos;jodit-editor&apos;)
+      const editor = screen.getByTestId('jodit-editor')
 
-      await user.type(titleInput, &apos;Validation Test&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
-      await user.type(editor, &apos;Short&apos;)
+      await user.type(titleInput, 'Validation Test')
+      await user.type(authorInput, 'Test Author')
+      await user.type(editor, 'Short')
 
       // Mock editor having empty content after sync
-      mockJoditEditor.getContent.mockReturnValue(&apos;')
+      mockJoditEditor.getContent.mockReturnValue('')
 
       // Act - Try to submit
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should validate synced content and show error
@@ -475,25 +475,25 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       expect(global.fetch).not.toHaveBeenCalled()
     })
 
-    test(&apos;should show loading state during content sync&apos;, async () => {
+    test('should show loading state during content sync', async () => {
       // Arrange
       render(<WritePostForm />)
 
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Loading Test&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Loading Test')
+      await user.type(authorInput, 'Test Author')
 
       // Mock slow content sync
       mockJoditEditor.getContent.mockImplementation(() => {
         return new Promise(resolve => {
-          setTimeout(() => resolve(&apos;Synced content&apos;), 1000)
+          setTimeout(() => resolve('Synced content'), 1000)
         })
       })
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - Should show loading state
@@ -507,17 +507,17 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
     })
   })
 
-  describe(&apos;Multiple Content Types Sync&apos;, () => {
-    test(&apos;should sync mixed content (text, images, embeds)&apos;, async () => {
+  describe('Multiple Content Types Sync', () => {
+    test('should sync mixed content (text, images, embeds)', async () => {
       // Arrange
-      const { useImageUpload } = require(&apos;@/hooks/useImageUpload&apos;)
+      const { useImageUpload } = require('@/hooks/useImageUpload')
       useImageUpload.mockReturnValue({
         ...mockUseImageUpload,
         images: [{
-          id: &apos;1&apos;,
-          url: &apos;https://storage.supabase.co/v1/object/public/post-images/mixed.webp&apos;,
-          file_name: &apos;mixed.jpg&apos;,
-          upload_status: &apos;completed&apos;
+          id: '1',
+          url: 'https://storage.supabase.co/v1/object/public/post-images/mixed.webp',
+          file_name: 'mixed.jpg',
+          upload_status: 'completed'
         }]
       })
 
@@ -526,16 +526,16 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       const titleInput = screen.getByLabelText(/title|제목/i)
       const authorInput = screen.getByLabelText(/author|작성자/i)
 
-      await user.type(titleInput, &apos;Mixed Content Test&apos;)
-      await user.type(authorInput, &apos;Test Author&apos;)
+      await user.type(titleInput, 'Mixed Content Test')
+      await user.type(authorInput, 'Test Author')
 
       // Mock complex editor content
       const complexContent = `
         <h2>Article Title</h2>
         <p>Introduction paragraph with <strong>bold</strong> and <em>italic</em> text.</p>
-        <img src=&quot;https://storage.supabase.co/v1/object/public/post-images/mixed.webp&quot; alt=&quot;mixed.jpg&quot; />
+        <img src="https://storage.supabase.co/v1/object/public/post-images/mixed.webp" alt="mixed.jpg" />
         <p>Text after image</p>
-        <iframe src=&quot;https://www.youtube.com/embed/example&quot; width=&quot;560&quot; height=&quot;315&quot;></iframe>
+        <iframe src="https://www.youtube.com/embed/example" width="560" height="315"></iframe>
         <ul>
           <li>List item 1</li>
           <li>List item 2</li>
@@ -545,7 +545,7 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
       mockJoditEditor.getContent.mockReturnValue(complexContent)
 
       // Act - Submit form
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /submit|게시|post/i })
+      const submitButton = screen.getByRole('button', { name: /submit|게시|post/i })
       await user.click(submitButton)
 
       // Assert - All content types should be preserved
@@ -553,11 +553,11 @@ describe(&apos;WritePostForm - Editor Content Sync&apos;, () => {
         const fetchCall = (global.fetch as jest.Mock).mock.calls[0]
         const submittedContent = fetchCall[1].body
 
-        expect(submittedContent).toContain(&apos;<h2>Article Title</h2>&apos;)
-        expect(submittedContent).toContain(&apos;<img src=&quot;https://storage.supabase.co&apos;)
-        expect(submittedContent).toContain(&apos;<iframe src=&quot;https://www.youtube.com&apos;)
-        expect(submittedContent).toContain(&apos;<ul>&apos;)
-        expect(submittedContent).toContain(&apos;<strong>bold</strong>&apos;)
+        expect(submittedContent).toContain('<h2>Article Title</h2>')
+        expect(submittedContent).toContain('<img src="https://storage.supabase.co')
+        expect(submittedContent).toContain('<iframe src="https://www.youtube.com')
+        expect(submittedContent).toContain('<ul>')
+        expect(submittedContent).toContain('<strong>bold</strong>')
       })
     })
   })

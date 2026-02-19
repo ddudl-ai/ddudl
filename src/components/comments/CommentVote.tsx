@@ -1,8 +1,8 @@
-'use client&apos;
+'use client'
 
-import { useState, useEffect } from &apos;react&apos;
-import { ArrowUp, ArrowDown } from &apos;lucide-react&apos;
-import { Button } from &apos;@/components/ui/button&apos;
+import { useState, useEffect } from 'react'
+import { ArrowUp, ArrowDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface CommentVoteProps {
   commentId: string
@@ -11,7 +11,7 @@ interface CommentVoteProps {
 }
 
 export default function CommentVote({ commentId, initialUpvotes, initialDownvotes }: CommentVoteProps) {
-  const [userVote, setUserVote] = useState<&apos;up&apos; | &apos;down&apos; | null>(null)
+  const [userVote, setUserVote] = useState<'up' | 'down' | null>(null)
   const [currentUpvotes, setCurrentUpvotes] = useState(initialUpvotes)
   const [currentDownvotes, setCurrentDownvotes] = useState(initialDownvotes)
   const [isVoting, setIsVoting] = useState(false)
@@ -28,26 +28,26 @@ export default function CommentVote({ commentId, initialUpvotes, initialDownvote
           setCurrentDownvotes(data.downvotes)
         }
       } catch (error) {
-        console.error(&apos;Failed to load user vote:&apos;, error)
+        console.error('Failed to load user vote:', error)
       }
     }
     
     loadUserVote()
   }, [commentId])
 
-  const handleVote = async (voteType: &apos;up&apos; | &apos;down&apos;) => {
+  const handleVote = async (voteType: 'up' | 'down') => {
     if (isVoting) return
     
     setIsVoting(true)
     
     try {
       // 같은 투표를 클릭하면 제거, 다른 투표를 클릭하면 변경
-      const actualVoteType = userVote === voteType ? &apos;remove&apos; : voteType
+      const actualVoteType = userVote === voteType ? 'remove' : voteType
       
       const response = await fetch(`/api/comments/${commentId}/vote`, {
-        method: &apos;POST&apos;,
+        method: 'POST',
         headers: {
-          &apos;Content-Type&apos;: &apos;application/json&apos;,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ voteType: actualVoteType }),
       })
@@ -59,16 +59,16 @@ export default function CommentVote({ commentId, initialUpvotes, initialDownvote
         setCurrentDownvotes(data.downvotes)
       } else {
         const error = await response.json()
-        console.error(&apos;Vote failed:&apos;, error.error || error)
+        console.error('Vote failed:', error.error || error)
         // 로그인이 필요한 경우 알림
         if (response.status === 401) {
-          alert(&apos;You need to sign in to vote.&apos;)
+          alert('You need to sign in to vote.')
         } else {
-          alert(`Vote failed: ${error.error || &apos;Unknown error&apos;}`)
+          alert(`Vote failed: ${error.error || 'Unknown error'}`)
         }
       }
     } catch (error) {
-      console.error(&apos;Vote error:&apos;, error)
+      console.error('Vote error:', error)
     } finally {
       setIsVoting(false)
     }
@@ -77,33 +77,33 @@ export default function CommentVote({ commentId, initialUpvotes, initialDownvote
   const getVoteScore = () => currentUpvotes - currentDownvotes
 
   return (
-    <div className=&quot;flex items-center space-x-1&quot;>
+    <div className="flex items-center space-x-1">
       <Button
-        variant=&quot;ghost&quot;
-        size=&quot;sm&quot;
-        onClick={() => handleVote(&apos;up&apos;)}
+        variant="ghost"
+        size="sm"
+        onClick={() => handleVote('up')}
         disabled={isVoting}
-        className={`p-1 h-6 w-6 ${userVote === &apos;up&apos; ? &apos;text-orange-500&apos; : &apos;text-gray-400&apos;} ${isVoting ? &apos;opacity-50&apos; : &apos;'}`}
+        className={`p-1 h-6 w-6 ${userVote === 'up' ? 'text-orange-500' : 'text-gray-400'} ${isVoting ? 'opacity-50' : ''}`}
       >
-        <ArrowUp className=&quot;w-3 h-3&quot; />
+        <ArrowUp className="w-3 h-3" />
       </Button>
       
       <span className={`text-xs font-medium px-1 ${
-        getVoteScore() > 0 ? &apos;text-orange-500&apos; : 
-        getVoteScore() < 0 ? &apos;text-blue-500&apos; : 
-        &apos;text-gray-500&apos;
+        getVoteScore() > 0 ? 'text-orange-500' : 
+        getVoteScore() < 0 ? 'text-blue-500' : 
+        'text-gray-500'
       }`}>
         {getVoteScore()}
       </span>
       
       <Button
-        variant=&quot;ghost&quot;
-        size=&quot;sm&quot;
-        onClick={() => handleVote(&apos;down&apos;)}
+        variant="ghost"
+        size="sm"
+        onClick={() => handleVote('down')}
         disabled={isVoting}
-        className={`p-1 h-6 w-6 ${userVote === &apos;down&apos; ? &apos;text-blue-500&apos; : &apos;text-gray-400&apos;} ${isVoting ? &apos;opacity-50&apos; : &apos;'}`}
+        className={`p-1 h-6 w-6 ${userVote === 'down' ? 'text-blue-500' : 'text-gray-400'} ${isVoting ? 'opacity-50' : ''}`}
       >
-        <ArrowDown className=&quot;w-3 h-3&quot; />
+        <ArrowDown className="w-3 h-3" />
       </Button>
     </div>
   )

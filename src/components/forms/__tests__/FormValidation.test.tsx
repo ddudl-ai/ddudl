@@ -1,20 +1,20 @@
 // T014: Unit test for FormValidation module - TDD Phase
 // This test MUST FAIL before implementation
 
-import React from &apos;react&apos;
-import { render, screen, fireEvent, waitFor, act } from &apos;@testing-library/react&apos;
-import userEvent from &apos;@testing-library/user-event&apos;
-import { FormValidation } from &apos;../FormValidation&apos;
-import type { ValidationState, ValidationError, ValidationWarning } from &apos;../../../types/forms&apos;
+import React from 'react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { FormValidation } from '../FormValidation'
+import type { ValidationState, ValidationError, ValidationWarning } from '../../../types/forms'
 
 // Mock useFormValidation hook
-jest.mock(&apos;../../../hooks/useFormValidation&apos;, () => ({
+jest.mock('../../../hooks/useFormValidation', () => ({
   useFormValidation: jest.fn()
 }))
 
-const mockUseFormValidation = require(&apos;../../../hooks/useFormValidation&apos;).useFormValidation
+const mockUseFormValidation = require('../../../hooks/useFormValidation').useFormValidation
 
-describe(&apos;FormValidation&apos;, () => {
+describe('FormValidation', () => {
   const defaultValidationState: ValidationState = {
     isValid: true,
     errors: [],
@@ -44,11 +44,11 @@ describe(&apos;FormValidation&apos;, () => {
     jest.restoreAllMocks()
   })
 
-  describe(&apos;Error Display&apos;, () => {
-    it(&apos;should render field errors&apos;, () => {
+  describe('Error Display', () => {
+    it('should render field errors', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목은 필수입니다&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;내용이 너무 깁니다&apos;, code: &apos;MAX_LENGTH&apos; }
+        { field: 'title', message: '제목은 필수입니다', code: 'REQUIRED' },
+        { field: 'content', message: '내용이 너무 깁니다', code: 'MAX_LENGTH' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -62,14 +62,14 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation />)
 
-      expect(screen.getByText(&apos;제목은 필수입니다&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;내용이 너무 깁니다&apos;)).toBeInTheDocument()
+      expect(screen.getByText('제목은 필수입니다')).toBeInTheDocument()
+      expect(screen.getByText('내용이 너무 깁니다')).toBeInTheDocument()
     })
 
-    it(&apos;should render warnings separately from errors&apos;, () => {
+    it('should render warnings separately from errors', () => {
       const warnings: ValidationWarning[] = [
-        { field: &apos;title&apos;, message: &apos;제목이 너무 짧습니다&apos; },
-        { field: &apos;authorName&apos;, message: &apos;추천하지 않는 User명입니다&apos; }
+        { field: 'title', message: '제목이 너무 짧습니다' },
+        { field: 'authorName', message: '추천하지 않는 User명입니다' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -82,15 +82,15 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation showWarnings />)
 
-      expect(screen.getByText(&apos;제목이 너무 짧습니다&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;추천하지 않는 User명입니다&apos;)).toBeInTheDocument()
+      expect(screen.getByText('제목이 너무 짧습니다')).toBeInTheDocument()
+      expect(screen.getByText('추천하지 않는 User명입니다')).toBeInTheDocument()
     })
 
-    it(&apos;should group errors by field&apos;, () => {
+    it('should group errors by field', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목은 필수입니다&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;title&apos;, message: &apos;제목이 너무 짧습니다&apos;, code: &apos;MIN_LENGTH&apos; },
-        { field: &apos;content&apos;, message: &apos;내용이 필요합니다&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목은 필수입니다', code: 'REQUIRED' },
+        { field: 'title', message: '제목이 너무 짧습니다', code: 'MIN_LENGTH' },
+        { field: 'content', message: '내용이 필요합니다', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -104,19 +104,19 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation groupByField />)
 
-      const titleSection = screen.getByTestId(&apos;validation-field-title&apos;)
-      expect(titleSection).toContainHTML(&apos;제목은 필수입니다&apos;)
-      expect(titleSection).toContainHTML(&apos;제목이 너무 짧습니다&apos;)
+      const titleSection = screen.getByTestId('validation-field-title')
+      expect(titleSection).toContainHTML('제목은 필수입니다')
+      expect(titleSection).toContainHTML('제목이 너무 짧습니다')
 
-      const contentSection = screen.getByTestId(&apos;validation-field-content&apos;)
-      expect(contentSection).toContainHTML(&apos;내용이 필요합니다&apos;)
+      const contentSection = screen.getByTestId('validation-field-content')
+      expect(contentSection).toContainHTML('내용이 필요합니다')
     })
 
-    it(&apos;should show error icons for different error types&apos;, () => {
+    it('should show error icons for different error types', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;필수 필드입니다&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;패턴이 맞지 않습니다&apos;, code: &apos;PATTERN&apos; },
-        { field: &apos;images&apos;, message: &apos;파일이 너무 큽니다&apos;, code: &apos;FILE_TOO_LARGE&apos; }
+        { field: 'title', message: '필수 필드입니다', code: 'REQUIRED' },
+        { field: 'content', message: '패턴이 맞지 않습니다', code: 'PATTERN' },
+        { field: 'images', message: '파일이 너무 큽니다', code: 'FILE_TOO_LARGE' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -130,17 +130,17 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation showIcons />)
 
-      expect(screen.getByTestId(&apos;error-icon-required&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;error-icon-pattern&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;error-icon-file&apos;)).toBeInTheDocument()
+      expect(screen.getByTestId('error-icon-required')).toBeInTheDocument()
+      expect(screen.getByTestId('error-icon-pattern')).toBeInTheDocument()
+      expect(screen.getByTestId('error-icon-file')).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Validation Summary&apos;, () => {
-    it(&apos;should show validation summary when errors exist&apos;, () => {
+  describe('Validation Summary', () => {
+    it('should show validation summary when errors exist', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;내용 오류&apos;, code: &apos;MAX_LENGTH&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' },
+        { field: 'content', message: '내용 오류', code: 'MAX_LENGTH' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -154,22 +154,22 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation showSummary />)
 
-      expect(screen.getByText(&apos;2개의 오류가 발견되었습니다&apos;)).toBeInTheDocument()
+      expect(screen.getByText('2개의 오류가 발견되었습니다')).toBeInTheDocument()
     })
 
-    it(&apos;should show success message when form is valid&apos;, () => {
+    it('should show success message when form is valid', () => {
       render(<FormValidation showSummary />)
 
-      expect(screen.getByText(&apos;폼이 유효합니다&apos;)).toBeInTheDocument()
-      expect(screen.getByTestId(&apos;success-icon&apos;)).toBeInTheDocument()
+      expect(screen.getByText('폼이 유효합니다')).toBeInTheDocument()
+      expect(screen.getByTestId('success-icon')).toBeInTheDocument()
     })
 
-    it(&apos;should show mixed summary with errors and warnings&apos;, () => {
+    it('should show mixed summary with errors and warnings', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
       const warnings: ValidationWarning[] = [
-        { field: &apos;content&apos;, message: &apos;내용 경고&apos; }
+        { field: 'content', message: '내용 경고' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -184,12 +184,12 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation showSummary showWarnings />)
 
-      expect(screen.getByText(&apos;1개의 오류, 1개의 경고&apos;)).toBeInTheDocument()
+      expect(screen.getByText('1개의 오류, 1개의 경고')).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Real-time Validation&apos;, () => {
-    it(&apos;should trigger field validation on blur&apos;, async () => {
+  describe('Real-time Validation', () => {
+    it('should trigger field validation on blur', async () => {
       const mockValidateField = jest.fn()
 
       mockUseFormValidation.mockReturnValue({
@@ -198,19 +198,19 @@ describe(&apos;FormValidation&apos;, () => {
       })
 
       render(
-        <FormValidation mode=&quot;onBlur&quot;>
-          <input name=&quot;title&quot; data-testid=&quot;title-input&quot; />
+        <FormValidation mode="onBlur">
+          <input name="title" data-testid="title-input" />
         </FormValidation>
       )
 
-      const titleInput = screen.getByTestId(&apos;title-input&apos;)
+      const titleInput = screen.getByTestId('title-input')
 
       fireEvent.blur(titleInput)
 
-      expect(mockValidateField).toHaveBeenCalledWith(&apos;title&apos;, expect.anything())
+      expect(mockValidateField).toHaveBeenCalledWith('title', expect.anything())
     })
 
-    it(&apos;should trigger field validation on change in onChange mode&apos;, async () => {
+    it('should trigger field validation on change in onChange mode', async () => {
       const mockValidateField = jest.fn()
 
       mockUseFormValidation.mockReturnValue({
@@ -219,19 +219,19 @@ describe(&apos;FormValidation&apos;, () => {
       })
 
       render(
-        <FormValidation mode=&quot;onChange&quot;>
-          <input name=&quot;title&quot; data-testid=&quot;title-input&quot; />
+        <FormValidation mode="onChange">
+          <input name="title" data-testid="title-input" />
         </FormValidation>
       )
 
-      const titleInput = screen.getByTestId(&apos;title-input&apos;)
+      const titleInput = screen.getByTestId('title-input')
 
-      fireEvent.change(titleInput, { target: { value: &apos;new value&apos; } })
+      fireEvent.change(titleInput, { target: { value: 'new value' } })
 
-      expect(mockValidateField).toHaveBeenCalledWith(&apos;title&apos;, &apos;new value&apos;)
+      expect(mockValidateField).toHaveBeenCalledWith('title', 'new value')
     })
 
-    it(&apos;should debounce validation in onChange mode&apos;, async () => {
+    it('should debounce validation in onChange mode', async () => {
       jest.useFakeTimers()
       const mockValidateField = jest.fn()
 
@@ -241,17 +241,17 @@ describe(&apos;FormValidation&apos;, () => {
       })
 
       render(
-        <FormValidation mode=&quot;onChange&quot; debounceMs={500}>
-          <input name=&quot;title&quot; data-testid=&quot;title-input&quot; />
+        <FormValidation mode="onChange" debounceMs={500}>
+          <input name="title" data-testid="title-input" />
         </FormValidation>
       )
 
-      const titleInput = screen.getByTestId(&apos;title-input&apos;)
+      const titleInput = screen.getByTestId('title-input')
 
       // Rapid typing
-      fireEvent.change(titleInput, { target: { value: &apos;a&apos; } })
-      fireEvent.change(titleInput, { target: { value: &apos;ab&apos; } })
-      fireEvent.change(titleInput, { target: { value: &apos;abc&apos; } })
+      fireEvent.change(titleInput, { target: { value: 'a' } })
+      fireEvent.change(titleInput, { target: { value: 'ab' } })
+      fireEvent.change(titleInput, { target: { value: 'abc' } })
 
       expect(mockValidateField).not.toHaveBeenCalled()
 
@@ -261,19 +261,19 @@ describe(&apos;FormValidation&apos;, () => {
       })
 
       expect(mockValidateField).toHaveBeenCalledTimes(1)
-      expect(mockValidateField).toHaveBeenCalledWith(&apos;title&apos;, &apos;abc&apos;)
+      expect(mockValidateField).toHaveBeenCalledWith('title', 'abc')
 
       jest.useRealTimers()
     })
   })
 
-  describe(&apos;Error Dismissal&apos;, () => {
-    it(&apos;should allow dismissing individual field errors&apos;, async () => {
+  describe('Error Dismissal', () => {
+    it('should allow dismissing individual field errors', async () => {
       const user = userEvent.setup()
       const mockClearFieldError = jest.fn()
 
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -288,19 +288,19 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation dismissible />)
 
-      const dismissButton = screen.getByRole(&apos;button&apos;, { name: /닫기/i })
+      const dismissButton = screen.getByRole('button', { name: /닫기/i })
       await user.click(dismissButton)
 
-      expect(mockClearFieldError).toHaveBeenCalledWith(&apos;title&apos;)
+      expect(mockClearFieldError).toHaveBeenCalledWith('title')
     })
 
-    it(&apos;should allow dismissing all errors at once&apos;, async () => {
+    it('should allow dismissing all errors at once', async () => {
       const user = userEvent.setup()
       const mockClearAllErrors = jest.fn()
 
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;내용 오류&apos;, code: &apos;MAX_LENGTH&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' },
+        { field: 'content', message: '내용 오류', code: 'MAX_LENGTH' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -315,18 +315,18 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation dismissible showSummary />)
 
-      const dismissAllButton = screen.getByRole(&apos;button&apos;, { name: /모든 오류 닫기/i })
+      const dismissAllButton = screen.getByRole('button', { name: /모든 오류 닫기/i })
       await user.click(dismissAllButton)
 
       expect(mockClearAllErrors).toHaveBeenCalled()
     })
 
-    it(&apos;should auto-dismiss errors after timeout&apos;, () => {
+    it('should auto-dismiss errors after timeout', () => {
       jest.useFakeTimers()
 
       const mockClearFieldError = jest.fn()
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -345,16 +345,16 @@ describe(&apos;FormValidation&apos;, () => {
         jest.advanceTimersByTime(3000)
       })
 
-      expect(mockClearFieldError).toHaveBeenCalledWith(&apos;title&apos;)
+      expect(mockClearFieldError).toHaveBeenCalledWith('title')
 
       jest.useRealTimers()
     })
   })
 
-  describe(&apos;Custom Styling&apos;, () => {
-    it(&apos;should apply custom error styles&apos;, () => {
+  describe('Custom Styling', () => {
+    it('should apply custom error styles', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -366,15 +366,15 @@ describe(&apos;FormValidation&apos;, () => {
         }
       })
 
-      render(<FormValidation errorClassName=&quot;custom-error&quot; />)
+      render(<FormValidation errorClassName="custom-error" />)
 
-      const errorElement = screen.getByText(&apos;제목 오류&apos;)
-      expect(errorElement).toHaveClass(&apos;custom-error&apos;)
+      const errorElement = screen.getByText('제목 오류')
+      expect(errorElement).toHaveClass('custom-error')
     })
 
-    it(&apos;should apply custom warning styles&apos;, () => {
+    it('should apply custom warning styles', () => {
       const warnings: ValidationWarning[] = [
-        { field: &apos;title&apos;, message: &apos;제목 경고&apos; }
+        { field: 'title', message: '제목 경고' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -385,15 +385,15 @@ describe(&apos;FormValidation&apos;, () => {
         }
       })
 
-      render(<FormValidation showWarnings warningClassName=&quot;custom-warning&quot; />)
+      render(<FormValidation showWarnings warningClassName="custom-warning" />)
 
-      const warningElement = screen.getByText(&apos;제목 경고&apos;)
-      expect(warningElement).toHaveClass(&apos;custom-warning&apos;)
+      const warningElement = screen.getByText('제목 경고')
+      expect(warningElement).toHaveClass('custom-warning')
     })
 
-    it(&apos;should support custom error templates&apos;, () => {
+    it('should support custom error templates', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -406,22 +406,22 @@ describe(&apos;FormValidation&apos;, () => {
       })
 
       const ErrorTemplate = ({ error }: { error: ValidationError }) => (
-        <div data-testid=&quot;custom-error&quot;>
+        <div data-testid="custom-error">
           <strong>{error.field}:</strong> {error.message}
         </div>
       )
 
       render(<FormValidation ErrorComponent={ErrorTemplate} />)
 
-      const customError = screen.getByTestId(&apos;custom-error&apos;)
-      expect(customError).toHaveTextContent(&apos;title: 제목 오류&apos;)
+      const customError = screen.getByTestId('custom-error')
+      expect(customError).toHaveTextContent('title: 제목 오류')
     })
   })
 
-  describe(&apos;Accessibility&apos;, () => {
-    it(&apos;should have proper ARIA attributes&apos;, () => {
+  describe('Accessibility', () => {
+    it('should have proper ARIA attributes', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -435,16 +435,16 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation />)
 
-      const errorList = screen.getByRole(&apos;list&apos;)
-      expect(errorList).toHaveAttribute(&apos;aria-label&apos;, &apos;폼 검증 오류&apos;)
+      const errorList = screen.getByRole('list')
+      expect(errorList).toHaveAttribute('aria-label', '폼 검증 오류')
 
-      const errorItem = screen.getByRole(&apos;listitem&apos;)
-      expect(errorItem).toHaveAttribute(&apos;aria-describedby&apos;)
+      const errorItem = screen.getByRole('listitem')
+      expect(errorItem).toHaveAttribute('aria-describedby')
     })
 
-    it(&apos;should announce errors to screen readers&apos;, () => {
+    it('should announce errors to screen readers', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -458,16 +458,16 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation announceErrors />)
 
-      expect(screen.getByRole(&apos;status&apos;)).toBeInTheDocument()
-      expect(screen.getByRole(&apos;status&apos;)).toHaveTextContent(&apos;제목 오류&apos;)
+      expect(screen.getByRole('status')).toBeInTheDocument()
+      expect(screen.getByRole('status')).toHaveTextContent('제목 오류')
     })
 
-    it(&apos;should support keyboard navigation for dismissible errors&apos;, async () => {
+    it('should support keyboard navigation for dismissible errors', async () => {
       const user = userEvent.setup()
       const mockClearFieldError = jest.fn()
 
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -482,22 +482,22 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation dismissible />)
 
-      const dismissButton = screen.getByRole(&apos;button&apos;, { name: /닫기/i })
+      const dismissButton = screen.getByRole('button', { name: /닫기/i })
 
       dismissButton.focus()
       expect(dismissButton).toHaveFocus()
 
-      await user.keyboard(&apos;{Enter}&apos;)
-      expect(mockClearFieldError).toHaveBeenCalledWith(&apos;title&apos;)
+      await user.keyboard('{Enter}')
+      expect(mockClearFieldError).toHaveBeenCalledWith('title')
     })
   })
 
-  describe(&apos;Field Targeting&apos;, () => {
-    it(&apos;should show errors only for specific fields&apos;, () => {
+  describe('Field Targeting', () => {
+    it('should show errors only for specific fields', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;내용 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;author&apos;, message: &apos;작성자 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' },
+        { field: 'content', message: '내용 오류', code: 'REQUIRED' },
+        { field: 'author', message: '작성자 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -509,18 +509,18 @@ describe(&apos;FormValidation&apos;, () => {
         }
       })
 
-      render(<FormValidation fields={[&apos;title&apos;, &apos;content&apos;]} />)
+      render(<FormValidation fields={['title', 'content']} />)
 
-      expect(screen.getByText(&apos;제목 오류&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;내용 오류&apos;)).toBeInTheDocument()
-      expect(screen.queryByText(&apos;작성자 오류&apos;)).not.toBeInTheDocument()
+      expect(screen.getByText('제목 오류')).toBeInTheDocument()
+      expect(screen.getByText('내용 오류')).toBeInTheDocument()
+      expect(screen.queryByText('작성자 오류')).not.toBeInTheDocument()
     })
 
-    it(&apos;should exclude specified fields from validation display&apos;, () => {
+    it('should exclude specified fields from validation display', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;내용 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;captcha&apos;, message: &apos;CAPTCHA 필요&apos;, code: &apos;CAPTCHA_REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' },
+        { field: 'content', message: '내용 오류', code: 'REQUIRED' },
+        { field: 'captcha', message: 'CAPTCHA 필요', code: 'CAPTCHA_REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -532,21 +532,21 @@ describe(&apos;FormValidation&apos;, () => {
         }
       })
 
-      render(<FormValidation excludeFields={[&apos;captcha&apos;]} />)
+      render(<FormValidation excludeFields={['captcha']} />)
 
-      expect(screen.getByText(&apos;제목 오류&apos;)).toBeInTheDocument()
-      expect(screen.getByText(&apos;내용 오류&apos;)).toBeInTheDocument()
-      expect(screen.queryByText(&apos;CAPTCHA 필요&apos;)).not.toBeInTheDocument()
+      expect(screen.getByText('제목 오류')).toBeInTheDocument()
+      expect(screen.getByText('내용 오류')).toBeInTheDocument()
+      expect(screen.queryByText('CAPTCHA 필요')).not.toBeInTheDocument()
     })
   })
 
-  describe(&apos;Animation and Transitions&apos;, () => {
-    it(&apos;should animate error appearance and disappearance&apos;, () => {
+  describe('Animation and Transitions', () => {
+    it('should animate error appearance and disappearance', () => {
       const { rerender } = render(<FormValidation animated />)
 
       // Add error
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -560,15 +560,15 @@ describe(&apos;FormValidation&apos;, () => {
 
       rerender(<FormValidation animated />)
 
-      const errorElement = screen.getByText(&apos;제목 오류&apos;)
-      expect(errorElement.closest(&apos;.validation-error&apos;)).toHaveClass(&apos;error-enter&apos;)
+      const errorElement = screen.getByText('제목 오류')
+      expect(errorElement.closest('.validation-error')).toHaveClass('error-enter')
     })
 
-    it(&apos;should stagger multiple error animations&apos;, async () => {
+    it('should stagger multiple error animations', async () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;content&apos;, message: &apos;내용 오류&apos;, code: &apos;REQUIRED&apos; },
-        { field: &apos;author&apos;, message: &apos;작성자 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' },
+        { field: 'content', message: '내용 오류', code: 'REQUIRED' },
+        { field: 'author', message: '작성자 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -582,7 +582,7 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(<FormValidation animated staggerDelay={100} />)
 
-      const errorElements = screen.getAllByRole(&apos;listitem&apos;)
+      const errorElements = screen.getAllByRole('listitem')
 
       errorElements.forEach((element, index) => {
         expect(element).toHaveStyle(`animation-delay: ${index * 100}ms`)
@@ -590,10 +590,10 @@ describe(&apos;FormValidation&apos;, () => {
     })
   })
 
-  describe(&apos;Integration with Form Context&apos;, () => {
-    it(&apos;should integrate with form submission state&apos;, () => {
+  describe('Integration with Form Context', () => {
+    it('should integrate with form submission state', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -608,17 +608,17 @@ describe(&apos;FormValidation&apos;, () => {
       render(
         <form>
           <FormValidation preventSubmit />
-          <button type=&quot;submit&quot;>제출</button>
+          <button type="submit">제출</button>
         </form>
       )
 
-      const submitButton = screen.getByRole(&apos;button&apos;, { name: /제출/i })
+      const submitButton = screen.getByRole('button', { name: /제출/i })
       expect(submitButton).toBeDisabled()
     })
 
-    it(&apos;should focus first error field on validation trigger&apos;, () => {
+    it('should focus first error field on validation trigger', () => {
       const errors: ValidationError[] = [
-        { field: &apos;title&apos;, message: &apos;제목 오류&apos;, code: &apos;REQUIRED&apos; }
+        { field: 'title', message: '제목 오류', code: 'REQUIRED' }
       ]
 
       mockUseFormValidation.mockReturnValue({
@@ -632,12 +632,12 @@ describe(&apos;FormValidation&apos;, () => {
 
       render(
         <div>
-          <input name=&quot;title&quot; data-testid=&quot;title-input&quot; />
+          <input name="title" data-testid="title-input" />
           <FormValidation focusFirstError />
         </div>
       )
 
-      const titleInput = screen.getByTestId(&apos;title-input&apos;)
+      const titleInput = screen.getByTestId('title-input')
       expect(titleInput).toHaveFocus()
     })
   })

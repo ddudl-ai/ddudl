@@ -1,8 +1,8 @@
-import React from &apos;react&apos;
-import { render, screen, fireEvent, waitFor } from &apos;@testing-library/react&apos;
-import CommentVote from &apos;../CommentVote&apos;
+import React from 'react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import CommentVote from '../CommentVote'
 
-describe(&apos;CommentVote&apos;, () => {
+describe('CommentVote', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     global.fetch = jest.fn()
@@ -14,28 +14,28 @@ describe(&apos;CommentVote&apos;, () => {
   })
 
   const defaultProps = {
-    commentId: &apos;comment-123&apos;,
+    commentId: 'comment-123',
     initialUpvotes: 5,
     initialDownvotes: 2,
   }
 
-  describe(&apos;Initial render&apos;, () => {
-    it(&apos;should render vote buttons and initial score&apos;, () => {
+  describe('Initial render', () => {
+    it('should render vote buttons and initial score', () => {
       render(<CommentVote {...defaultProps} />)
 
       // Should show vote score (upvotes - downvotes)
-      expect(screen.getByText(&apos;3&apos;)).toBeInTheDocument() // 5 - 2 = 3
+      expect(screen.getByText('3')).toBeInTheDocument() // 5 - 2 = 3
 
       // Should have up and down vote buttons
-      const buttons = screen.getAllByRole(&apos;button&apos;)
+      const buttons = screen.getAllByRole('button')
       expect(buttons).toHaveLength(2)
     })
 
-    it(&apos;should load user vote on mount&apos;, async () => {
+    it('should load user vote on mount', async () => {
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          userVote: &apos;up&apos;,
+          userVote: 'up',
           upvotes: 6,
           downvotes: 2,
         }),
@@ -44,17 +44,17 @@ describe(&apos;CommentVote&apos;, () => {
       render(<CommentVote {...defaultProps} />)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;)
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote')
       })
 
       // Should update with server data
       await waitFor(() => {
-        expect(screen.getByText(&apos;4&apos;)).toBeInTheDocument() // 6 - 2 = 4
+        expect(screen.getByText('4')).toBeInTheDocument() // 6 - 2 = 4
       })
     })
 
-    it(&apos;should handle vote loading error gracefully&apos;, async () => {
-      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error(&apos;Network error&apos;))
+    it('should handle vote loading error gracefully', async () => {
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
 
       // Should not crash
       render(<CommentVote {...defaultProps} />)
@@ -64,35 +64,35 @@ describe(&apos;CommentVote&apos;, () => {
       })
 
       // Should still show initial values
-      expect(screen.getByText(&apos;3&apos;)).toBeInTheDocument()
+      expect(screen.getByText('3')).toBeInTheDocument()
     })
   })
 
-  describe(&apos;Vote score display&apos;, () => {
-    it(&apos;should display positive score in orange&apos;, () => {
-      render(<CommentVote commentId=&quot;comment-123&quot; initialUpvotes={10} initialDownvotes={3} />)
+  describe('Vote score display', () => {
+    it('should display positive score in orange', () => {
+      render(<CommentVote commentId="comment-123" initialUpvotes={10} initialDownvotes={3} />)
 
-      const scoreElement = screen.getByText(&apos;7&apos;) // 10 - 3
-      expect(scoreElement).toHaveClass(&apos;text-orange-500&apos;)
+      const scoreElement = screen.getByText('7') // 10 - 3
+      expect(scoreElement).toHaveClass('text-orange-500')
     })
 
-    it(&apos;should display negative score in blue&apos;, () => {
-      render(<CommentVote commentId=&quot;comment-123&quot; initialUpvotes={2} initialDownvotes={8} />)
+    it('should display negative score in blue', () => {
+      render(<CommentVote commentId="comment-123" initialUpvotes={2} initialDownvotes={8} />)
 
-      const scoreElement = screen.getByText(&apos;-6&apos;) // 2 - 8
-      expect(scoreElement).toHaveClass(&apos;text-blue-500&apos;)
+      const scoreElement = screen.getByText('-6') // 2 - 8
+      expect(scoreElement).toHaveClass('text-blue-500')
     })
 
-    it(&apos;should display zero score in gray&apos;, () => {
-      render(<CommentVote commentId=&quot;comment-123&quot; initialUpvotes={5} initialDownvotes={5} />)
+    it('should display zero score in gray', () => {
+      render(<CommentVote commentId="comment-123" initialUpvotes={5} initialDownvotes={5} />)
 
-      const scoreElement = screen.getByText(&apos;0&apos;) // 5 - 5
-      expect(scoreElement).toHaveClass(&apos;text-gray-500&apos;)
+      const scoreElement = screen.getByText('0') // 5 - 5
+      expect(scoreElement).toHaveClass('text-gray-500')
     })
   })
 
-  describe(&apos;Upvote functionality&apos;, () => {
-    it(&apos;should handle upvote click&apos;, async () => {
+  describe('Upvote functionality', () => {
+    it('should handle upvote click', async () => {
       ;(global.fetch as jest.Mock)
         // Initial vote loading
         .mockResolvedValueOnce({
@@ -107,7 +107,7 @@ describe(&apos;CommentVote&apos;, () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 6,
             downvotes: 2,
           }),
@@ -120,31 +120,31 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;, {
-          method: &apos;POST&apos;,
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;up&apos; }),
+          body: JSON.stringify({ voteType: 'up' }),
         })
       })
 
       // Should update score
       await waitFor(() => {
-        expect(screen.getByText(&apos;4&apos;)).toBeInTheDocument() // 6 - 2 = 4
+        expect(screen.getByText('4')).toBeInTheDocument() // 6 - 2 = 4
       })
     })
 
-    it(&apos;should show upvoted state&apos;, async () => {
+    it('should show upvoted state', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 6,
             downvotes: 2,
           }),
@@ -153,14 +153,14 @@ describe(&apos;CommentVote&apos;, () => {
       render(<CommentVote {...defaultProps} />)
 
       await waitFor(() => {
-        const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
-        expect(upvoteButton).toHaveClass(&apos;text-orange-500&apos;)
+        const upvoteButton = screen.getAllByRole('button')[0]
+        expect(upvoteButton).toHaveClass('text-orange-500')
       })
     })
   })
 
-  describe(&apos;Downvote functionality&apos;, () => {
-    it(&apos;should handle downvote click&apos;, async () => {
+  describe('Downvote functionality', () => {
+    it('should handle downvote click', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -173,7 +173,7 @@ describe(&apos;CommentVote&apos;, () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;down&apos;,
+            userVote: 'down',
             upvotes: 5,
             downvotes: 3,
           }),
@@ -185,31 +185,31 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const downvoteButton = screen.getAllByRole(&apos;button&apos;)[1]
+      const downvoteButton = screen.getAllByRole('button')[1]
       fireEvent.click(downvoteButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;, {
-          method: &apos;POST&apos;,
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;down&apos; }),
+          body: JSON.stringify({ voteType: 'down' }),
         })
       })
 
       // Should update score
       await waitFor(() => {
-        expect(screen.getByText(&apos;2&apos;)).toBeInTheDocument() // 5 - 3 = 2
+        expect(screen.getByText('2')).toBeInTheDocument() // 5 - 3 = 2
       })
     })
 
-    it(&apos;should show downvoted state&apos;, async () => {
+    it('should show downvoted state', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;down&apos;,
+            userVote: 'down',
             upvotes: 5,
             downvotes: 3,
           }),
@@ -218,19 +218,19 @@ describe(&apos;CommentVote&apos;, () => {
       render(<CommentVote {...defaultProps} />)
 
       await waitFor(() => {
-        const downvoteButton = screen.getAllByRole(&apos;button&apos;)[1]
-        expect(downvoteButton).toHaveClass(&apos;text-blue-500&apos;)
+        const downvoteButton = screen.getAllByRole('button')[1]
+        expect(downvoteButton).toHaveClass('text-blue-500')
       })
     })
   })
 
-  describe(&apos;Vote toggling&apos;, () => {
-    it(&apos;should toggle upvote when same vote is clicked&apos;, async () => {
+  describe('Vote toggling', () => {
+    it('should toggle upvote when same vote is clicked', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 6,
             downvotes: 2,
           }),
@@ -250,26 +250,26 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;, {
-          method: &apos;POST&apos;,
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;remove&apos; }),
+          body: JSON.stringify({ voteType: 'remove' }),
         })
       })
     })
 
-    it(&apos;should toggle downvote when same vote is clicked&apos;, async () => {
+    it('should toggle downvote when same vote is clicked', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;down&apos;,
+            userVote: 'down',
             upvotes: 5,
             downvotes: 3,
           }),
@@ -289,28 +289,28 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const downvoteButton = screen.getAllByRole(&apos;button&apos;)[1]
+      const downvoteButton = screen.getAllByRole('button')[1]
       fireEvent.click(downvoteButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;, {
-          method: &apos;POST&apos;,
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;remove&apos; }),
+          body: JSON.stringify({ voteType: 'remove' }),
         })
       })
     })
   })
 
-  describe(&apos;Vote changes&apos;, () => {
-    it(&apos;should change upvote to downvote&apos;, async () => {
+  describe('Vote changes', () => {
+    it('should change upvote to downvote', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 6,
             downvotes: 2,
           }),
@@ -318,7 +318,7 @@ describe(&apos;CommentVote&apos;, () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;down&apos;,
+            userVote: 'down',
             upvotes: 5,
             downvotes: 3,
           }),
@@ -330,32 +330,32 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const downvoteButton = screen.getAllByRole(&apos;button&apos;)[1]
+      const downvoteButton = screen.getAllByRole('button')[1]
       fireEvent.click(downvoteButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;, {
-          method: &apos;POST&apos;,
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;down&apos; }),
+          body: JSON.stringify({ voteType: 'down' }),
         })
       })
 
       // Should update score and button states
       await waitFor(() => {
-        expect(screen.getByText(&apos;2&apos;)).toBeInTheDocument() // 5 - 3 = 2
-        expect(downvoteButton).toHaveClass(&apos;text-blue-500&apos;)
+        expect(screen.getByText('2')).toBeInTheDocument() // 5 - 3 = 2
+        expect(downvoteButton).toHaveClass('text-blue-500')
       })
     })
 
-    it(&apos;should change downvote to upvote&apos;, async () => {
+    it('should change downvote to upvote', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;down&apos;,
+            userVote: 'down',
             upvotes: 5,
             downvotes: 3,
           }),
@@ -363,7 +363,7 @@ describe(&apos;CommentVote&apos;, () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 6,
             downvotes: 2,
           }),
@@ -375,23 +375,23 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(&apos;/api/comments/comment-123/vote&apos;, {
-          method: &apos;POST&apos;,
+        expect(global.fetch).toHaveBeenCalledWith('/api/comments/comment-123/vote', {
+          method: 'POST',
           headers: {
-            &apos;Content-Type&apos;: &apos;application/json&apos;,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ voteType: &apos;up&apos; }),
+          body: JSON.stringify({ voteType: 'up' }),
         })
       })
     })
   })
 
-  describe(&apos;Loading states&apos;, () => {
-    it(&apos;should prevent multiple simultaneous votes&apos;, async () => {
+  describe('Loading states', () => {
+    it('should prevent multiple simultaneous votes', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -409,7 +409,7 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       
       // Click multiple times quickly
       fireEvent.click(upvoteButton)
@@ -422,7 +422,7 @@ describe(&apos;CommentVote&apos;, () => {
       })
     })
 
-    it(&apos;should show loading state on buttons&apos;, async () => {
+    it('should show loading state on buttons', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -440,21 +440,21 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
-      const downvoteButton = screen.getAllByRole(&apos;button&apos;)[1]
+      const upvoteButton = screen.getAllByRole('button')[0]
+      const downvoteButton = screen.getAllByRole('button')[1]
       
       fireEvent.click(upvoteButton)
 
       // Both buttons should be disabled and have opacity class
       expect(upvoteButton).toBeDisabled()
       expect(downvoteButton).toBeDisabled()
-      expect(upvoteButton).toHaveClass(&apos;opacity-50&apos;)
-      expect(downvoteButton).toHaveClass(&apos;opacity-50&apos;)
+      expect(upvoteButton).toHaveClass('opacity-50')
+      expect(downvoteButton).toHaveClass('opacity-50')
     })
   })
 
-  describe(&apos;Error handling&apos;, () => {
-    it(&apos;should show alert for authentication error&apos;, async () => {
+  describe('Error handling', () => {
+    it('should show alert for authentication error', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -468,7 +468,7 @@ describe(&apos;CommentVote&apos;, () => {
           ok: false,
           status: 401,
           json: async () => ({
-            error: &apos;Not authenticated&apos;,
+            error: 'Not authenticated',
           }),
         })
 
@@ -478,15 +478,15 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith(&apos;투표하려면 로그인이 필요합니다.&apos;)
+        expect(global.alert).toHaveBeenCalledWith('투표하려면 로그인이 필요합니다.')
       })
     })
 
-    it(&apos;should show alert for general vote error&apos;, async () => {
+    it('should show alert for general vote error', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -500,7 +500,7 @@ describe(&apos;CommentVote&apos;, () => {
           ok: false,
           status: 500,
           json: async () => ({
-            error: &apos;Internal server error&apos;,
+            error: 'Internal server error',
           }),
         })
 
@@ -510,15 +510,15 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith(&apos;투표 실패: Internal server error&apos;)
+        expect(global.alert).toHaveBeenCalledWith('투표 실패: Internal server error')
       })
     })
 
-    it(&apos;should handle network errors gracefully&apos;, async () => {
+    it('should handle network errors gracefully', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -528,7 +528,7 @@ describe(&apos;CommentVote&apos;, () => {
             downvotes: 2,
           }),
         })
-        .mockRejectedValueOnce(new Error(&apos;Network error&apos;))
+        .mockRejectedValueOnce(new Error('Network error'))
 
       render(<CommentVote {...defaultProps} />)
 
@@ -536,7 +536,7 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       
       // Should not crash
       fireEvent.click(upvoteButton)
@@ -549,7 +549,7 @@ describe(&apos;CommentVote&apos;, () => {
       expect(upvoteButton).not.toBeDisabled()
     })
 
-    it(&apos;should handle malformed response gracefully&apos;, async () => {
+    it('should handle malformed response gracefully', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -563,7 +563,7 @@ describe(&apos;CommentVote&apos;, () => {
           ok: false,
           status: 500,
           json: async () => {
-            throw new Error(&apos;Invalid JSON&apos;)
+            throw new Error('Invalid JSON')
           },
         })
 
@@ -573,40 +573,40 @@ describe(&apos;CommentVote&apos;, () => {
         expect(global.fetch).toHaveBeenCalledTimes(1)
       })
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith(&apos;투표 실패: 알 수 없는 오류&apos;)
+        expect(global.alert).toHaveBeenCalledWith('투표 실패: 알 수 없는 오류')
       })
     })
   })
 
-  describe(&apos;Accessibility&apos;, () => {
-    it(&apos;should have proper button roles&apos;, () => {
+  describe('Accessibility', () => {
+    it('should have proper button roles', () => {
       render(<CommentVote {...defaultProps} />)
 
-      const buttons = screen.getAllByRole(&apos;button&apos;)
+      const buttons = screen.getAllByRole('button')
       expect(buttons).toHaveLength(2)
     })
 
-    it(&apos;should be keyboard navigable&apos;, () => {
+    it('should be keyboard navigable', () => {
       render(<CommentVote {...defaultProps} />)
 
-      const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
+      const upvoteButton = screen.getAllByRole('button')[0]
       upvoteButton.focus()
       
       expect(upvoteButton).toHaveFocus()
     })
   })
 
-  describe(&apos;Visual feedback&apos;, () => {
-    it(&apos;should show correct colors for vote states&apos;, async () => {
+  describe('Visual feedback', () => {
+    it('should show correct colors for vote states', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            userVote: &apos;up&apos;,
+            userVote: 'up',
             upvotes: 6,
             downvotes: 2,
           }),
@@ -615,15 +615,15 @@ describe(&apos;CommentVote&apos;, () => {
       render(<CommentVote {...defaultProps} />)
 
       await waitFor(() => {
-        const upvoteButton = screen.getAllByRole(&apos;button&apos;)[0]
-        const downvoteButton = screen.getAllByRole(&apos;button&apos;)[1]
+        const upvoteButton = screen.getAllByRole('button')[0]
+        const downvoteButton = screen.getAllByRole('button')[1]
         
-        expect(upvoteButton).toHaveClass(&apos;text-orange-500&apos;)
-        expect(downvoteButton).toHaveClass(&apos;text-gray-400&apos;)
+        expect(upvoteButton).toHaveClass('text-orange-500')
+        expect(downvoteButton).toHaveClass('text-gray-400')
       })
     })
 
-    it(&apos;should show correct colors for neutral state&apos;, async () => {
+    it('should show correct colors for neutral state', async () => {
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -637,9 +637,9 @@ describe(&apos;CommentVote&apos;, () => {
       render(<CommentVote {...defaultProps} />)
 
       await waitFor(() => {
-        const buttons = screen.getAllByRole(&apos;button&apos;)
+        const buttons = screen.getAllByRole('button')
         buttons.forEach(button => {
-          expect(button).toHaveClass(&apos;text-gray-400&apos;)
+          expect(button).toHaveClass('text-gray-400')
         })
       })
     })

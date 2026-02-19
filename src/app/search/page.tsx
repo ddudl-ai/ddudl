@@ -1,15 +1,15 @@
-'use client&apos;
+'use client'
 
-import { Suspense, useEffect, useState } from &apos;react&apos;
-import { useSearchParams } from &apos;next/navigation&apos;
-import Link from &apos;next/link&apos;
-import Header from &apos;@/components/layout/Header&apos;
-import { stripHtmlTags } from &apos;@/lib/utils/html&apos;
-import { Card, CardContent, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
-import { Tabs, TabsContent, TabsList, TabsTrigger } from &apos;@/components/ui/tabs&apos;
-import { Badge } from &apos;@/components/ui/badge&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import Header from '@/components/layout/Header'
+import { stripHtmlTags } from '@/lib/utils/html'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 import {
   Search,
   FileText,
@@ -19,7 +19,7 @@ import {
   ArrowUp,
   Calendar,
   ChevronRight
-} from &apos;lucide-react&apos;
+} from 'lucide-react'
 
 interface SearchResults {
   posts: any[]
@@ -30,7 +30,7 @@ interface SearchResults {
 
 function SearchContent() {
   const searchParams = useSearchParams()
-  const query = searchParams.get(&apos;q&apos;) || &apos;'
+  const query = searchParams.get('q') || ''
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<SearchResults>({
     posts: [],
@@ -38,7 +38,7 @@ function SearchContent() {
     users: [],
     channels: []
   })
-  const [activeTab, setActiveTab] = useState(&apos;all&apos;)
+  const [activeTab, setActiveTab] = useState('all')
   const [totalResults, setTotalResults] = useState(0)
 
   useEffect(() => {
@@ -51,13 +51,13 @@ function SearchContent() {
     setLoading(true)
     try {
       const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=${activeTab}`)
-      if (!response.ok) throw new Error(&apos;Search failed&apos;)
+      if (!response.ok) throw new Error('Search failed')
 
       const data = await response.json()
       setResults(data.results)
       setTotalResults(data.totalResults)
     } catch (error) {
-      console.error(&apos;Search error:&apos;, error)
+      console.error('Search error:', error)
     } finally {
       setLoading(false)
     }
@@ -69,89 +69,89 @@ function SearchContent() {
     const diff = now.getTime() - date.getTime()
     const hours = Math.floor(diff / (1000 * 60 * 60))
 
-    if (hours < 1) return &apos;Just now&apos;
+    if (hours < 1) return 'Just now'
     if (hours < 24) return `${hours} hours ago`
     if (hours < 168) return `${Math.floor(hours / 24)} days ago`
-    return date.toLocaleDateString(&apos;ko-KR&apos;)
+    return date.toLocaleDateString('ko-KR')
   }
 
   const highlightText = (text: string, query: string) => {
     if (!query) return text
-    const parts = text.split(new RegExp(`(${query})`, &apos;gi&apos;))
+    const parts = text.split(new RegExp(`(${query})`, 'gi'))
     return parts.map((part, i) =>
       part.toLowerCase() === query.toLowerCase() ?
-        <mark key={i} className=&quot;bg-yellow-200 px-0.5&quot;>{part}</mark> : part
+        <mark key={i} className="bg-yellow-200 px-0.5">{part}</mark> : part
     )
   }
 
   if (!query) {
     return (
-      <div className=&quot;min-h-screen bg-gray-50&quot;>
+      <div className="min-h-screen bg-gray-50">
         <Header />
-        <div className=&quot;max-w-4xl mx-auto px-4 py-16 text-center&quot;>
-          <Search className=&quot;w-16 h-16 mx-auto mb-4 text-gray-400&quot; />
-          <h1 className=&quot;text-2xl font-bold mb-2&quot;>Enter your search term</h1>
-          <p className=&quot;text-gray-600&quot;>You can search for posts, comments, users, and communities.</p>
+        <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+          <Search className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <h1 className="text-2xl font-bold mb-2">Enter your search term</h1>
+          <p className="text-gray-600">You can search for posts, comments, users, and communities.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className=&quot;min-h-screen bg-gray-50&quot;>
+    <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className=&quot;max-w-6xl mx-auto px-4 py-6&quot;>
+      <div className="max-w-6xl mx-auto px-4 py-6">
         {/* 검색 헤더 */}
-        <div className=&quot;mb-6&quot;>
-          <h1 className=&quot;text-2xl font-bold mb-2&quot;>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-2">
             Search results for &ldquo;{query}&rdquo;
           </h1>
-          <p className=&quot;text-gray-600&quot;>
+          <p className="text-gray-600">
             Found {totalResults} results
           </p>
         </div>
 
         {loading ? (
-          <div className=&quot;flex justify-center py-12&quot;>
-            <LoadingSpinner text=&quot;Searching...&quot; />
+          <div className="flex justify-center py-12">
+            <LoadingSpinner text="Searching..." />
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={(value) => {
             setActiveTab(value)
             performSearch()
           }}>
-            <TabsList className=&quot;mb-6&quot;>
-              <TabsTrigger value=&quot;all&quot;>All</TabsTrigger>
-              <TabsTrigger value=&quot;posts&quot;>Posts</TabsTrigger>
-              <TabsTrigger value=&quot;channels&quot;>Channels</TabsTrigger>
-              <TabsTrigger value=&quot;users&quot;>Users</TabsTrigger>
-              <TabsTrigger value=&quot;channels&quot;>Channels</TabsTrigger>
+            <TabsList className="mb-6">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="posts">Posts</TabsTrigger>
+              <TabsTrigger value="channels">Channels</TabsTrigger>
+              <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="channels">Channels</TabsTrigger>
             </TabsList>
 
             {/* 전체 검색 결과 */}
-            <TabsContent value=&quot;all&quot; className=&quot;space-y-6&quot;>
+            <TabsContent value="all" className="space-y-6">
               {/* 채널 */}
               {results.channels.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className=&quot;flex items-center space-x-2&quot;>
-                      <Hash className=&quot;w-5 h-5&quot; />
+                    <CardTitle className="flex items-center space-x-2">
+                      <Hash className="w-5 h-5" />
                       <span>Channels</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className=&quot;space-y-3&quot;>
+                  <CardContent className="space-y-3">
                     {results.channels.slice(0, 3).map((sub) => (
                       <Link key={sub.id} href={`/c/${sub.name}`}>
-                        <div className=&quot;p-3 hover:bg-gray-50 rounded-lg transition-colors&quot;>
-                          <div className=&quot;flex items-center justify-between&quot;>
+                        <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <div className="flex items-center justify-between">
                             <div>
-                              <h3 className=&quot;font-medium&quot;>c/{sub.name}</h3>
-                              <p className=&quot;text-sm text-gray-600&quot;>
-                                {highlightText(sub.description || &apos;', query)}
+                              <h3 className="font-medium">c/{sub.name}</h3>
+                              <p className="text-sm text-gray-600">
+                                {highlightText(sub.description || '', query)}
                               </p>
                             </div>
-                            <Badge variant=&quot;secondary&quot;>{sub.member_count} 멤버</Badge>
+                            <Badge variant="secondary">{sub.member_count} 멤버</Badge>
                           </div>
                         </div>
                       </Link>
@@ -164,26 +164,26 @@ function SearchContent() {
               {results.posts.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className=&quot;flex items-center space-x-2&quot;>
-                      <FileText className=&quot;w-5 h-5&quot; />
+                    <CardTitle className="flex items-center space-x-2">
+                      <FileText className="w-5 h-5" />
                       <span>게시물</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className=&quot;space-y-3&quot;>
+                  <CardContent className="space-y-3">
                     {results.posts.slice(0, 5).map((post) => (
                       <Link key={post.id} href={`/c/${post.channel?.name}/posts/${post.id}`}>
-                        <div className=&quot;p-3 hover:bg-gray-50 rounded-lg transition-colors&quot;>
-                          <h3 className=&quot;font-medium mb-1&quot;>
+                        <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <h3 className="font-medium mb-1">
                             {highlightText(post.title, query)}
                           </h3>
-                          <p className=&quot;text-sm text-gray-600 line-clamp-2 mb-2&quot;>
-                            {highlightText(stripHtmlTags(post.content || &apos;'), query)}
+                          <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                            {highlightText(stripHtmlTags(post.content || ''), query)}
                           </p>
-                          <div className=&quot;flex items-center space-x-4 text-xs text-gray-500&quot;>
+                          <div className="flex items-center space-x-4 text-xs text-gray-500">
                             <span>c/{post.channel?.name}</span>
                             <span>{post.author?.username}</span>
-                            <span className=&quot;flex items-center&quot;>
-                              <ArrowUp className=&quot;w-3 h-3 mr-1&quot; />
+                            <span className="flex items-center">
+                              <ArrowUp className="w-3 h-3 mr-1" />
                               {post.upvotes}
                             </span>
                             <span>{formatDate(post.created_at)}</span>
@@ -199,28 +199,28 @@ function SearchContent() {
               {results.comments.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className=&quot;flex items-center space-x-2&quot;>
-                      <MessageSquare className=&quot;w-5 h-5&quot; />
+                    <CardTitle className="flex items-center space-x-2">
+                      <MessageSquare className="w-5 h-5" />
                       <span>댓글</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className=&quot;space-y-3&quot;>
+                  <CardContent className="space-y-3">
                     {results.comments.slice(0, 5).map((comment) => (
                       <Link key={comment.id} href={`#`}>
-                        <div className=&quot;p-3 hover:bg-gray-50 rounded-lg transition-colors&quot;>
-                          <p className=&quot;text-sm mb-2&quot;>
+                        <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <p className="text-sm mb-2">
                             {highlightText(stripHtmlTags(comment.content), query)}
                           </p>
-                          <div className=&quot;flex items-center space-x-4 text-xs text-gray-500&quot;>
+                          <div className="flex items-center space-x-4 text-xs text-gray-500">
                             <span>{comment.author?.username}</span>
-                            <span className=&quot;flex items-center&quot;>
-                              <ArrowUp className=&quot;w-3 h-3 mr-1&quot; />
+                            <span className="flex items-center">
+                              <ArrowUp className="w-3 h-3 mr-1" />
                               {comment.upvotes}
                             </span>
                             <span>{formatDate(comment.created_at)}</span>
                           </div>
                           {comment.post && (
-                            <div className=&quot;mt-2 text-xs text-blue-600&quot;>
+                            <div className="mt-2 text-xs text-blue-600">
                               게시물: {comment.post.title}
                             </div>
                           )}
@@ -235,24 +235,24 @@ function SearchContent() {
               {results.users.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className=&quot;flex items-center space-x-2&quot;>
-                      <Users className=&quot;w-5 h-5&quot; />
+                    <CardTitle className="flex items-center space-x-2">
+                      <Users className="w-5 h-5" />
                       <span>User</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className=&quot;space-y-3&quot;>
+                  <CardContent className="space-y-3">
                     {results.users.slice(0, 5).map((user) => (
                       <Link key={user.id} href={`/u/${user.username}`}>
-                        <div className=&quot;p-3 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-between&quot;>
+                        <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-between">
                           <div>
-                            <h3 className=&quot;font-medium&quot;>
+                            <h3 className="font-medium">
                               {highlightText(user.username, query)}
                             </h3>
-                            <p className=&quot;text-sm text-gray-600&quot;>
+                            <p className="text-sm text-gray-600">
                               가입일: {formatDate(user.created_at)}
                             </p>
                           </div>
-                          <Badge variant=&quot;outline&quot;>{user.karma_points} Karma</Badge>
+                          <Badge variant="outline">{user.karma_points} Karma</Badge>
                         </div>
                       </Link>
                     ))}
@@ -263,32 +263,32 @@ function SearchContent() {
               {/* 결과 없음 */}
               {totalResults === 0 && (
                 <Card>
-                  <CardContent className=&quot;py-12 text-center&quot;>
-                    <Search className=&quot;w-12 h-12 mx-auto mb-4 text-gray-400&quot; />
-                    <h3 className=&quot;text-lg font-medium mb-2&quot;>검색 결과가 없습니다</h3>
-                    <p className=&quot;text-gray-600&quot;>다른 검색어를 시도해보세요</p>
+                  <CardContent className="py-12 text-center">
+                    <Search className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                    <h3 className="text-lg font-medium mb-2">검색 결과가 없습니다</h3>
+                    <p className="text-gray-600">다른 검색어를 시도해보세요</p>
                   </CardContent>
                 </Card>
               )}
             </TabsContent>
 
             {/* 게시물 탭 */}
-            <TabsContent value=&quot;posts&quot; className=&quot;space-y-4&quot;>
+            <TabsContent value="posts" className="space-y-4">
               {results.posts.map((post) => (
                 <Card key={post.id}>
-                  <CardContent className=&quot;pt-6&quot;>
+                  <CardContent className="pt-6">
                     <Link href={`/c/${post.channel?.name}/posts/${post.id}`}>
-                      <h3 className=&quot;font-medium text-lg mb-2 hover:text-blue-600&quot;>
+                      <h3 className="font-medium text-lg mb-2 hover:text-blue-600">
                         {highlightText(post.title, query)}
                       </h3>
-                      <p className=&quot;text-gray-600 mb-3 line-clamp-3&quot;>
-                        {highlightText(stripHtmlTags(post.content || &apos;'), query)}
+                      <p className="text-gray-600 mb-3 line-clamp-3">
+                        {highlightText(stripHtmlTags(post.content || ''), query)}
                       </p>
-                      <div className=&quot;flex items-center space-x-4 text-sm text-gray-500&quot;>
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <span>c/{post.channel?.name}</span>
                         <span>{post.author?.username}</span>
-                        <span className=&quot;flex items-center&quot;>
-                          <ArrowUp className=&quot;w-4 h-4 mr-1&quot; />
+                        <span className="flex items-center">
+                          <ArrowUp className="w-4 h-4 mr-1" />
                           {post.upvotes}
                         </span>
                         <span>{post.comment_count} 댓글</span>
@@ -301,25 +301,25 @@ function SearchContent() {
             </TabsContent>
 
             {/* 댓글 탭 */}
-            <TabsContent value=&quot;comments&quot; className=&quot;space-y-4&quot;>
+            <TabsContent value="comments" className="space-y-4">
               {results.comments.map((comment) => (
                 <Card key={comment.id}>
-                  <CardContent className=&quot;pt-6&quot;>
-                    <p className=&quot;mb-3&quot;>
+                  <CardContent className="pt-6">
+                    <p className="mb-3">
                       {highlightText(stripHtmlTags(comment.content), query)}
                     </p>
-                    <div className=&quot;flex items-center space-x-4 text-sm text-gray-500&quot;>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <span>{comment.author?.username}</span>
-                      <span className=&quot;flex items-center&quot;>
-                        <ArrowUp className=&quot;w-4 h-4 mr-1&quot; />
+                      <span className="flex items-center">
+                        <ArrowUp className="w-4 h-4 mr-1" />
                         {comment.upvotes}
                       </span>
                       <span>{formatDate(comment.created_at)}</span>
                     </div>
                     {comment.post && (
-                      <div className=&quot;mt-3 p-2 bg-gray-50 rounded&quot;>
-                        <span className=&quot;text-xs text-gray-500&quot;>원글:</span>
-                        <p className=&quot;text-sm&quot;>{comment.post.title}</p>
+                      <div className="mt-3 p-2 bg-gray-50 rounded">
+                        <span className="text-xs text-gray-500">원글:</span>
+                        <p className="text-sm">{comment.post.title}</p>
                       </div>
                     )}
                   </CardContent>
@@ -328,25 +328,25 @@ function SearchContent() {
             </TabsContent>
 
             {/* User 탭 */}
-            <TabsContent value=&quot;users&quot; className=&quot;space-y-4&quot;>
+            <TabsContent value="users" className="space-y-4">
               {results.users.map((user) => (
                 <Card key={user.id}>
-                  <CardContent className=&quot;pt-6&quot;>
+                  <CardContent className="pt-6">
                     <Link href={`/u/${user.username}`}>
-                      <div className=&quot;flex items-center justify-between&quot;>
+                      <div className="flex items-center justify-between">
                         <div>
-                          <h3 className=&quot;font-medium text-lg mb-1&quot;>
+                          <h3 className="font-medium text-lg mb-1">
                             {highlightText(user.username, query)}
                           </h3>
-                          <p className=&quot;text-sm text-gray-600&quot;>
+                          <p className="text-sm text-gray-600">
                             가입일: {formatDate(user.created_at)}
                           </p>
                         </div>
-                        <div className=&quot;text-right&quot;>
-                          <div className=&quot;text-2xl font-bold text-amber-600&quot;>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-amber-600">
                             {user.karma_points}
                           </div>
-                          <div className=&quot;text-sm text-gray-500&quot;>Points</div>
+                          <div className="text-sm text-gray-500">Points</div>
                         </div>
                       </div>
                     </Link>
@@ -356,25 +356,25 @@ function SearchContent() {
             </TabsContent>
 
             {/* 채널 탭 */}
-            <TabsContent value=&quot;channels&quot; className=&quot;space-y-4&quot;>
+            <TabsContent value="channels" className="space-y-4">
               {results.channels.map((sub) => (
                 <Card key={sub.id}>
-                  <CardContent className=&quot;pt-6&quot;>
+                  <CardContent className="pt-6">
                     <Link href={`/c/${sub.name}`}>
-                      <div className=&quot;flex items-center justify-between&quot;>
-                        <div className=&quot;flex-1&quot;>
-                          <h3 className=&quot;font-medium text-lg mb-1&quot;>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-lg mb-1">
                             c/{highlightText(sub.name, query)}
                           </h3>
-                          <p className=&quot;text-gray-600 mb-2&quot;>
+                          <p className="text-gray-600 mb-2">
                             {highlightText(sub.display_name || sub.name, query)}
                           </p>
-                          <p className=&quot;text-sm text-gray-500&quot;>
-                            {highlightText(sub.description || &apos;', query)}
+                          <p className="text-sm text-gray-500">
+                            {highlightText(sub.description || '', query)}
                           </p>
                         </div>
-                        <div className=&quot;ml-4&quot;>
-                          <Badge variant=&quot;secondary&quot; className=&quot;text-lg px-3 py-1&quot;>
+                        <div className="ml-4">
+                          <Badge variant="secondary" className="text-lg px-3 py-1">
                             {sub.member_count} 멤버
                           </Badge>
                         </div>
@@ -393,7 +393,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className=&quot;min-h-screen bg-gray-50&quot;><Header /><div className=&quot;flex justify-center py-12&quot;><LoadingSpinner text=&quot;검색 페이지 로딩 중...&quot; /></div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gray-50"><Header /><div className="flex justify-center py-12"><LoadingSpinner text="검색 페이지 로딩 중..." /></div></div>}>
       <SearchContent />
     </Suspense>
   )

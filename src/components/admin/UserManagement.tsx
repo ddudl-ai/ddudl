@@ -1,11 +1,11 @@
-'use client&apos;
+'use client'
 
-import { useState, useEffect } from &apos;react&apos;
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from &apos;@/components/ui/card&apos;
-import { Button } from &apos;@/components/ui/button&apos;
-import { Badge } from &apos;@/components/ui/badge&apos;
-import { Input } from &apos;@/components/ui/input&apos;
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from &apos;@/components/ui/select&apos;
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
   Search, 
   UserPlus, 
@@ -19,7 +19,7 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle
-} from &apos;lucide-react&apos;
+} from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from &quot;@/components/ui/table&quot;
+} from "@/components/ui/table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +35,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from &quot;@/components/ui/dropdown-menu&quot;
+} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -44,9 +44,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from &quot;@/components/ui/dialog&quot;
-import { Textarea } from &apos;@/components/ui/textarea&apos;
-import { LoadingSpinner } from &apos;@/components/common/LoadingSpinner&apos;
+} from "@/components/ui/dialog"
+import { Textarea } from '@/components/ui/textarea'
+import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 
 interface User {
   id: string
@@ -73,9 +73,9 @@ interface Pagination {
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState(&apos;')
-  const [roleFilter, setRoleFilter] = useState(&apos;all&apos;)
-  const [statusFilter, setStatusFilter] = useState(&apos;all&apos;)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
   const [pagination, setPagination] = useState<Pagination>({
     currentPage: 1,
     totalPages: 1,
@@ -91,12 +91,12 @@ export default function UserManagement() {
     description: string
   }>({
     open: false,
-    action: &apos;',
-    title: &apos;',
-    description: &apos;'
+    action: '',
+    title: '',
+    description: ''
   })
-  const [banReason, setBanReason] = useState(&apos;')
-  const [newRole, setNewRole] = useState(&apos;')
+  const [banReason, setBanReason] = useState('')
+  const [newRole, setNewRole] = useState('')
 
   useEffect(() => {
     fetchUsers()
@@ -110,17 +110,17 @@ export default function UserManagement() {
         role: roleFilter,
         status: statusFilter,
         page: pagination.currentPage.toString(),
-        limit: &apos;10&apos;
+        limit: '10'
       })
 
       const response = await fetch(`/api/admin/users/search?${params}`)
-      if (!response.ok) throw new Error(&apos;Failed to fetch users&apos;)
+      if (!response.ok) throw new Error('Failed to fetch users')
 
       const data = await response.json()
       setUsers(data.users || [])
       setPagination(data.pagination)
     } catch (error) {
-      console.error(&apos;Error fetching users:&apos;, error)
+      console.error('Error fetching users:', error)
     } finally {
       setLoading(false)
     }
@@ -130,20 +130,20 @@ export default function UserManagement() {
     try {
       const body: any = { action, userId }
       
-      if (action === &apos;ban_user&apos; && banReason) {
+      if (action === 'ban_user' && banReason) {
         body.reason = banReason
       }
-      if (action === &apos;change_role&apos; && newRole) {
+      if (action === 'change_role' && newRole) {
         body.role = newRole
       }
 
-      const response = await fetch(&apos;/api/admin/users&apos;, {
-        method: &apos;POST&apos;,
-        headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       })
 
-      if (!response.ok) throw new Error(&apos;Action failed&apos;)
+      if (!response.ok) throw new Error('Action failed')
 
       const result = await response.json()
       alert(result.message)
@@ -152,14 +152,14 @@ export default function UserManagement() {
       fetchUsers()
       
       // Close dialog
-      setActionDialog({ open: false, action: &apos;', title: &apos;', description: &apos;' })
-      setBanReason(&apos;')
-      setNewRole(&apos;')
+      setActionDialog({ open: false, action: '', title: '', description: '' })
+      setBanReason('')
+      setNewRole('')
       setSelectedUser(null)
 
     } catch (error) {
-      console.error(&apos;Error performing user action:&apos;, error)
-      alert(&apos;An error occurred during the operation.&apos;)
+      console.error('Error performing user action:', error)
+      alert('An error occurred during the operation.')
     }
   }
 
@@ -168,19 +168,19 @@ export default function UserManagement() {
     
     const dialogs = {
       ban_user: {
-        title: &apos;Ban User&apos;,
+        title: 'Ban User',
         description: `Are you sure you want to ban ${user.username}?`
       },
       unban_user: {
-        title: &apos;Unban User&apos;,
+        title: 'Unban User',
         description: `Are you sure you want to unban ${user.username}?`
       },
       change_role: {
-        title: &apos;Change Role&apos;,
-        description: `Are you sure you want to change ${user.username}&apos;s role?`
+        title: 'Change Role',
+        description: `Are you sure you want to change ${user.username}'s role?`
       },
       delete_user: {
-        title: &apos;Delete User&apos;,
+        title: 'Delete User',
         description: `Are you sure you want to permanently delete ${user.username}? This action cannot be undone.`
       }
     }
@@ -193,41 +193,41 @@ export default function UserManagement() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(&apos;ko-KR&apos;, {
-      year: &apos;numeric&apos;,
-      month: &apos;short&apos;,
-      day: &apos;numeric&apos;
+    return new Date(dateString).toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
     })
   }
 
   const getRoleBadge = (role: string, isAdmin: boolean) => {
     if (isAdmin) {
-      return <Badge className=&quot;bg-red-100 text-red-800&quot;>Admin</Badge>
+      return <Badge className="bg-red-100 text-red-800">Admin</Badge>
     }
     
     const roleColors = {
-      admin: &apos;bg-red-100 text-red-800&apos;,
-      moderator: &apos;bg-blue-100 text-blue-800&apos;,
-      user: &apos;bg-gray-100 text-gray-800&apos;
+      admin: 'bg-red-100 text-red-800',
+      moderator: 'bg-blue-100 text-blue-800',
+      user: 'bg-gray-100 text-gray-800'
     }
     
     return (
       <Badge className={roleColors[role as keyof typeof roleColors] || roleColors.user}>
-        {role === &apos;admin&apos; ? &apos;Admin&apos; : role === &apos;moderator&apos; ? &apos;Moderator&apos; : &apos;User&apos;}
+        {role === 'admin' ? 'Admin' : role === 'moderator' ? 'Moderator' : 'User'}
       </Badge>
     )
   }
 
   const getStatusBadge = (isBanned: boolean) => {
     return isBanned ? (
-      <Badge variant=&quot;destructive&quot;>Banned</Badge>
+      <Badge variant="destructive">Banned</Badge>
     ) : (
-      <Badge variant=&quot;secondary&quot;>Active</Badge>
+      <Badge variant="secondary">Active</Badge>
     )
   }
 
   return (
-    <div className=&quot;space-y-6&quot;>
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>User Management</CardTitle>
@@ -237,45 +237,45 @@ export default function UserManagement() {
         </CardHeader>
         <CardContent>
           {/* Search and filters */}
-          <div className=&quot;flex flex-col sm:flex-row gap-4 mb-6&quot;>
-            <div className=&quot;flex-1 relative&quot;>
-              <Search className=&quot;absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4&quot; />
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder=&quot;Search by username...&quot;
+                placeholder="Search by username..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className=&quot;pl-10&quot;
+                className="pl-10"
               />
             </div>
             
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className=&quot;w-40&quot;>
-                <SelectValue placeholder=&quot;Filter by role&quot; />
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=&quot;all&quot;>All roles</SelectItem>
-                <SelectItem value=&quot;admin&quot;>Admin</SelectItem>
-                <SelectItem value=&quot;moderator&quot;>Moderator</SelectItem>
-                <SelectItem value=&quot;user&quot;>User</SelectItem>
+                <SelectItem value="all">All roles</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="moderator">Moderator</SelectItem>
+                <SelectItem value="user">User</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className=&quot;w-40&quot;>
-                <SelectValue placeholder=&quot;Filter by status&quot; />
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=&quot;all&quot;>All statuses</SelectItem>
-                <SelectItem value=&quot;active&quot;>Active</SelectItem>
-                <SelectItem value=&quot;banned&quot;>Banned</SelectItem>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="banned">Banned</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* User table */}
           {loading ? (
-            <div className=&quot;flex justify-center py-8&quot;>
-              <LoadingSpinner text=&quot;Loading user list...&quot; />
+            <div className="flex justify-center py-8">
+              <LoadingSpinner text="Loading user list..." />
             </div>
           ) : (
             <>
@@ -287,16 +287,16 @@ export default function UserManagement() {
                     <TableHead>Status</TableHead>
                     <TableHead>Token</TableHead>
                     <TableHead>Joined</TableHead>
-                    <TableHead className=&quot;text-right&quot;>Actions</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user.id}>
-                      <TableCell className=&quot;font-medium&quot;>
+                      <TableCell className="font-medium">
                         <div>
                           <div>{user.username}</div>
-                          <div className=&quot;text-sm text-gray-500&quot;>
+                          <div className="text-sm text-gray-500">
                             ID: {user.id.slice(0, 8)}...
                           </div>
                         </div>
@@ -307,53 +307,53 @@ export default function UserManagement() {
                       <TableCell>
                         {getStatusBadge(user.is_banned)}
                         {user.ban_reason && (
-                          <div className=&quot;text-xs text-red-600 mt-1&quot;>
+                          <div className="text-xs text-red-600 mt-1">
                             {user.ban_reason}
                           </div>
                         )}
                       </TableCell>
                       <TableCell>{user.karma_points.toLocaleString()}</TableCell>
                       <TableCell>{formatDate(user.created_at)}</TableCell>
-                      <TableCell className=&quot;text-right&quot;>
+                      <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant=&quot;ghost&quot; size=&quot;sm&quot;>
-                              <MoreVertical className=&quot;h-4 w-4&quot; />
+                            <Button variant="ghost" size="sm">
+                              <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align=&quot;end&quot;>
+                          <DropdownMenuContent align="end">
                             <DropdownMenuLabel>User Management</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             
                             <DropdownMenuItem 
-                              onClick={() => openActionDialog(&apos;change_role&apos;, user)}
+                              onClick={() => openActionDialog('change_role', user)}
                             >
-                              <Edit className=&quot;mr-2 h-4 w-4&quot; />
+                              <Edit className="mr-2 h-4 w-4" />
                               Change Role
                             </DropdownMenuItem>
                             
                             {user.is_banned ? (
                               <DropdownMenuItem 
-                                onClick={() => openActionDialog(&apos;unban_user&apos;, user)}
+                                onClick={() => openActionDialog('unban_user', user)}
                               >
-                                <CheckCircle className=&quot;mr-2 h-4 w-4 text-green-600&quot; />
+                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
                                 Unban
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem 
-                                onClick={() => openActionDialog(&apos;ban_user&apos;, user)}
+                                onClick={() => openActionDialog('ban_user', user)}
                               >
-                                <Ban className=&quot;mr-2 h-4 w-4 text-red-600&quot; />
+                                <Ban className="mr-2 h-4 w-4 text-red-600" />
                                 Ban User
                               </DropdownMenuItem>
                             )}
                             
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
-                              className=&quot;text-red-600&quot;
-                              onClick={() => openActionDialog(&apos;delete_user&apos;, user)}
+                              className="text-red-600"
+                              onClick={() => openActionDialog('delete_user', user)}
                             >
-                              <Trash2 className=&quot;mr-2 h-4 w-4&quot; />
+                              <Trash2 className="mr-2 h-4 w-4" />
                               Delete User
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -365,22 +365,22 @@ export default function UserManagement() {
               </Table>
 
               {/* Pagination */}
-              <div className=&quot;flex items-center justify-between mt-6&quot;>
-                <div className=&quot;text-sm text-gray-500&quot;>
+              <div className="flex items-center justify-between mt-6">
+                <div className="text-sm text-gray-500">
                   Total {pagination.totalUsers} users (Page {pagination.currentPage}/{pagination.totalPages})
                 </div>
-                <div className=&quot;flex space-x-2&quot;>
+                <div className="flex space-x-2">
                   <Button
-                    variant=&quot;outline&quot;
-                    size=&quot;sm&quot;
+                    variant="outline"
+                    size="sm"
                     disabled={!pagination.hasPrev}
                     onClick={() => setPagination(prev => ({ ...prev, currentPage: prev.currentPage - 1 }))}
                   >
                     Previous
                   </Button>
                   <Button
-                    variant=&quot;outline&quot;
-                    size=&quot;sm&quot;
+                    variant="outline"
+                    size="sm"
                     disabled={!pagination.hasNext}
                     onClick={() => setPagination(prev => ({ ...prev, currentPage: prev.currentPage + 1 }))}
                   >
@@ -405,28 +405,28 @@ export default function UserManagement() {
             </DialogDescription>
           </DialogHeader>
 
-          {actionDialog.action === &apos;ban_user&apos; && (
-            <div className=&quot;space-y-2&quot;>
-              <label className=&quot;text-sm font-medium&quot;>Ban Reason</label>
+          {actionDialog.action === 'ban_user' && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Ban Reason</label>
               <Textarea
-                placeholder=&quot;Enter ban reason...&quot;
+                placeholder="Enter ban reason..."
                 value={banReason}
                 onChange={(e) => setBanReason(e.target.value)}
               />
             </div>
           )}
 
-          {actionDialog.action === &apos;change_role&apos; && (
-            <div className=&quot;space-y-2&quot;>
-              <label className=&quot;text-sm font-medium&quot;>New Role</label>
+          {actionDialog.action === 'change_role' && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">New Role</label>
               <Select value={newRole} onValueChange={setNewRole}>
                 <SelectTrigger>
-                  <SelectValue placeholder=&quot;Select a role&quot; />
+                  <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=&quot;admin&quot;>Admin</SelectItem>
-                  <SelectItem value=&quot;moderator&quot;>Moderator</SelectItem>
-                  <SelectItem value=&quot;user&quot;>User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="moderator">Moderator</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -434,17 +434,17 @@ export default function UserManagement() {
 
           <DialogFooter>
             <Button
-              variant=&quot;outline&quot;
-              onClick={() => setActionDialog({ open: false, action: &apos;', title: &apos;', description: &apos;' })}
+              variant="outline"
+              onClick={() => setActionDialog({ open: false, action: '', title: '', description: '' })}
             >
               Cancel
             </Button>
             <Button
-              variant={actionDialog.action === &apos;delete_user&apos; ? &apos;destructive&apos; : &apos;default&apos;}
+              variant={actionDialog.action === 'delete_user' ? 'destructive' : 'default'}
               onClick={() => selectedUser && handleUserAction(actionDialog.action, selectedUser.id)}
               disabled={
-                (actionDialog.action === &apos;change_role&apos; && !newRole) ||
-                (actionDialog.action === &apos;ban_user&apos; && !banReason.trim())
+                (actionDialog.action === 'change_role' && !newRole) ||
+                (actionDialog.action === 'ban_user' && !banReason.trim())
               }
             >
               Confirm

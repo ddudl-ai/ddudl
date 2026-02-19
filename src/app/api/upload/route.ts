@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
       // 이미지 처리 및 변환
       try {
-        const sharpImage = sharp(processedBuffer)
+        let sharpImage = sharp(processedBuffer)
 
         // 이미지 메타데이터 가져오기
         const metadata = await sharpImage.metadata()

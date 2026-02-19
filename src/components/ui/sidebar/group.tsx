@@ -1,24 +1,24 @@
-"use client&quot;
+"use client"
 
-import * as React from &quot;react&quot;
-import { Slot } from &quot;@radix-ui/react-slot&quot;
-import { cn } from &quot;@/lib/utils&quot;
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cn } from "@/lib/utils"
 
-export function SidebarGroup({ className, ...props }: React.ComponentProps<&quot;div&quot;>) {
+export function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot=&quot;sidebar-group&quot; data-sidebar=&quot;group&quot; className={cn(&quot;relative flex w-full min-w-0 flex-col p-2&quot;, className)} {...props} />
+    <div data-slot="sidebar-group" data-sidebar="group" className={cn("relative flex w-full min-w-0 flex-col p-2", className)} {...props} />
   )
 }
 
-export function SidebarGroupLabel({ className, asChild = false, ...props }: React.ComponentProps<&quot;div&quot;> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : &quot;div&quot;
+export function SidebarGroupLabel({ className, asChild = false, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
   return (
     <Comp
-      data-slot=&quot;sidebar-group-label&quot;
-      data-sidebar=&quot;group-label&quot;
+      data-slot="sidebar-group-label"
+      data-sidebar="group-label"
       className={cn(
-        &quot;text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0&quot;,
-        &quot;group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0&quot;,
+        "text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         className
       )}
       {...props}
@@ -26,16 +26,16 @@ export function SidebarGroupLabel({ className, asChild = false, ...props }: Reac
   )
 }
 
-export function SidebarGroupAction({ className, asChild = false, ...props }: React.ComponentProps<&quot;button&quot;> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : &quot;button&quot;
+export function SidebarGroupAction({ className, asChild = false, ...props }: React.ComponentProps<"button"> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "button"
   return (
     <Comp
-      data-slot=&quot;sidebar-group-action&quot;
-      data-sidebar=&quot;group-action&quot;
+      data-slot="sidebar-group-action"
+      data-sidebar="group-action"
       className={cn(
-        &quot;text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0&quot;,
-        &quot;after:absolute after:-inset-2 md:after:hidden&quot;,
-        &quot;group-data-[collapsible=icon]:hidden&quot;,
+        "text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "after:absolute after:-inset-2 md:after:hidden",
+        "group-data-[collapsible=icon]:hidden",
         className
       )}
       {...props}
@@ -43,8 +43,8 @@ export function SidebarGroupAction({ className, asChild = false, ...props }: Rea
   )
 }
 
-export function SidebarGroupContent({ className, ...props }: React.ComponentProps<&quot;div&quot;>) {
+export function SidebarGroupContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot=&quot;sidebar-group-content&quot; data-sidebar=&quot;group-content&quot; className={cn(&quot;w-full text-sm&quot;, className)} {...props} />
+    <div data-slot="sidebar-group-content" data-sidebar="group-content" className={cn("w-full text-sm", className)} {...props} />
   )}
 

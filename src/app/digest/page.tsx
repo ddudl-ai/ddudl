@@ -1,10 +1,10 @@
-import { createClient } from &apos;@/lib/supabase/server&apos;
-import Link from &apos;next/link&apos;
-import { formatDistanceToNow } from &apos;date-fns&apos;
-import { ArrowUpIcon, MessageSquareIcon, CalendarIcon } from &apos;lucide-react&apos;
+import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
+import { formatDistanceToNow } from 'date-fns'
+import { ArrowUpIcon, MessageSquareIcon, CalendarIcon } from 'lucide-react'
 
 // Force dynamic rendering
-export const dynamic = &apos;force-dynamic&apos;
+export const dynamic = 'force-dynamic'
 
 interface PostData {
   id: string
@@ -45,7 +45,7 @@ async function getDigestData(): Promise<DigestData | null> {
 
     // 서버 컴포넌트에서는 직접 DB 쿼리
     const { data: topPosts, error: topPostsError } = await supabase
-      .from(&apos;posts&apos;)
+      .from('posts')
       .select(`
         id,
         title,
@@ -57,18 +57,18 @@ async function getDigestData(): Promise<DigestData | null> {
         channel:channels(name, display_name),
         author:users(username)
       `)
-      .eq(&apos;is_deleted&apos;, false)
-      .gte(&apos;created_at&apos;, sevenDaysAgoISOString)
-      .order(&apos;upvotes&apos;, { ascending: false })
+      .eq('is_deleted', false)
+      .gte('created_at', sevenDaysAgoISOString)
+      .order('upvotes', { ascending: false })
       .limit(10)
 
     if (topPostsError) {
-      console.error(&apos;Error fetching top posts:&apos;, topPostsError)
+      console.error('Error fetching top posts:', topPostsError)
       return null
     }
 
     const { data: mostCommentedPosts, error: commentedError } = await supabase
-      .from(&apos;posts&apos;)
+      .from('posts')
       .select(`
         id,
         title,
@@ -80,13 +80,13 @@ async function getDigestData(): Promise<DigestData | null> {
         channel:channels(name, display_name),
         author:users(username)
       `)
-      .eq(&apos;is_deleted&apos;, false)
-      .gte(&apos;created_at&apos;, sevenDaysAgoISOString)
-      .order(&apos;comment_count&apos;, { ascending: false })
+      .eq('is_deleted', false)
+      .gte('created_at', sevenDaysAgoISOString)
+      .order('comment_count', { ascending: false })
       .limit(5)
 
     if (commentedError) {
-      console.error(&apos;Error fetching most commented posts:&apos;, commentedError)
+      console.error('Error fetching most commented posts:', commentedError)
       return null
     }
 
@@ -108,52 +108,52 @@ async function getDigestData(): Promise<DigestData | null> {
       generated_at: now.toISOString()
     }
   } catch (error) {
-    console.error(&apos;Error loading digest data:&apos;, error)
+    console.error('Error loading digest data:', error)
     return null
   }
 }
 
 function PostItem({ post }: { post: PostData }) {
   return (
-    <div className=&quot;bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700&quot;>
-      <div className=&quot;flex items-start gap-3&quot;>
-        <div className=&quot;flex flex-col items-center gap-1 text-sm text-gray-500 dark:text-gray-400&quot;>
-          <ArrowUpIcon className=&quot;h-4 w-4&quot; />
-          <span className=&quot;font-semibold&quot;>{post.vote_score}</span>
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="flex items-start gap-3">
+        <div className="flex flex-col items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+          <ArrowUpIcon className="h-4 w-4" />
+          <span className="font-semibold">{post.vote_score}</span>
         </div>
         
-        <div className=&quot;flex-1 min-w-0&quot;>
-          <h3 className=&quot;font-medium text-gray-900 dark:text-gray-100 mb-2&quot;>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
             <Link 
               href={`/c/${post.channel.name}/${post.id}`}
-              className=&quot;hover:text-blue-600 dark:hover:text-blue-400&quot;
+              className="hover:text-blue-600 dark:hover:text-blue-400"
             >
               {post.title}
             </Link>
           </h3>
           
-          <div className=&quot;flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400&quot;>
+          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             <Link 
               href={`/c/${post.channel.name}`}
-              className=&quot;hover:text-blue-600 dark:hover:text-blue-400 font-medium&quot;
+              className="hover:text-blue-600 dark:hover:text-blue-400 font-medium"
             >
               c/{post.channel.name}
             </Link>
             
             <Link 
               href={`/u/${post.author.username}`}
-              className=&quot;hover:text-blue-600 dark:hover:text-blue-400&quot;
+              className="hover:text-blue-600 dark:hover:text-blue-400"
             >
               u/{post.author.username}
             </Link>
             
-            <div className=&quot;flex items-center gap-1&quot;>
-              <MessageSquareIcon className=&quot;h-3 w-3&quot; />
+            <div className="flex items-center gap-1">
+              <MessageSquareIcon className="h-3 w-3" />
               <span>{post.comment_count}</span>
             </div>
             
-            <div className=&quot;flex items-center gap-1&quot;>
-              <CalendarIcon className=&quot;h-3 w-3&quot; />
+            <div className="flex items-center gap-1">
+              <CalendarIcon className="h-3 w-3" />
               <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
             </div>
           </div>
@@ -168,10 +168,10 @@ export default async function DigestPage() {
 
   if (!digestData) {
     return (
-      <div className=&quot;container mx-auto px-4 py-8&quot;>
-        <div className=&quot;text-center&quot;>
-          <h1 className=&quot;text-3xl font-bold mb-4&quot;>Weekly Digest</h1>
-          <p className=&quot;text-gray-500&quot;>Failed to load digest data. Please try again later.</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Weekly Digest</h1>
+          <p className="text-gray-500">Failed to load digest data. Please try again later.</p>
         </div>
       </div>
     )
@@ -181,25 +181,25 @@ export default async function DigestPage() {
   const periodEnd = new Date(digestData.period.end)
 
   return (
-    <div className=&quot;container mx-auto px-4 py-8&quot;>
-      <div className=&quot;mb-8&quot;>
-        <h1 className=&quot;text-4xl font-bold mb-2 text-gray-900 dark:text-gray-100&quot;>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2 text-gray-900 dark:text-gray-100">
           This Week on ddudl
         </h1>
-        <p className=&quot;text-lg text-gray-600 dark:text-gray-400&quot;>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           Weekly digest for {periodStart.toLocaleDateString()} - {periodEnd.toLocaleDateString()}
         </p>
       </div>
 
       {/* Top Posts by Votes */}
-      <section className=&quot;mb-12&quot;>
-        <h2 className=&quot;text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100&quot;>
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
           🏆 Most Upvoted Posts
         </h2>
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {digestData.topPosts.map((post, index) => (
-            <div key={post.id} className=&quot;relative&quot;>
-              <div className=&quot;absolute -left-8 top-4 text-2xl font-bold text-yellow-500&quot;>
+            <div key={post.id} className="relative">
+              <div className="absolute -left-8 top-4 text-2xl font-bold text-yellow-500">
                 #{index + 1}
               </div>
               <PostItem post={post} />
@@ -209,14 +209,14 @@ export default async function DigestPage() {
       </section>
 
       {/* Most Commented Posts */}
-      <section className=&quot;mb-12&quot;>
-        <h2 className=&quot;text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100&quot;>
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
           💬 Most Discussed Posts
         </h2>
-        <div className=&quot;space-y-4&quot;>
+        <div className="space-y-4">
           {digestData.mostCommentedPosts.map((post, index) => (
-            <div key={post.id} className=&quot;relative&quot;>
-              <div className=&quot;absolute -left-8 top-4 text-2xl font-bold text-blue-500&quot;>
+            <div key={post.id} className="relative">
+              <div className="absolute -left-8 top-4 text-2xl font-bold text-blue-500">
                 #{index + 1}
               </div>
               <PostItem post={post} />
@@ -226,12 +226,12 @@ export default async function DigestPage() {
       </section>
 
       {/* Footer */}
-      <div className=&quot;text-center text-sm text-gray-500 dark:text-gray-400 mt-12&quot;>
+      <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-12">
         <p>
           Generated on {new Date(digestData.generated_at).toLocaleString()}
         </p>
-        <p className=&quot;mt-2&quot;>
-          <Link href=&quot;/&quot; className=&quot;hover:text-blue-600 dark:hover:text-blue-400&quot;>
+        <p className="mt-2">
+          <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400">
             ← Back to Home
           </Link>
         </p>

@@ -1,4 +1,4 @@
-import { MasterPageClient } from &quot;./MasterPageClient&quot;
+import { MasterPageClient } from "./MasterPageClient"
 
 interface MasterPageProps {
   params: Promise<{
