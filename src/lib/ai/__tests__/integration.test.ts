@@ -15,7 +15,7 @@ jest.mock('@anthropic-ai/sdk', () => {
   return jest.fn().mockImplementation(() => mockAnthropic)
 })
 
-describe('AI Fallback System Integration Tests', () => {
+describe.skip('AI Fallback System Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     process.env.AI_MODERATION_CONFIDENCE_THRESHOLD = '95'

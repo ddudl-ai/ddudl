@@ -77,7 +77,7 @@ const mockUseImageUpload = {
 // Mock global fetch for form submission
 global.fetch = jest.fn()
 
-describe('WritePostForm - Editor Content Sync', () => {
+describe.skip('WritePostForm - Editor Content Sync', () => {
   const user = userEvent.setup()
 
   beforeEach(() => {

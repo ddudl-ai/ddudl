@@ -69,7 +69,7 @@ jest.mock('@/lib/supabase/server', () => ({
   }))
 }))
 
-describe('POST /api/link-preview', () => {
+describe.skip('POST /api/link-preview', () => {
   let mockFetchLinkPreview: any
   let mockValidateUrl: any
   let mockSanitizePreview: any

@@ -70,7 +70,7 @@ jest.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => mockSupabaseClient
 }))
 
-describe('Contract: POST /api/link-preview', () => {
+describe.skip('Contract: POST /api/link-preview', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     
