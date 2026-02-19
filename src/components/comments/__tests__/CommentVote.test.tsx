@@ -246,8 +246,10 @@ describe('CommentVote', () => {
 
       render(<CommentVote {...defaultProps} />)
 
+      // Wait for initial vote state to load AND reflect in UI
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledTimes(1)
+        const upBtn = screen.getAllByRole('button')[0]
+        expect(upBtn.className).toContain('text-orange-500')
       })
 
       const upvoteButton = screen.getAllByRole('button')[0]
@@ -285,8 +287,10 @@ describe('CommentVote', () => {
 
       render(<CommentVote {...defaultProps} />)
 
+      // Wait for initial vote state to load AND reflect in UI
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledTimes(1)
+        const downBtn = screen.getAllByRole('button')[1]
+        expect(downBtn.className).toContain('text-blue-500')
       })
 
       const downvoteButton = screen.getAllByRole('button')[1]
@@ -482,7 +486,7 @@ describe('CommentVote', () => {
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith('투표하려면 로그인이 필요합니다.')
+        expect(global.alert).toHaveBeenCalledWith('You need to sign in to vote.')
       })
     })
 
@@ -514,7 +518,7 @@ describe('CommentVote', () => {
       fireEvent.click(upvoteButton)
 
       await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith('투표 실패: Internal server error')
+        expect(global.alert).toHaveBeenCalledWith('Vote failed: Internal server error')
       })
     })
 
@@ -550,6 +554,7 @@ describe('CommentVote', () => {
     })
 
     it('should handle malformed response gracefully', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
@@ -576,9 +581,11 @@ describe('CommentVote', () => {
       const upvoteButton = screen.getAllByRole('button')[0]
       fireEvent.click(upvoteButton)
 
+      // json() throws → caught by catch block → console.error, no alert
       await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith('투표 실패: 알 수 없는 오류')
+        expect(consoleSpy).toHaveBeenCalled()
       })
+      consoleSpy.mockRestore()
     })
   })
 

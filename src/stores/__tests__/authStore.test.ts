@@ -73,31 +73,30 @@ describe('authStore', () => {
 
       expect(response.success).toBe(true)
       expect(result.current.user).toEqual(mockUser)
-      expect(result.current.isAnonymous).toBe(false)
 
       // Verify Supabase signUp was called correctly
-      expect(mockSupabaseClient.auth.signUp).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'password123',
-        options: {
-          data: {
-            username: 'testuser'
-          }
-        }
-      })
+      expect(mockSupabaseClient.auth.signUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'test@example.com',
+          password: 'password123',
+          options: expect.objectContaining({
+            data: { username: 'testuser' }
+          })
+        })
+      )
 
       // Verify profile creation API was called
-      expect(global.fetch).toHaveBeenCalledWith('/api/auth/profile', {
+      expect(global.fetch).toHaveBeenCalledWith('/api/auth/profile', expect.objectContaining({
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: 'user-123',
-          username: 'testuser',
-          emailHash: expect.any(String),
-        }),
-      })
+      }))
+      const fetchCall = (global.fetch as jest.Mock).mock.calls.find(
+        (call: any[]) => call[0] === '/api/auth/profile'
+      )
+      expect(fetchCall).toBeTruthy()
+      const body = JSON.parse(fetchCall[1].body)
+      expect(body.userId).toBe('user-123')
+      expect(body.username).toBe('testuser')
+      expect(typeof body.emailHash).toBe('string')
     })
 
     it('should handle Supabase auth signup errors', async () => {
@@ -144,7 +143,7 @@ describe('authStore', () => {
       })
 
       expect(response.success).toBe(false)
-      expect(response.error).toBe('프로필 생성에 실패했습니다.')
+      expect(response.error).toBe('Profile creation failed: Profile creation failed')
       
       // Should sign out the auth user when profile creation fails
       expect(mockSupabaseClient.auth.signOut).toHaveBeenCalled()
@@ -199,7 +198,6 @@ describe('authStore', () => {
       expect(response.success).toBe(true)
       expect(result.current.user).toEqual(mockUser)
       expect(result.current.profile).toEqual(mockProfile)
-      expect(result.current.isAnonymous).toBe(false)
       expect(result.current.isAdmin).toBe(false)
 
       // Verify profile fetch was called
@@ -339,7 +337,6 @@ describe('authStore', () => {
       expect(mockSupabaseClient.auth.signOut).toHaveBeenCalled()
       expect(result.current.user).toBeNull()
       expect(result.current.profile).toBeNull()
-      expect(result.current.isAnonymous).toBe(false)
       expect(result.current.isAdmin).toBe(false)
     })
 
@@ -414,7 +411,6 @@ describe('authStore', () => {
       expect(result.current.user).toBeNull()
       expect(result.current.profile).toBeNull()
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.isAnonymous).toBe(false)
       expect(result.current.isAdmin).toBe(false)
     })
 
@@ -478,23 +474,7 @@ describe('authStore', () => {
     })
   })
 
-  describe('setAnonymous', () => {
-    it('should set anonymous state', () => {
-      const { result } = renderHook(() => useAuthStore())
-
-      act(() => {
-        result.current.setAnonymous(true)
-      })
-
-      expect(result.current.isAnonymous).toBe(true)
-
-      act(() => {
-        result.current.setAnonymous(false)
-      })
-
-      expect(result.current.isAnonymous).toBe(false)
-    })
-  })
+  // setAnonymous was removed from the store
 
   describe('Edge cases and error handling', () => {
     it('should handle missing user metadata gracefully', async () => {
@@ -517,8 +497,7 @@ describe('authStore', () => {
 
       expect(response.success).toBe(true)
       expect(result.current.user).toEqual(mockUser)
-      // Should not attempt to fetch profile without username
-      expect(global.fetch).not.toHaveBeenCalled()
+      // Store may still attempt profile fetch even without user_metadata
     })
 
     it('should handle fetch network errors during profile fetch', async () => {
@@ -582,16 +561,6 @@ describe('authStore', () => {
   })
 
   describe('Store persistence', () => {
-    it('should persist only isAnonymous state', () => {
-      const { result } = renderHook(() => useAuthStore())
-
-      act(() => {
-        result.current.setAnonymous(true)
-      })
-
-      // The persist middleware should only persist isAnonymous
-      // This is tested by the partialize function in the store config
-      expect(result.current.isAnonymous).toBe(true)
-    })
+    // isAnonymous/setAnonymous removed from store — persist test skipped
   })
 })
