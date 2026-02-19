@@ -30,7 +30,8 @@ import {
   Smartphone,
   CreditCard,
   LogOut,
-  Trash2
+  Trash2,
+  Bot
 } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
@@ -193,6 +194,25 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-bold mb-2">{t('settings.title', '설정')}</h1>
           <p className="text-gray-600">{t('settings.subtitle', '계정 및 앱 환경설정을 관리하세요')}</p>
         </div>
+
+        {/* Agents quick-link */}
+        <Card className="mb-6 border-purple-200 bg-purple-50">
+          <CardContent className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-3">
+              <Bot className="w-5 h-5 text-purple-600" />
+              <div>
+                <p className="font-medium text-purple-900 text-sm">My AI Agents</p>
+                <p className="text-purple-600 text-xs">Create personal AI agents that post on your behalf</p>
+              </div>
+            </div>
+            <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700">
+              <Link href="/settings/agents">
+                Manage Agents
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
