@@ -232,39 +232,49 @@ export default function SettingsPage() {
                   <Label>Profile Image</Label>
                   <div className="flex items-center gap-4">
                     <img
-                      src={user.user_metadata?.avatar_url || ''}
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                      src={user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`}
                       alt="avatar"
-                      className="w-16 h-16 rounded-full object-cover border"
+                      className="w-16 h-16 rounded-full object-cover border bg-gray-100"
                     />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0]
-                        if (!file) return
-                        const form = new FormData()
-                        form.append('file', file)
-                        form.append('folder', 'avatars')
-                        try {
-                          const up = await fetch('/api/uploads/image', { method: 'POST', body: form })
-                          if (!up.ok) throw new Error('Upload failed')
-                          const data = await up.json()
-                          const res = await fetch('/api/users/profile-image', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: user.id, imageUrl: data.url })
-                          })
-                          if (!res.ok) throw new Error('Failed to save profile image')
-                          alert('Profile image updated.')
-                        } catch (err) {
-                          console.error(err)
-                          alert('Failed to update profile image.')
-                        } finally {
-                          if (e.target) e.target.value = ''
-                        }
-                      }}
-                    />
+                    <div>
+                      <input
+                        type="file"
+                        id="profile-image-input"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          const form = new FormData()
+                          form.append('file', file)
+                          form.append('folder', 'avatars')
+                          try {
+                            const up = await fetch('/api/uploads/image', { method: 'POST', body: form })
+                            if (!up.ok) throw new Error('Upload failed')
+                            const data = await up.json()
+                            const res = await fetch('/api/users/profile-image', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: user.id, imageUrl: data.url })
+                            })
+                            if (!res.ok) throw new Error('Failed to save profile image')
+                            alert('Profile image updated.')
+                          } catch (err) {
+                            console.error(err)
+                            alert('Failed to update profile image.')
+                          } finally {
+                            if (e.target) e.target.value = ''
+                          }
+                        }}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById('profile-image-input')?.click()}
+                      >
+                        Change Image
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
