@@ -94,7 +94,10 @@ export function useImageUpload(options: UseImageUploadOptions = {}): UseImageUpl
       }
 
       const result = await response.json()
-      if (result.success && result.files && result.files.length > 0) {
+      // Handle both { url } and { success, files } response formats
+      if (result.url) {
+        return { success: true, url: result.url }
+      } else if (result.success && result.files && result.files.length > 0) {
         return { success: true, url: result.files[0] }
       } else {
         throw new Error('No file URL in response')
@@ -142,7 +145,8 @@ export function useImageUpload(options: UseImageUploadOptions = {}): UseImageUpl
           fileName: file.name,
           size: file.size,
           mimeType: file.type,
-          uploadedAt: new Date()
+          uploadedAt: new Date(),
+          status: 'uploaded'
         }
 
         setImages(prev => [...prev, uploadedImage])

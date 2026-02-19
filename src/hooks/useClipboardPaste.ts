@@ -67,7 +67,7 @@ export function useClipboardPaste({
 
     } catch (error) {
       console.error('❌ 클립보드 이미지 처리 failed:', error)
-      onError?.(error instanceof Error ? error.message : '이미지 Processing failed')
+      onError?.(error instanceof Error ? error.message : '이미지 처리에 실패했습니다')
     } finally {
       onUploadEnd?.()
     }

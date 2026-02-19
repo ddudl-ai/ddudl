@@ -20,7 +20,7 @@ export interface ValidationRules {
     min_length: number
     max_length: number
     required: boolean
-    pattern?: string
+    pattern?: string | null
   }
   content: {
     max_length: number
@@ -39,7 +39,7 @@ const DEFAULT_VALIDATION_RULES: ValidationRules = {
     min_length: 5,
     max_length: 300,
     required: true,
-    pattern: undefined
+    pattern: null
   },
   content: {
     max_length: 10000,
@@ -82,7 +82,7 @@ export function validatePostTitle(title: string, customRules?: Partial<Validatio
   if (!trimmedTitle) {
     errors.push({
       code: 'TITLE_REQUIRED',
-      message: 'Title is required',
+      message: '제목은 필수입니다',
       field: 'title'
     })
     return { valid: false, errors }
@@ -92,7 +92,7 @@ export function validatePostTitle(title: string, customRules?: Partial<Validatio
   if (trimmedTitle.length < rules.min_length) {
     errors.push({
       code: 'TITLE_TOO_SHORT',
-      message: `Title must be at least ${rules.min_length} characters long`,
+      message: `제목은 최소 ${rules.min_length}자 이상이어야 합니다`,
       field: 'title'
     })
   }
@@ -100,7 +100,7 @@ export function validatePostTitle(title: string, customRules?: Partial<Validatio
   if (trimmedTitle.length > rules.max_length) {
     errors.push({
       code: 'TITLE_TOO_LONG',
-      message: `Title cannot exceed ${rules.max_length} characters`,
+      message: `제목은 ${rules.max_length}자를 초과할 수 없습니다`,
       field: 'title'
     })
   }
@@ -109,7 +109,7 @@ export function validatePostTitle(title: string, customRules?: Partial<Validatio
   if (containsForbiddenCharacters(trimmedTitle)) {
     errors.push({
       code: 'TITLE_INVALID_CHARACTERS',
-      message: 'Title contains forbidden characters',
+      message: '제목에 허용되지 않는 문자가 포함되어 있습니다',
       field: 'title'
     })
   }
@@ -142,29 +142,28 @@ export function validatePostContent(content: string, customRules?: Partial<Valid
 
   // 내용은 선택사항이므로 빈 문자열 허용
   if (!content || !content.trim()) {
-    return {
-      valid: true,
-      errors: [],
-      warnings: rules.required ? ['Please enter content'] : []
-    }
+    return { valid: true, errors: [] }
   }
 
   const trimmedContent = content.trim()
 
-  // 길이 검증
+  // 길이 검증 (너무 길면 다른 검증 스킵)
   if (trimmedContent.length > rules.max_length) {
-    errors.push({
-      code: 'CONTENT_TOO_LONG',
-      message: `내용은 ${rules.max_length.toLocaleString()}자를 초과할 수 없습니다`,
-      field: 'content'
-    })
+    return {
+      valid: false,
+      errors: [{
+        code: 'CONTENT_TOO_LONG',
+        message: `내용은 ${rules.max_length.toLocaleString()}자를 초과할 수 없습니다`,
+        field: 'content'
+      }]
+    }
   }
 
   // 스팸 패턴 감지
   if (detectSpamPatterns(trimmedContent)) {
     errors.push({
       code: 'CONTENT_SPAM_DETECTED',
-      message: 'Spam content detected',
+      message: '스팸성 내용이 감지되었습니다',
       field: 'content'
     })
   }
@@ -172,7 +171,10 @@ export function validatePostContent(content: string, customRules?: Partial<Valid
   // HTML 정리 및 검증
   let sanitizedContent: string | undefined
   try {
-    sanitizedContent = sanitizeHtmlContent(trimmedContent)
+    const sanitized = sanitizeHtmlContent(trimmedContent)
+    if (sanitized !== trimmedContent) {
+      sanitizedContent = sanitized
+    }
   } catch (error) {
     errors.push({
       code: 'CONTENT_SANITIZATION_FAILED',
@@ -181,12 +183,10 @@ export function validatePostContent(content: string, customRules?: Partial<Valid
     })
   }
 
-  return {
-    valid: errors.length === 0,
-    errors,
-    warnings,
-    sanitizedContent
-  }
+  const result: ValidationResult = { valid: errors.length === 0, errors }
+  if (warnings.length > 0) result.warnings = warnings
+  if (sanitizedContent !== undefined) result.sanitizedContent = sanitizedContent
+  return result
 }
 
 /**
@@ -204,7 +204,7 @@ export function validatePostFlair(flair: string, availableFlairs: string[] | nul
   if (!availableFlairs) {
     errors.push({
       code: 'FLAIR_NOT_AVAILABLE',
-      message: 'Flair is not available in this channel',
+      message: '이 서브레딧에서는 플레어를 사용할 수 없습니다',
       field: 'flair'
     })
     return { valid: false, errors }
@@ -214,7 +214,7 @@ export function validatePostFlair(flair: string, availableFlairs: string[] | nul
   if (!availableFlairs.includes(flair.trim())) {
     errors.push({
       code: 'INVALID_FLAIR',
-      message: 'Please select a valid flair',
+      message: '올바른 플레어를 선택해주세요',
       field: 'flair'
     })
   }
@@ -262,7 +262,7 @@ export function validateImageUploads(images: File[], customRules?: Partial<Valid
     if (!rules.allowed_types.includes(file.type)) {
       errors.push({
         code: 'INVALID_IMAGE_TYPE',
-        message: 'Unsupported image format',
+        message: '지원되지 않는 이미지 형식입니다',
         field: 'images',
         fileName: file.name
       })
@@ -317,7 +317,7 @@ export function validatePostForm(
   if (!formData.channel_name || !formData.channel_name.trim()) {
     errors.push({
       code: 'CHANNEL_REQUIRED',
-      message: 'You must select a channel',
+      message: '서브레딧을 선택해야 합니다',
       field: 'channel_name'
     })
   }
@@ -327,7 +327,7 @@ export function validatePostForm(
     const flairValidation = validatePostFlair(formData.flair, availableFlairs || null)
     errors.push(...flairValidation.errors)
   } else if (availableFlairs && availableFlairs.length > 0) {
-    warnings.push('Selecting a flair makes posts easier to find.')
+    warnings.push('플레어를 선택하면 게시물을 더 쉽게 찾을 수 있습니다.')
   }
 
   // 이미지 검증
@@ -338,7 +338,7 @@ export function validatePostForm(
 
   // 내용 관련 경고
   if (!formData.content || !formData.content.trim()) {
-    warnings.push('Content is empty. Please add more information.')
+    warnings.push('내용이 비어있습니다. 더 많은 정보를 추가해보세요.')
   }
 
   return {
@@ -364,7 +364,7 @@ export function sanitizeFormData(formData: {
 } {
   return {
     title: sanitizeText(formData.title || ''),
-    content: sanitizeHtmlContent(formData.content || ''),
+    content: sanitizeHtmlContent(formData.content || '').trim(),
     channel_name: sanitizeText(formData.channel_name || ''),
     flair: formData.flair ? sanitizeText(formData.flair) : undefined
   }
@@ -379,7 +379,7 @@ export function validateCaptcha(userAnswer: string, expectedAnswer: string): Val
   if (!userAnswer || !userAnswer.trim()) {
     errors.push({
       code: 'CAPTCHA_REQUIRED',
-      message: 'Please complete the CAPTCHA',
+      message: 'CAPTCHA를 완료해주세요',
       field: 'captcha'
     })
     return { valid: false, errors }
@@ -393,7 +393,7 @@ export function validateCaptcha(userAnswer: string, expectedAnswer: string): Val
     if (userNum !== expectedNum) {
       errors.push({
         code: 'CAPTCHA_INCORRECT',
-        message: 'CAPTCHA answer is incorrect',
+        message: 'CAPTCHA 답이 올바르지 않습니다',
         field: 'captcha'
       })
     }
@@ -402,7 +402,7 @@ export function validateCaptcha(userAnswer: string, expectedAnswer: string): Val
     if (userAnswer.trim().toLowerCase() !== expectedAnswer.trim().toLowerCase()) {
       errors.push({
         code: 'CAPTCHA_INCORRECT',
-        message: 'CAPTCHA answer is incorrect',
+        message: 'CAPTCHA 답이 올바르지 않습니다',
         field: 'captcha'
       })
     }

@@ -25,6 +25,7 @@ export interface UploadedImage {
   width?: number;
   height?: number;
   uploadedAt: Date;
+  status?: 'uploaded' | 'uploading' | 'error';
 }
 
 export interface PastedImage extends UploadedImage {

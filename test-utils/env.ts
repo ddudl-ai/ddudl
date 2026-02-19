@@ -34,6 +34,10 @@ global.WritableStream = global.WritableStream || class MockWritableStream {
   constructor() {}
 } as any
 
+// MessagePort polyfill for undici (used by cheerio CJS) in jsdom environment
+const { MessagePort: NodeMessagePort } = require('worker_threads')
+global.MessagePort = global.MessagePort || NodeMessagePort
+
 // Mock BroadcastChannel
 global.BroadcastChannel = global.BroadcastChannel || class MockBroadcastChannel {
   name: string

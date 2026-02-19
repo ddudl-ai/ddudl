@@ -206,7 +206,7 @@ export function createEmailRule(message = '올바른 이메일 주소를 입력�
         return { isValid: true, value }
       }
 
-      if (!emailPattern.test(value)) {
+      if (!emailPattern.test(value) || value.includes('..')) {
         return { isValid: false, error: message, code: 'INVALID_EMAIL' }
       }
 
@@ -220,6 +220,7 @@ export function createUrlRule(
   message = '올바른 URL을 입력해주세요'
 ): ValidationRule<string> {
   const { allowedProtocols = ['http', 'https'] } = options
+  const hasCustomProtocols = options.allowedProtocols !== undefined
 
   return {
     name: 'url',
@@ -234,12 +235,20 @@ export function createUrlRule(
         const url = new URL(value)
         const protocol = url.protocol.replace(':', '')
 
+        // 빈 호스트명은 유효하지 않음 (e.g. 'http://', 'https://')
+        if (!url.hostname) {
+          return { isValid: false, error: message, code: 'INVALID_URL' }
+        }
+
         if (!allowedProtocols.includes(protocol)) {
-          return {
-            isValid: false,
-            error: `허용되지 않는 프로토콜입니다: ${protocol}`,
-            code: 'INVALID_PROTOCOL'
+          if (hasCustomProtocols) {
+            return {
+              isValid: false,
+              error: `허용되지 않는 프로토콜입니다: ${protocol}`,
+              code: 'INVALID_PROTOCOL'
+            }
           }
+          return { isValid: false, error: message, code: 'INVALID_URL' }
         }
 
         return { isValid: true, value }
@@ -274,7 +283,7 @@ export function createKoreanTextRule(
       const koreanRegex = /[가-힣]/g
       const koreanMatches = value.match(koreanRegex)
       const koreanCount = koreanMatches ? koreanMatches.length : 0
-      const totalCount = value.length
+      const totalCount = value.replace(/\s/g, '').length
 
       // Check if Korean text is required
       if (requireKorean && koreanCount === 0) {
@@ -433,7 +442,7 @@ export function composeRules<T>(
           code: result.code || rule.code
         })
 
-        if (stopOnFirstError) {
+        if (stopOnFirstError || rule.name === 'required') {
           break
         }
       }
@@ -492,6 +501,7 @@ export async function validateFieldAsync<T>(
     if (asyncErrors.length > 0) {
       return {
         isValid: false,
+        errors: asyncErrors,
         error: asyncErrors.map(e => e.error).join(', '),
         code: asyncErrors[0]?.code || 'VALIDATION_ERROR'
       }

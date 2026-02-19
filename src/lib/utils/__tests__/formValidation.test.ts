@@ -199,6 +199,7 @@ describe('formValidation utilities', () => {
     it('should handle code blocks correctly', () => {
       const validatePostContent = require('../formValidation').validatePostContent
 
+      const codeContent = '```javascript\nconst x = 1;\nconsole.log(x);\n```'
       const result = validatePostContent(codeContent)
 
       expect(result).toEqual({
@@ -335,7 +336,8 @@ describe('formValidation utilities', () => {
         errors: [{
           code: 'IMAGE_TOO_LARGE',
           message: '이미지 크기는 10MB를 초과할 수 없습니다',
-          field: 'images'
+          field: 'images',
+          fileName: 'large.jpg'
         }]
       })
     })
@@ -352,7 +354,8 @@ describe('formValidation utilities', () => {
         errors: [{
           code: 'INVALID_IMAGE_TYPE',
           message: '지원되지 않는 이미지 형식입니다',
-          field: 'images'
+          field: 'images',
+          fileName: 'document.pdf'
         }]
       })
     })
@@ -485,14 +488,14 @@ describe('formValidation utilities', () => {
         images: []
       }
 
-      const result = validatePostForm(formData, [])
+      const result = validatePostForm(formData, ['질문', '토론'])
 
       expect(result).toEqual({
         valid: true,
         errors: [],
         warnings: [
+          '플레어를 선택하면 게시물을 더 쉽게 찾을 수 있습니다.',
           '내용이 비어있습니다. 더 많은 정보를 추가해보세요.',
-          '플레어를 선택하면 게시물을 더 쉽게 찾을 수 있습니다.'
         ]
       })
     })
@@ -524,7 +527,7 @@ describe('formValidation utilities', () => {
       const validatePostForm = require('../formValidation').validatePostForm
 
       const formData = {
-        title: '제목',
+        title: '제목입니다',
         content: '내용',
         // channel_name missing
         flair: '',

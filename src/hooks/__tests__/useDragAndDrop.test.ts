@@ -35,6 +35,7 @@ describe('useDragAndDrop Hook Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    global.fetch = mockFetch
     mockContains.mockReturnValue(true)
 
     // Mock successful fetch response by default

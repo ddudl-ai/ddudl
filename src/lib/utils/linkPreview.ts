@@ -10,7 +10,7 @@ export interface UrlValidationResult {
 export interface LinkPreviewMetadata {
   title?: string
   description?: string
-  image?: string
+  image?: string | null
   url: string
   siteName?: string
   type?: 'website' | 'video' | 'article' | 'tweet'
@@ -123,19 +123,17 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreviewMetadata
     }
 
     // 플랫폼별 특화 처리
+    let result = metadata
+
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      return processYouTubeMetadata(metadata, $)
+      result = processYouTubeMetadata(metadata, $)
+    } else if (url.includes('twitter.com') || url.includes('x.com')) {
+      result = processTwitterMetadata(metadata, $)
+    } else if (url.includes('vimeo.com')) {
+      result = processVimeoMetadata(metadata, $)
     }
 
-    if (url.includes('twitter.com') || url.includes('x.com')) {
-      return processTwitterMetadata(metadata, $)
-    }
-
-    if (url.includes('vimeo.com')) {
-      return processVimeoMetadata(metadata, $)
-    }
-
-    return metadata
+    return sanitizePreview(result)
   } catch (error) {
     clearTimeout(timeoutId)
     throw error
@@ -145,7 +143,7 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreviewMetadata
 /**
  * 제목 추출
  */
-function extractTitle($: any): string {
+function extractTitle($: any): string | undefined {
   // Open Graph title 우선
   let title = $('meta[property="og:title"]').attr('content')
 
@@ -156,12 +154,11 @@ function extractTitle($: any): string {
 
   // HTML title tag
   if (!title) {
-    title = $('title').text().trim()
+    title = $('title').text().trim() || undefined
   }
 
-  // 기본값
   if (!title) {
-    title = 'Untitled'
+    return undefined
   }
 
   return title.substring(0, 200) // 최대 200자
@@ -354,18 +351,21 @@ function processVimeoMetadata(metadata: LinkPreviewMetadata, $: any): LinkPrevie
 export function sanitizePreview(preview: LinkPreviewMetadata): LinkPreviewMetadata {
   const sanitized = { ...preview }
 
-  // HTML 태그 제거
+  // HTML 태그 제거 (script 태그 내용 포함)
   if (sanitized.title) {
-    sanitized.title = sanitized.title.replace(/<[^>]*>/g, '').trim()
+    sanitized.title = sanitized.title
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<[^>]*>/g, '')
+      .trim()
     if (sanitized.title.length > 300) {
-      sanitized.title = sanitized.title.substring(0, 300) + '...'
+      sanitized.title = sanitized.title.substring(0, 297) + '...'
     }
   }
 
   if (sanitized.description) {
     sanitized.description = sanitized.description.replace(/<[^>]*>/g, '').trim()
     if (sanitized.description.length > 500) {
-      sanitized.description = sanitized.description.substring(0, 500) + '...'
+      sanitized.description = sanitized.description.substring(0, 497) + '...'
     }
   }
 
@@ -374,11 +374,13 @@ export function sanitizePreview(preview: LinkPreviewMetadata): LinkPreviewMetada
     try {
       const imageUrl = new URL(sanitized.image)
       if (!['http:', 'https:'].includes(imageUrl.protocol)) {
-        sanitized.image = undefined
+        sanitized.image = null
       }
     } catch {
-      sanitized.image = undefined
+      sanitized.image = null
     }
+  } else {
+    sanitized.image = null
   }
 
   // 기본값 설정

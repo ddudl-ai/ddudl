@@ -4,17 +4,14 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useLinkPreview } from '../useLinkPreview'
 
-// Mock fetch for link preview
-global.fetch = jest.fn()
-
 describe('useLinkPreview', () => {
   beforeEach(() => {
+    global.fetch = jest.fn()
     jest.clearAllMocks()
-    ;(global.fetch as jest.Mock).mockClear()
   })
 
   afterEach(() => {
-    jest.restoreAllMocks()
+    jest.clearAllMocks()
   })
 
   describe('Initial State', () => {
@@ -125,37 +122,36 @@ describe('useLinkPreview', () => {
     })
 
     it('should set loading state during preview generation', async () => {
-      const { result } = renderHook(() => useLinkPreview())
+      const { result } = renderHook(() => useLinkPreview({ maxRetries: 0 }))
 
+      let resolveFetch!: (val: any) => void
       ;(global.fetch as jest.Mock).mockImplementation(() =>
-        new Promise(resolve =>
-          setTimeout(() => resolve({
-            ok: true,
-            json: async () => ({
-              title: 'Test',
-              description: 'Test description'
-            })
-          }), 100)
-        )
+        new Promise(resolve => {
+          resolveFetch = resolve
+        })
       )
 
-      let loadingDuringFetch = false
-
-      const fetchPromise = act(async () => {
-        const promise = result.current.generatePreview('https://example.com')
-        loadingDuringFetch = result.current.loading
-        return promise
+      // Start generation without awaiting it (void discards the promise)
+      await act(async () => {
+        void result.current.generatePreview('https://example.com')
       })
 
-      expect(loadingDuringFetch).toBe(true)
+      // After act flushes, setLoading(true) should be committed
+      expect(result.current.loading).toBe(true)
 
-      await fetchPromise
+      // Now resolve the pending fetch
+      await act(async () => {
+        resolveFetch({
+          ok: true,
+          json: async () => ({ title: 'Test', description: 'Test description' })
+        })
+      })
 
       expect(result.current.loading).toBe(false)
     })
 
     it('should handle preview generation errors', async () => {
-      const { result } = renderHook(() => useLinkPreview())
+      const { result } = renderHook(() => useLinkPreview({ maxRetries: 0 }))
 
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
@@ -173,7 +169,7 @@ describe('useLinkPreview', () => {
     })
 
     it('should handle network errors', async () => {
-      const { result } = renderHook(() => useLinkPreview())
+      const { result } = renderHook(() => useLinkPreview({ maxRetries: 0 }))
 
       ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
 
@@ -381,10 +377,10 @@ describe('useLinkPreview', () => {
   })
 
   describe('Debouncing', () => {
-    it('should debounce preview generation', async () => {
+    it('should debounce auto-preview via onTextChange', async () => {
       jest.useFakeTimers()
 
-      const { result } = renderHook(() => useLinkPreview({ debounceMs: 500 }))
+      const { result } = renderHook(() => useLinkPreview({ debounceMs: 500, autoPreview: true }))
 
       ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
@@ -394,16 +390,17 @@ describe('useLinkPreview', () => {
         })
       })
 
-      // Trigger multiple preview generations
+      // Trigger multiple text changes (debounced via onTextChange)
       act(() => {
-        result.current.generatePreview('https://example.com/1')
-        result.current.generatePreview('https://example.com/2')
-        result.current.generatePreview('https://example.com/3')
+        result.current.onTextChange('visit https://example.com/1')
+        result.current.onTextChange('visit https://example.com/2')
+        result.current.onTextChange('visit https://example.com/3')
       })
 
+      // Fetch should not have been called yet (debounce pending)
       expect(global.fetch).not.toHaveBeenCalled()
 
-      // Advance timers
+      // Advance timers past debounce
       await act(async () => {
         jest.advanceTimersByTime(500)
         await Promise.resolve()
@@ -434,10 +431,12 @@ describe('useLinkPreview', () => {
         })
       })
 
-      await act(async () => {
+      act(() => {
         result.current.onTextChange('Check this out: https://example.com/auto')
-        await waitFor(() => expect(result.current.preview).not.toBeNull())
       })
+
+      // waitFor outside act - polls until debounce fires (500ms) + fetch + state update
+      await waitFor(() => expect(result.current.preview).not.toBeNull(), { timeout: 2000 })
 
       expect(result.current.preview?.title).toBe('Auto Preview')
     })
@@ -464,10 +463,12 @@ describe('useLinkPreview', () => {
         })
       })
 
-      await act(async () => {
+      act(() => {
         result.current.onTextChange('Links: https://example.com/1 and https://example.com/2')
-        await waitFor(() => expect(result.current.preview).not.toBeNull())
       })
+
+      // waitFor outside act - polls until debounce fires (500ms) + fetch + state update
+      await waitFor(() => expect(result.current.preview).not.toBeNull(), { timeout: 2000 })
 
       // Should preview only the first URL
       expect(result.current.preview?.title).toBe('First Link')
@@ -477,11 +478,13 @@ describe('useLinkPreview', () => {
 
   describe('Abort Functionality', () => {
     it('should abort preview generation', async () => {
-      const { result } = renderHook(() => useLinkPreview())
+      jest.useFakeTimers()
+
+      const { result } = renderHook(() => useLinkPreview({ maxRetries: 0 }))
 
       let abortSignal: AbortSignal | undefined
 
-      ;(global.fetch as jest.Mock).mockImplementation((url, options) => {
+      ;(global.fetch as jest.Mock).mockImplementation((_url, options) => {
         abortSignal = options?.signal
         return new Promise((resolve, reject) => {
           setTimeout(() => {
@@ -497,15 +500,16 @@ describe('useLinkPreview', () => {
         })
       })
 
-      const generatePromise = act(async () => {
-        return result.current.generatePreview('https://example.com')
-      })
-
-      act(() => {
+      // Start preview and abort within a single act
+      await act(async () => {
+        result.current.generatePreview('https://example.com')
         result.current.abort()
+        jest.advanceTimersByTime(1000)
+        await Promise.resolve()
+        await Promise.resolve() // flush extra microtasks
       })
 
-      await generatePromise
+      jest.useRealTimers()
 
       expect(result.current.preview).toBeNull()
       expect(result.current.error).toContain('Aborted')
