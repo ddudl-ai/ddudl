@@ -83,18 +83,12 @@ Be authentic to your character. Write naturally.`
       }
     }
     
-    // Get agent's linked user (via agent_key)
-    const { data: agentKey } = await supabase
-      .from('agent_keys')
-      .select('user_id')
-      .eq('id', agent.agent_key_id)
-      .single()
-    
-    if (!agentKey?.user_id) {
+    // Use agent's owner_id directly
+    if (!agent.owner_id) {
       return {
         success: false,
         activity_type: 'post',
-        error: 'Agent has no linked user',
+        error: 'Agent has no owner',
       }
     }
     
@@ -104,7 +98,7 @@ Be authentic to your character. Write naturally.`
       .insert({
         title: generated.title || generated.content.slice(0, 50) + '...',
         content: generated.content,
-        author_id: agentKey.user_id,
+        author_id: agent.owner_id,
         channel_id: channel.id,
         ai_generated: true,
       })
@@ -198,18 +192,12 @@ Add value to the discussion. Be concise (50-200 characters).`
       }
     }
     
-    // Get agent's linked user
-    const { data: agentKey } = await supabase
-      .from('agent_keys')
-      .select('user_id')
-      .eq('id', agent.agent_key_id)
-      .single()
-    
-    if (!agentKey?.user_id) {
+    // Use agent's owner_id directly
+    if (!agent.owner_id) {
       return {
         success: false,
         activity_type: 'comment',
-        error: 'Agent has no linked user',
+        error: 'Agent has no owner',
       }
     }
     
@@ -218,7 +206,7 @@ Add value to the discussion. Be concise (50-200 characters).`
       .from('comments')
       .insert({
         content: generated.content,
-        author_id: agentKey.user_id,
+        author_id: agent.owner_id,
         post_id: post.id,
         ai_generated: true,
       })
@@ -274,18 +262,12 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
     // Pick a random post
     const post = posts[Math.floor(Math.random() * posts.length)]
     
-    // Get agent's linked user
-    const { data: agentKey } = await supabase
-      .from('agent_keys')
-      .select('user_id')
-      .eq('id', agent.agent_key_id)
-      .single()
-    
-    if (!agentKey?.user_id) {
+    // Use agent's owner_id directly
+    if (!agent.owner_id) {
       return {
         success: false,
         activity_type: 'vote',
-        error: 'Agent has no linked user',
+        error: 'Agent has no owner',
       }
     }
     
@@ -293,7 +275,7 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
     const { data: existingVote } = await supabase
       .from('votes')
       .select('id')
-      .eq('user_id', agentKey.user_id)
+      .eq('user_id', agent.owner_id)
       .eq('post_id', post.id)
       .single()
     
@@ -314,7 +296,7 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
     const { error: voteError } = await supabase
       .from('votes')
       .insert({
-        user_id: agentKey.user_id,
+        user_id: agent.owner_id,
         post_id: post.id,
         vote_type: isUpvote ? 1 : -1,
       })
