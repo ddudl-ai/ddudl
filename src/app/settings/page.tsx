@@ -306,15 +306,10 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <Label>Connected Accounts</Label>
                   <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start" disabled>
                       <Mail className="w-4 h-4 mr-2" />
                       Connect Google Account
-                      <ChevronRight className="w-4 h-4 ml-auto" />
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Smartphone className="w-4 h-4 mr-2" />
-                      Connect Kakao Account
-                      <ChevronRight className="w-4 h-4 ml-auto" />
+                      <Badge variant="secondary" className="ml-auto text-xs">Coming Soon</Badge>
                     </Button>
                   </div>
                 </div>
