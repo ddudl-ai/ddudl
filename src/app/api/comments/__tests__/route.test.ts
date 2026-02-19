@@ -30,6 +30,8 @@ describe('/api/comments', () => {
     mockSupabaseClient.update.mockReturnValue(mockSupabaseClient)
     mockSupabaseClient.eq.mockReturnValue(mockSupabaseClient)
 
+    // Re-establish fetch mock in case MSW interfered
+    global.fetch = jest.fn() as jest.MockedFunction<typeof fetch>
     ;(global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({}),

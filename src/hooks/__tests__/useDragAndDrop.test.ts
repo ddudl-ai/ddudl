@@ -286,32 +286,27 @@ describe('useDragAndDrop Hook Tests', () => {
 
       const { result } = renderHook(() => useDragAndDrop(defaultOptions))
 
-      const mockDropEvent = {
-        preventDefault: jest.fn(),
-        stopPropagation: jest.fn(),
-        dataTransfer: {
-          files: mockFiles
-        }
-      } as unknown as DragEvent
-
       await act(async () => {
-        // Simulate multiple file processing
-        const files = mockDropEvent.dataTransfer?.files
-        if (files) {
-          const imageFiles = extractImageFiles(files)
+        // Create and dispatch a real DragEvent
+        const dropEvent = new Event('drop', { bubbles: true, cancelable: true })
+        
+        // Mock the dataTransfer property
+        Object.defineProperty(dropEvent, 'dataTransfer', {
+          value: {
+            files: mockFiles
+          },
+          writable: false
+        })
 
-          for (const file of imageFiles) {
-            // Each file should trigger upload
-            const formData = new FormData()
-            formData.append('file', file)
+        // Add the preventDefault and stopPropagation methods
+        dropEvent.preventDefault = jest.fn()
+        dropEvent.stopPropagation = jest.fn()
 
-            // Simulate the fetch call
-            await fetch('/api/uploads/image', {
-              method: 'POST',
-              body: formData
-            })
-          }
-        }
+        // Dispatch the event
+        document.dispatchEvent(dropEvent)
+        
+        // Wait for async operations to complete
+        await new Promise(resolve => setTimeout(resolve, 100))
       })
 
       expect(mockFetch).toHaveBeenCalledTimes(2)

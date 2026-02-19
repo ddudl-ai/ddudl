@@ -3,6 +3,51 @@ import { createMocks } from 'node-mocks-http'
 import { NextRequest } from 'next/server'
 import { POST } from '../route'
 
+// Mock cheerio to resolve ES modules issue
+const mock$ = jest.fn((selector: string) => {
+  if (selector.includes('og:title') || selector.includes('title')) {
+    return {
+      attr: jest.fn(() => 'Sample Website Title'),
+      text: jest.fn(() => 'Sample Website Title'),
+      length: 1
+    }
+  }
+  if (selector.includes('og:description') || selector.includes('description')) {
+    return {
+      attr: jest.fn(() => 'Sample description'),
+      text: jest.fn(() => 'Sample description'),
+      length: 1
+    }
+  }
+  if (selector.includes('og:image') || selector.includes('image')) {
+    return {
+      attr: jest.fn(() => 'https://example.com/image.jpg'),
+      text: jest.fn(() => ''),
+      length: 1
+    }
+  }
+  if (selector.includes('og:site_name') || selector.includes('site')) {
+    return {
+      attr: jest.fn(() => 'Example.com'),
+      text: jest.fn(() => 'Example.com'),
+      length: 1
+    }
+  }
+  return {
+    attr: jest.fn(() => null),
+    text: jest.fn(() => ''),
+    length: 0
+  }
+})
+
+jest.mock('cheerio', () => ({
+  __esModule: true,
+  default: {
+    load: jest.fn(() => mock$)
+  },
+  load: jest.fn(() => mock$)
+}))
+
 // Mock link preview utilities
 jest.mock('@/lib/utils/linkPreview', () => ({
   fetchLinkPreview: jest.fn(),
