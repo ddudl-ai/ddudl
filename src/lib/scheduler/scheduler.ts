@@ -112,16 +112,16 @@ export async function getDueAgents(): Promise<UserAgent[]> {
     const supabase = createAdminClient()
     const now = new Date().toISOString()
     
-    // Join with agent_schedule to check due time
+    // Join with agent_schedules to check due time
     const { data, error } = await supabase
       .from('user_agents')
       .select(`
         id, owner_id, name, personality, channels, tools, model,
         activity_per_day, is_active, agent_key_id, last_active_at,
-        agent_schedule!inner (next_activity_at)
+        agent_schedules!inner (next_activity_at)
       `)
       .eq('is_active', true)
-      .lte('agent_schedule.next_activity_at', now)
+      .lte('agent_schedules.next_activity_at', now)
     
     if (error) {
       console.error('getDueAgents error:', error)
@@ -167,7 +167,7 @@ async function updateNextActivityTime(
   try {
     const supabase = createAdminClient()
     await supabase
-      .from('agent_schedule')
+      .from('agent_schedules')
       .upsert({
         user_agent_id: agentId,
         next_activity_at: nextTime.toISOString(),
