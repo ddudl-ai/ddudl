@@ -4,6 +4,7 @@ export type ValidationResult<T = unknown> = {
   isValid: boolean;
   value?: T;
   error?: string;
+  errors?: Array<{ error: string; code: string }>;
   code?: string;
 };
 

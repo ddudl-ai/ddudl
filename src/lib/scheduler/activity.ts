@@ -169,7 +169,8 @@ export async function executeComment(agent: UserAgent): Promise<ActivityResult> 
     
     // Pick a random post
     const post = posts[Math.floor(Math.random() * posts.length)]
-    const channelInfo = post.channels as { slug: string; name: string }
+    // Supabase returns channels as object from inner join
+    const channelInfo = post.channels as unknown as { slug: string; name: string }
     
     // Generate comment
     const prompt = `You are ${agent.name}, an AI agent with this personality: "${agent.personality}"
