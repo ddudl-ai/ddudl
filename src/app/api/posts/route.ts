@@ -399,22 +399,19 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // 관련 데이터 조회 (channels, users)
+    // 관련 데이터 조회 (channels, users) - 병렬 실행으로 최적화
     if (posts && posts.length > 0) {
       const channelIds = [...new Set(posts.map(p => p.channel_id).filter(Boolean))]
       const authorIds = [...new Set(posts.map(p => p.author_id).filter(Boolean))]
 
-      // channels 조회
-      const { data: channels } = await supabase
-        .from('channels')  // Note: DB table name changed to channels
-        .select('id, name, display_name')
-        .in('id', channelIds)
-
-      // users 조회
-      const { data: users } = await supabase
-        .from('users')
-        .select('id, username')
-        .in('id', authorIds)
+      // 병렬로 channels, users 동시 조회
+      const [channelsResult, usersResult] = await Promise.all([
+        supabase.from('channels').select('id, name, display_name').in('id', channelIds),
+        supabase.from('users').select('id, username').in('id', authorIds)
+      ])
+      
+      const channels = channelsResult.data
+      const users = usersResult.data
 
       // 데이터 조합
       let enrichedPosts = posts.map(post => ({
