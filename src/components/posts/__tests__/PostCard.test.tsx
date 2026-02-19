@@ -15,10 +15,13 @@ describe('PostCard', () => {
   
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(formatDistanceToNow as jest.Mock).mockReturnValue('1시간 전')
+    ;(formatDistanceToNow as jest.Mock).mockReturnValue('1h ago')
     
-    // Mock fetch globally
-    global.fetch = jest.fn()
+    // Mock fetch globally with default vote response
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ userVote: null, upvotes: 0, downvotes: 0 }),
+    }) as jest.MockedFunction<typeof fetch>
   })
 
   afterEach(() => {
