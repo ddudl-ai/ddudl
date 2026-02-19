@@ -21,22 +21,45 @@ import {
   weightedRandomSelect,
 } from '../scheduler'
 
+// Import mock for type checking
+import { executeActivity } from '../activity'
+
 // Mock Supabase
 const mockSupabaseClient = {
   from: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   eq: jest.fn().mockReturnThis(),
   lte: jest.fn().mockReturnThis(),
+  in: jest.fn().mockReturnThis(),
   order: jest.fn().mockReturnThis(),
   limit: jest.fn().mockReturnThis(),
   insert: jest.fn().mockReturnThis(),
   update: jest.fn().mockReturnThis(),
   upsert: jest.fn().mockReturnThis(),
-  single: jest.fn(),
+  single: jest.fn().mockResolvedValue({ 
+    data: { 
+      id: 'channel-1', 
+      name: 'Test Channel', 
+      description: 'Test desc',
+      user_id: 'user-456',
+    }, 
+    error: null 
+  }),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
 }
 
 jest.mock('@/lib/supabase/admin', () => ({
   createAdminClient: jest.fn(() => mockSupabaseClient),
+}))
+
+// Mock activity execution (separate module)
+jest.mock('../activity', () => ({
+  executeActivity: jest.fn().mockResolvedValue({
+    success: true,
+    activity_type: 'post',
+    target_id: 'post-123',
+    content_preview: 'Test content',
+  }),
 }))
 
 // Test fixtures
@@ -279,11 +302,30 @@ describe('User Agent Scheduler', () => {
 
   describe('runSchedulerTick', () => {
     beforeEach(() => {
+      jest.clearAllMocks()
+      
+      // Default mocks for all chains
+      mockSupabaseClient.from.mockReturnThis()
+      mockSupabaseClient.select.mockReturnThis()
+      mockSupabaseClient.eq.mockReturnThis()
+      mockSupabaseClient.in.mockReturnThis()
+      mockSupabaseClient.order.mockReturnThis()
+      
       // Default: no due agents
       mockSupabaseClient.lte.mockResolvedValue({ data: [], error: null })
       mockSupabaseClient.limit.mockResolvedValue({ data: [], error: null })
-      mockSupabaseClient.insert.mockResolvedValue({ data: {}, error: null })
+      mockSupabaseClient.insert.mockResolvedValue({ data: { id: 'new-id' }, error: null })
       mockSupabaseClient.upsert.mockResolvedValue({ data: {}, error: null })
+      mockSupabaseClient.single.mockResolvedValue({ 
+        data: { 
+          id: 'channel-1', 
+          name: 'Test Channel', 
+          slug: 'test',
+          user_id: 'user-456',
+        }, 
+        error: null 
+      })
+      mockSupabaseClient.rpc.mockResolvedValue({ data: null, error: null })
     })
 
     it('should return summary with counts', async () => {

@@ -1,6 +1,8 @@
 /**
  * User Agent Scheduler
  * Manages automatic activity scheduling for user-created agents
+ * 
+ * Pure scheduling logic only - activity execution is in activity.ts
  */
 
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -12,6 +14,7 @@ import {
   SchedulerTickResult,
   DEFAULT_SCHEDULER_CONFIG,
 } from './types'
+import { executeActivity } from './activity'
 
 /**
  * Calculate interval in milliseconds based on activity_per_day
@@ -129,36 +132,6 @@ export async function getDueAgents(): Promise<UserAgent[]> {
   } catch (error) {
     console.error('getDueAgents exception:', error)
     return []
-  }
-}
-
-/**
- * Execute a single activity for an agent
- */
-export async function executeActivity(
-  agent: UserAgent,
-  activityType: ActivityType
-): Promise<ActivityResult> {
-  try {
-    // TODO: Implement actual activity execution
-    // 1. For 'post': Generate content with LLM, submit to API
-    // 2. For 'comment': Find a post, generate comment, submit
-    // 3. For 'vote': Find content, decide vote, submit
-    
-    console.log(`Executing ${activityType} for agent ${agent.name}`)
-    
-    // Placeholder - will implement in next iteration
-    return {
-      success: true,
-      activity_type: activityType,
-      content_preview: 'Activity executed',
-    }
-  } catch (error) {
-    return {
-      success: false,
-      activity_type: activityType,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    }
   }
 }
 
