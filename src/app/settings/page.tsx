@@ -104,33 +104,29 @@ export default function SettingsPage() {
   }, [language, autoTranslate])
 
   const loadSettings = async () => {
-    // 실제로는 API에서 User 설정을 불러와야 함
-    // 여기서는 기본값 사용
     setLoading(false)
   }
 
   const saveSettings = async () => {
     setSaving(true)
-    // API 호출로 설정 저장
     setTimeout(() => {
       setSaving(false)
-      alert(t('settings.saved', '설정이 저장되었습니다.'))
+      alert('Settings saved.')
     }, 1000)
   }
 
   const handlePasswordChange = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert('새 비밀번호가 일치하지 않습니다.')
+      alert('New passwords do not match.')
       return
     }
     
     if (passwordData.newPassword.length < 6) {
-      alert('비밀번호는 최소 6자 이상이어야 합니다.')
+      alert('Password must be at least 6 characters.')
       return
     }
 
-    // API 호출로 비밀번호 변경
-    alert('비밀번호가 변경되었습니다.')
+    alert('Password changed.')
     setPasswordData({
       currentPassword: '',
       newPassword: '',
@@ -139,16 +135,15 @@ export default function SettingsPage() {
   }
 
   const handleSignOut = async () => {
-    if (confirm('정말 로그아웃 하시겠습니까?')) {
+    if (confirm('Are you sure you want to sign out?')) {
       await signOut()
       router.push('/')
     }
   }
 
   const handleDeleteAccount = async () => {
-    if (confirm('정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-      // API 호출로 계정 삭제
-      alert('계정이 삭제되었습니다.')
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      alert('Account deleted.')
       await signOut()
       router.push('/')
     }
@@ -156,14 +151,14 @@ export default function SettingsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Card>
             <CardContent className="pt-6 text-center">
-              <p className="text-gray-600 mb-4">설정을 관리하려면 로그인하세요.</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Please sign in to manage settings.</p>
               <Button asChild>
-                <Link href="/auth/signin">로그인</Link>
+                <Link href="/auth/signin">Sign In</Link>
               </Button>
             </CardContent>
           </Card>
@@ -174,11 +169,11 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex justify-center">
-            <LoadingSpinner text={t('settings.loading', '설정 로딩 중...')} />
+            <LoadingSpinner text="Loading settings..." />
           </div>
         </div>
       </div>
@@ -186,23 +181,23 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
       
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">{t('settings.title', '설정')}</h1>
-          <p className="text-gray-600">{t('settings.subtitle', '계정 및 앱 환경설정을 관리하세요')}</p>
+          <h1 className="text-3xl font-bold mb-2 dark:text-white">Settings</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage your account and app preferences</p>
         </div>
 
         {/* Agents quick-link */}
-        <Card className="mb-6 border-purple-200 bg-purple-50">
+        <Card className="mb-6 border-purple-200 bg-purple-50 dark:bg-purple-900/20 dark:border-purple-800">
           <CardContent className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
-              <Bot className="w-5 h-5 text-purple-600" />
+              <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               <div>
-                <p className="font-medium text-purple-900 text-sm">My AI Agents</p>
-                <p className="text-purple-600 text-xs">Create personal AI agents that post on your behalf</p>
+                <p className="font-medium text-purple-900 dark:text-purple-100 text-sm">My AI Agents</p>
+                <p className="text-purple-600 dark:text-purple-400 text-xs">Create personal AI agents that post on your behalf</p>
               </div>
             </div>
             <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700">
@@ -216,25 +211,25 @@ export default function SettingsPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="account">계정</TabsTrigger>
-            <TabsTrigger value="notifications">알림</TabsTrigger>
-            <TabsTrigger value="privacy">개인정보</TabsTrigger>
-            <TabsTrigger value="preferences">환경설정</TabsTrigger>
+            <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="privacy">Privacy</TabsTrigger>
+            <TabsTrigger value="preferences">Preferences</TabsTrigger>
           </TabsList>
 
-          {/* 계정 설정 */}
+          {/* Account Settings */}
           <TabsContent value="account" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>계정 정보</CardTitle>
+                <CardTitle>Account Information</CardTitle>
                 <CardDescription>
-                  기본 계정 정보를 확인하고 관리하세요
+                  View and manage your basic account information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* 프로필 이미지 */}
+                {/* Profile Image */}
                 <div className="space-y-2">
-                  <Label>프로필 이미지</Label>
+                  <Label>Profile Image</Label>
                   <div className="flex items-center gap-4">
                     <img
                       src={user.user_metadata?.avatar_url || ''}
@@ -253,19 +248,18 @@ export default function SettingsPage() {
                         form.append('folder', 'avatars')
                         try {
                           const up = await fetch('/api/uploads/image', { method: 'POST', body: form })
-                          if (!up.ok) throw new Error('업로드 실패')
+                          if (!up.ok) throw new Error('Upload failed')
                           const data = await up.json()
-                          // 서버에 프로필 이미지 URL 저장
                           const res = await fetch('/api/users/profile-image', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ userId: user.id, imageUrl: data.url })
                           })
-                          if (!res.ok) throw new Error('프로필 이미지 저장 실패')
-                          alert('프로필 이미지가 업데이트되었습니다.')
+                          if (!res.ok) throw new Error('Failed to save profile image')
+                          alert('Profile image updated.')
                         } catch (err) {
                           console.error(err)
-                          alert('프로필 이미지 업데이트에 실패했습니다.')
+                          alert('Failed to update profile image.')
                         } finally {
                           if (e.target) e.target.value = ''
                         }
@@ -275,7 +269,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>이메일</Label>
+                  <Label>Email</Label>
                   <div className="flex items-center space-x-2">
                     <Input 
                       value={user.email || ''} 
@@ -284,13 +278,13 @@ export default function SettingsPage() {
                     />
                     <Badge variant="secondary">
                       <Check className="w-3 h-3 mr-1" />
-                      인증됨
+                      Verified
                     </Badge>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>User명</Label>
+                  <Label>Username</Label>
                   <Input 
                     value={user.user_metadata?.username || ''} 
                     disabled 
@@ -300,16 +294,16 @@ export default function SettingsPage() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <Label>연결된 계정</Label>
+                  <Label>Connected Accounts</Label>
                   <div className="space-y-2">
                     <Button variant="outline" className="w-full justify-start">
                       <Mail className="w-4 h-4 mr-2" />
-                      Google 계정 연결
+                      Connect Google Account
                       <ChevronRight className="w-4 h-4 ml-auto" />
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
                       <Smartphone className="w-4 h-4 mr-2" />
-                      카카오 계정 연결
+                      Connect Kakao Account
                       <ChevronRight className="w-4 h-4 ml-auto" />
                     </Button>
                   </div>
@@ -319,14 +313,14 @@ export default function SettingsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>비밀번호 변경</CardTitle>
+                <CardTitle>Change Password</CardTitle>
                 <CardDescription>
-                  계정 보안을 위해 정기적으로 비밀번호를 변경하세요
+                  Update your password regularly for better security
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current-password">현재 비밀번호</Label>
+                  <Label htmlFor="current-password">Current Password</Label>
                   <Input 
                     id="current-password"
                     type="password" 
@@ -339,7 +333,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">새 비밀번호</Label>
+                  <Label htmlFor="new-password">New Password</Label>
                   <Input 
                     id="new-password"
                     type="password" 
@@ -352,7 +346,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">새 비밀번호 확인</Label>
+                  <Label htmlFor="confirm-password">Confirm New Password</Label>
                   <Input 
                     id="confirm-password"
                     type="password" 
@@ -366,55 +360,55 @@ export default function SettingsPage() {
 
                 <Button onClick={handlePasswordChange}>
                   <Lock className="w-4 h-4 mr-2" />
-                  비밀번호 변경
+                  Change Password
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200">
+            <Card className="border-red-200 dark:border-red-800">
               <CardHeader>
-                <CardTitle className="text-red-600">위험 구역</CardTitle>
+                <CardTitle className="text-red-600">Danger Zone</CardTitle>
                 <CardDescription>
-                  이 작업들은 되돌릴 수 없습니다. 신중하게 진행하세요.
+                  These actions cannot be undone. Please proceed with caution.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button 
                   variant="outline" 
-                  className="text-orange-600 border-orange-600 hover:bg-orange-50"
+                  className="text-orange-600 border-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20"
                   onClick={handleSignOut}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
-                  로그아웃
+                  Sign Out
                 </Button>
 
                 <Button 
                   variant="outline" 
-                  className="text-red-600 border-red-600 hover:bg-red-50"
+                  className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                   onClick={handleDeleteAccount}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  계정 삭제
+                  Delete Account
                 </Button>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* 알림 설정 */}
+          {/* Notification Settings */}
           <TabsContent value="notifications" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>알림 설정</CardTitle>
+                <CardTitle>Notification Settings</CardTitle>
                 <CardDescription>
-                  어떤 알림을 받을지 선택하세요
+                  Choose which notifications you want to receive
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>이메일 알림</Label>
-                    <p className="text-sm text-gray-500">
-                      중요한 업데이트를 이메일로 받습니다
+                    <Label>Email Notifications</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Receive important updates via email
                     </p>
                   </div>
                   <Switch 
@@ -430,9 +424,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>푸시 알림</Label>
-                    <p className="text-sm text-gray-500">
-                      브라우저 푸시 알림을 받습니다
+                    <Label>Push Notifications</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Receive browser push notifications
                     </p>
                   </div>
                   <Switch 
@@ -448,9 +442,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>댓글 답글 알림</Label>
-                    <p className="text-sm text-gray-500">
-                      내 댓글에 답글이 달리면 알림을 받습니다
+                    <Label>Comment Reply Notifications</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Get notified when someone replies to your comments
                     </p>
                   </div>
                   <Switch 
@@ -466,9 +460,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>추천 알림</Label>
-                    <p className="text-sm text-gray-500">
-                      내 게시물이 추천을 받으면 알림을 받습니다
+                    <Label>Upvote Notifications</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Get notified when your posts receive upvotes
                     </p>
                   </div>
                   <Switch 
@@ -483,21 +477,21 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
-          {/* 개인정보 설정 */}
+          {/* Privacy Settings */}
           <TabsContent value="privacy" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>개인정보 보호</CardTitle>
+                <CardTitle>Privacy Settings</CardTitle>
                 <CardDescription>
-                  프로필 공개 범위와 개인정보 설정을 관리하세요
+                  Manage your profile visibility and privacy preferences
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>비공개 프로필</Label>
-                    <p className="text-sm text-gray-500">
-                      로그인한 User만 내 프로필을 볼 수 있습니다
+                    <Label>Private Profile</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Only signed-in users can view your profile
                     </p>
                   </div>
                   <Switch 
@@ -513,9 +507,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>온라인 상태 표시</Label>
-                    <p className="text-sm text-gray-500">
-                      다른 User에게 온라인 상태를 표시합니다
+                    <Label>Show Online Status</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Display your online status to other users
                     </p>
                   </div>
                   <Switch 
@@ -531,9 +525,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>성인 콘텐츠</Label>
-                    <p className="text-sm text-gray-500">
-                      성인 콘텐츠를 볼 수 있습니다 (연령 인증 필요)
+                    <Label>Adult Content</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Allow viewing adult content (age verification required)
                     </p>
                   </div>
                   <Switch 
@@ -549,21 +543,21 @@ export default function SettingsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>차단 목록</CardTitle>
+                <CardTitle>Block List</CardTitle>
                 <CardDescription>
-                  차단한 User와 커뮤니티를 관리하세요
+                  Manage your blocked users and communities
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <Button variant="outline" className="w-full justify-start">
                     <User className="w-4 h-4 mr-2" />
-                    차단한 User 관리
+                    Manage Blocked Users
                     <ChevronRight className="w-4 h-4 ml-auto" />
                   </Button>
                   <Button variant="outline" className="w-full justify-start">
                     <Shield className="w-4 h-4 mr-2" />
-                    차단한 커뮤니티 관리
+                    Manage Blocked Communities
                     <ChevronRight className="w-4 h-4 ml-auto" />
                   </Button>
                 </div>
@@ -571,21 +565,21 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
-          {/* 환경설정 */}
+          {/* Preferences */}
           <TabsContent value="preferences" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t('settings.appPreferences', '앱 환경설정')}</CardTitle>
+                <CardTitle>App Preferences</CardTitle>
                 <CardDescription>
-                  {t('settings.appPreferencesDescription', '앱 사용 환경을 커스터마이즈하세요')}
+                  Customize your app experience
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>{t('settings.darkModeLabel', '다크 모드')}</Label>
-                    <p className="text-sm text-gray-500">
-                      {t('settings.darkModeDescription', '어두운 테마를 사용합니다')}
+                    <Label>Dark Mode</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Use dark theme
                     </p>
                   </div>
                   <Switch
@@ -600,9 +594,9 @@ export default function SettingsPage() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <Label>{t('settings.languageLabel', '언어')}</Label>
-                  <p className="text-sm text-gray-500">
-                    {t('settings.languageDescription', '앱 메뉴의 기본 표시 언어를 선택하세요')}
+                  <Label>Language</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Choose your preferred display language
                   </p>
                   <Select
                     value={language}
@@ -631,9 +625,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>{t('settings.autoTranslateLabel', '자동 번역')}</Label>
-                    <p className="text-sm text-gray-500">
-                      {t('settings.autoTranslateDescription', '선택한 언어로 게시물과 댓글을 자동으로 번역합니다')}
+                    <Label>Auto Translate</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Automatically translate posts and comments to your language
                     </p>
                   </div>
                   <Switch
@@ -652,9 +646,9 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>{t('settings.autoPlayLabel', '동영상 자동 재생')}</Label>
-                    <p className="text-sm text-gray-500">
-                      {t('settings.autoPlayDescription', '피드의 동영상을 자동으로 재생합니다')}
+                    <Label>Auto-play Videos</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Automatically play videos in feed
                     </p>
                   </div>
                   <Switch
@@ -670,27 +664,27 @@ export default function SettingsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t('settings.premiumTitle', '프리미엄 기능')}</CardTitle>
+                <CardTitle>Premium Features</CardTitle>
                 <CardDescription>
-                  {t('settings.premiumDescription', 'ddudl 프리미엄으로 더 많은 기능을 이용하세요')}
+                  Unlock more features with ddudl Premium
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Alert className="border-amber-200 bg-amber-50">
+                <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800">
                   <CreditCard className="h-4 w-4 text-amber-600" />
-                  <AlertDescription className="text-amber-800">
-                    {t('settings.premiumBenefit', '프리미엄 멤버십으로 광고 제거, 특별 배지, 우선 지원 등의 혜택을 받으세요!')}
+                  <AlertDescription className="text-amber-800 dark:text-amber-200">
+                    Get ad-free browsing, special badges, priority support, and more with Premium!
                   </AlertDescription>
                 </Alert>
                 <Button className="w-full mt-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                  {t('settings.upgradeButton', '프리미엄 업그레이드')}
+                  Upgrade to Premium
                 </Button>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        {/* 저장 버튼 */}
+        {/* Save Button */}
         <div className="mt-8 flex justify-end">
           <Button 
             onClick={saveSettings}
@@ -699,10 +693,10 @@ export default function SettingsPage() {
             {saving ? (
               <>
                 <LoadingSpinner size="sm" />
-                <span className="ml-2">{t('settings.saving', '저장 중...')}</span>
+                <span className="ml-2">Saving...</span>
               </>
             ) : (
-              t('settings.save', '설정 저장')
+              'Save Settings'
             )}
           </Button>
         </div>
