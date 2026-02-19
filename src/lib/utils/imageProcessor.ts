@@ -189,7 +189,7 @@ export function formatFileSize(bytes: number): string {
 
   const k = 1024
   const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1)
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
@@ -315,16 +315,17 @@ export async function uploadProcessedImage(
   processedImage: ProcessedImage
 ): Promise<ImageUploadResult> {
   const formData = new FormData()
-  formData.append('file', processedImage.file) // 올바른 필드명 사용
+  formData.append('file', processedImage.file)
+  formData.append('folder', 'posts')
 
-  const response = await fetch('/api/uploads/image', { // 올바른 엔드points
+  const response = await fetch('/api/uploads/image', {
     method: 'POST',
     body: formData
   })
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Upload failed' }))
-    throw new Error(errorData.error || 'Upload failed')
+    throw new Error(errorData.error || errorData.message || 'Upload failed')
   }
 
   const result = await response.json()

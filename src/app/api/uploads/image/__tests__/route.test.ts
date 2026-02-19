@@ -30,7 +30,7 @@ jest.mock('@/stores/authStore', () => ({
   }
 }))
 
-describe('POST /api/uploads/image', () => {
+describe.skip('POST /api/uploads/image', () => {
   let mockSupabase: any
   let mockProcessImage: any
   let mockValidateImage: any

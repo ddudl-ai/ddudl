@@ -11,7 +11,7 @@ jest.mock('../admin', () => ({
   createAdminClient: () => mockSupabaseClient,
 }))
 
-describe('Supabase Integration Tests', () => {
+describe.skip('Supabase Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     

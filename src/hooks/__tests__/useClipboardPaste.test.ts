@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals'
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals'
 import { renderHook, act } from '@testing-library/react'
 import { useClipboardPaste } from '../useClipboardPaste'
+import * as imageProcessorModule from '@/lib/utils/imageProcessor'
 
-// Mock imageProcessor utilities
 jest.mock('@/lib/utils/imageProcessor', () => ({
   getImageFromPasteEvent: jest.fn(),
-  formatFileSize: jest.fn((size: number) => `${size} bytes`)
+  formatFileSize: jest.fn()
 }))
 
 // Mock fetch
@@ -28,6 +28,7 @@ describe('useClipboardPaste Hook Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    global.fetch = mockFetch
     // Mock successful fetch response by default
     mockFetch.mockResolvedValue({
       ok: true,
@@ -37,10 +38,12 @@ describe('useClipboardPaste Hook Tests', () => {
         compressionRatio: 30
       })
     })
+    // Default: no image in clipboard
+    ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(null)
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   describe('Basic Functionality', () => {
@@ -74,10 +77,9 @@ describe('useClipboardPaste Hook Tests', () => {
 
   describe('Image Paste Handling', () => {
     it('should handle successful image paste', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       const { result } = renderHook(() => useClipboardPaste(defaultOptions))
 
@@ -105,8 +107,6 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should ignore paste events on input elements', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
       const { result } = renderHook(() => useClipboardPaste(defaultOptions))
 
       const mockPasteEvent = {
@@ -118,14 +118,12 @@ describe('useClipboardPaste Hook Tests', () => {
         await result.current.checkClipboard(mockPasteEvent)
       })
 
-      expect(getImageFromPasteEvent).not.toHaveBeenCalled()
+      expect(imageProcessorModule.getImageFromPasteEvent).not.toHaveBeenCalled()
       expect(mockOnUploadStart).not.toHaveBeenCalled()
       expect(mockPasteEvent.preventDefault).not.toHaveBeenCalled()
     })
 
     it('should ignore paste events on textarea elements', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
       const { result } = renderHook(() => useClipboardPaste(defaultOptions))
 
       const mockPasteEvent = {
@@ -137,14 +135,11 @@ describe('useClipboardPaste Hook Tests', () => {
         await result.current.checkClipboard(mockPasteEvent)
       })
 
-      expect(getImageFromPasteEvent).not.toHaveBeenCalled()
+      expect(imageProcessorModule.getImageFromPasteEvent).not.toHaveBeenCalled()
     })
 
     it('should ignore non-image paste events', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
-      getImageFromPasteEvent.mockReturnValue(null)
-
+      // beforeEach already mocks getImageFromPasteEvent to return null
       const { result } = renderHook(() => useClipboardPaste(defaultOptions))
 
       const mockPasteEvent = {
@@ -164,10 +159,9 @@ describe('useClipboardPaste Hook Tests', () => {
 
   describe('Upload Handling', () => {
     it('should handle upload success with all response data', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'photo.png', { type: 'image/png' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       const mockResponse = {
         url: 'https://cdn.example.com/optimized.webp',
@@ -199,11 +193,10 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should fallback to original file size when processedSize is not available', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'large.jpg', { type: 'image/jpeg' })
       Object.defineProperty(mockImageFile, 'size', { value: 100000 })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       mockFetch.mockResolvedValue({
         ok: true,
@@ -232,10 +225,9 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should handle upload failure with error response', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       mockFetch.mockResolvedValue({
         ok: false,
@@ -261,10 +253,9 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should handle network error during upload', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       mockFetch.mockRejectedValue(new Error('Network error'))
 
@@ -284,10 +275,9 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should handle malformed error response', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       mockFetch.mockResolvedValue({
         ok: false,
@@ -312,8 +302,6 @@ describe('useClipboardPaste Hook Tests', () => {
 
   describe('Configuration Options', () => {
     it('should respect enabled flag', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
       const { result } = renderHook(() => useClipboardPaste({
         ...defaultOptions,
         enabled: false
@@ -328,15 +316,14 @@ describe('useClipboardPaste Hook Tests', () => {
         await result.current.checkClipboard(mockPasteEvent)
       })
 
-      expect(getImageFromPasteEvent).not.toHaveBeenCalled()
+      expect(imageProcessorModule.getImageFromPasteEvent).not.toHaveBeenCalled()
       expect(mockOnUploadStart).not.toHaveBeenCalled()
     })
 
     it('should handle missing callback functions gracefully', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       const { result } = renderHook(() => useClipboardPaste({
         enabled: true
@@ -373,10 +360,7 @@ describe('useClipboardPaste Hook Tests', () => {
 
   describe('Event Handling', () => {
     it('should handle real paste event through document listener', () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
-      getImageFromPasteEvent.mockReturnValue(null)
-
+      // beforeEach already mocks getImageFromPasteEvent to return null
       renderHook(() => useClipboardPaste(defaultOptions))
 
       // Simulate a real paste event
@@ -390,7 +374,7 @@ describe('useClipboardPaste Hook Tests', () => {
         document.dispatchEvent(pasteEvent)
       })
 
-      expect(getImageFromPasteEvent).toHaveBeenCalledWith(pasteEvent)
+      expect(imageProcessorModule.getImageFromPasteEvent).toHaveBeenCalledWith(pasteEvent)
     })
 
     it('should properly cleanup event listeners on unmount', () => {
@@ -406,10 +390,9 @@ describe('useClipboardPaste Hook Tests', () => {
 
   describe('FormData Creation', () => {
     it('should create FormData with correct file field', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       const { result } = renderHook(() => useClipboardPaste(defaultOptions))
 
@@ -436,9 +419,7 @@ describe('useClipboardPaste Hook Tests', () => {
 
   describe('Error Scenarios', () => {
     it('should handle generic error when image processing fails', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
-      getImageFromPasteEvent.mockImplementation(() => {
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockImplementation(() => {
         throw new Error('Image processing failed')
       })
 
@@ -458,9 +439,7 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should handle non-Error objects thrown during processing', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
-
-      getImageFromPasteEvent.mockImplementation(() => {
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockImplementation(() => {
         throw 'String error'
       })
 
@@ -499,10 +478,9 @@ describe('useClipboardPaste Hook Tests', () => {
     })
 
     it('should update callback references when they change', async () => {
-      const { getImageFromPasteEvent } = require('@/lib/utils/imageProcessor')
       const mockImageFile = new File(['image-data'], 'test.jpg', { type: 'image/jpeg' })
 
-      getImageFromPasteEvent.mockReturnValue(mockImageFile)
+      ;(imageProcessorModule.getImageFromPasteEvent as any).mockReturnValue(mockImageFile)
 
       const newOnImagePaste = jest.fn()
 

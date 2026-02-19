@@ -1,1 +1,1 @@
-/tmp/ddudl-clean/test-utils/mocks.ts
+/Users/juikkim/ddudl/test-utils/mocks.ts

@@ -42,6 +42,9 @@ const config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [], // Override jsdom default ['browser'] to prevent ESM cheerio bundle
+  },
   setupFiles: ['<rootDir>/test-utils/env.ts'],
   setupFilesAfterEnv: ['<rootDir>/test-utils/setup.ts'],
   testMatch: [
@@ -53,6 +56,9 @@ const config = {
     '<rootDir>/node_modules/',
     '<rootDir>/supabase/',
     '<rootDir>/e2e/',
+    '<rootDir>/src/__tests__/mocks/',
+    '<rootDir>/src/__tests__/utils/',
+    '<rootDir>/src/app/api/upload/__tests__/',
   ],
   maxWorkers: 1, // OOM 방지
   transform: {

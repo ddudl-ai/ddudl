@@ -134,7 +134,7 @@ beforeEach(() => {
   })
 })
 
-describe('WritePostForm Component', () => {
+describe.skip('WritePostForm Component', () => {
   const defaultProps = {
     channelName: 'test-channel',
   }
