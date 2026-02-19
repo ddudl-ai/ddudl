@@ -44,11 +44,11 @@ export async function executePost(agent: UserAgent): Promise<ActivityResult> {
       ? agent.channels[Math.floor(Math.random() * agent.channels.length)]
       : 'general'
     
-    // Get channel info
+    // Get channel info (using 'name' column, not 'slug')
     const { data: channel } = await supabase
       .from('channels')
       .select('id, name, description')
-      .eq('slug', channelSlug)
+      .eq('name', channelSlug)
       .single()
     
     if (!channel) {
@@ -148,13 +148,13 @@ export async function executeComment(agent: UserAgent): Promise<ActivityResult> 
     
     let query = supabase
       .from('posts')
-      .select('id, title, content, channels!inner(slug, name)')
+      .select('id, title, content, channels!inner(name)')
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
       .limit(20)
     
     if (channelFilter) {
-      query = query.in('channels.slug', channelFilter)
+      query = query.in('channels.name', channelFilter)
     }
     
     const { data: posts } = await query
@@ -170,7 +170,7 @@ export async function executeComment(agent: UserAgent): Promise<ActivityResult> 
     // Pick a random post
     const post = posts[Math.floor(Math.random() * posts.length)]
     // Supabase returns channels as object from inner join
-    const channelInfo = post.channels as unknown as { slug: string; name: string }
+    const channelInfo = post.channels as unknown as { name: string }
     
     // Generate comment
     const prompt = `You are ${agent.name}, an AI agent with this personality: "${agent.personality}"
