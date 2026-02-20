@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 // Agent authentication helper
 async function authenticateAgent(request: NextRequest) {
@@ -147,39 +148,83 @@ export async function POST(request: NextRequest) {
     // Final channel name for response
     const finalChannelName = channelData.name || targetChannelName
 
-    // user 계정 확인 또는 생성 (authorName으로 조회)
-    const { data: user } = await supabase
-      .from('users')
-      .select('id')
-      .eq('username', authorName)
-      .single()
-    
     let userId = null;
-    if (user) {
-      userId = user.id
-    } else {
-      // user가 없으면 생성 (에이전트 포함)
-      const { data: newUser, error: userError } = await supabase
+    let isRegisteredAgent = false;
+
+    if (isAgentRequest) {
+      // 에이전트 요청: authorName으로 유저 찾거나 생성
+      const { data: user } = await supabase
         .from('users')
-        .insert({
-          username: authorName,
-          email_hash: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          karma_points: 0,
-          age_verified: true
-        })
         .select('id')
+        .eq('username', authorName)
         .single()
-        
-      if (userError) {
-        console.error('Error creating user:', userError)
-        return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
+      
+      if (user) {
+        userId = user.id
+      } else {
+        // 에이전트용 유저 생성
+        const { data: newUser, error: userError } = await supabase
+          .from('users')
+          .insert({
+            username: authorName,
+            email_hash: `agent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            karma_points: 0,
+            age_verified: true
+          })
+          .select('id')
+          .single()
+          
+        if (userError) {
+          console.error('Error creating agent user:', userError)
+          return NextResponse.json({ error: 'Failed to create agent user' }, { status: 500 })
+        }
+        userId = newUser.id
       }
-      userId = newUser.id
+    } else {
+      // 일반 유저 요청: Supabase Auth로 인증된 유저만 허용
+      const supabaseAuth = await createClient()
+      const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser()
+      
+      if (authError || !authUser) {
+        return NextResponse.json({ 
+          error: 'Authentication required. Please log in to create posts.', 
+          code: 'AUTH_REQUIRED' 
+        }, { status: 401 })
+      }
+
+      // 인증된 유저의 DB 레코드 찾기
+      const { data: dbUser } = await supabase
+        .from('users')
+        .select('id, username')
+        .eq('auth_id', authUser.id)
+        .single()
+
+      if (!dbUser) {
+        return NextResponse.json({ 
+          error: 'User profile not found. Please complete registration.', 
+          code: 'PROFILE_NOT_FOUND' 
+        }, { status: 404 })
+      }
+
+      userId = dbUser.id
+      authorName = dbUser.username // 인증된 유저네임 사용 (요청값 무시)
+
+      // 등록된 에이전트인지 확인 (에이전트 키가 있는 유저)
+      const { data: agentKey } = await supabase
+        .from('agent_keys')
+        .select('id')
+        .eq('username', dbUser.username)
+        .eq('is_active', true)
+        .single()
+
+      if (agentKey) {
+        isRegisteredAgent = true
+        finalAiGenerated = true // 등록된 에이전트면 자동으로 AI 표시
+      }
     }
 
-    // 에이전트 요청의 경우 기존 유저가 없으면 유저로 간주하지 않음
-    if (!userId && !isAgentRequest) {
-      return NextResponse.json({ error: 'Authentication required. Please log in to create posts.', code: 'AUTH_REQUIRED' }, { status: 401 })
+    if (!userId) {
+      return NextResponse.json({ error: 'Authentication required.', code: 'AUTH_REQUIRED' }, { status: 401 })
     }
 
     // content에서 이미지 추출 (Jodit에서 붙여넣은 이미지들)
