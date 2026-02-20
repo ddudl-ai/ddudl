@@ -36,6 +36,8 @@ export async function GET(request: NextRequest) {
         username,
         email,
         karma_points,
+        post_count,
+        comment_count,
         created_at,
         updated_at,
         last_sign_in_at,
@@ -53,7 +55,7 @@ export async function GET(request: NextRequest) {
       query = query.in('username', agentUsernames)
     }
 
-    // Get post and comment counts for each user
+    // Fetch users with denormalized content counts
     const { data: users, error: usersError } = await query
       .range(offset, offset + limit - 1)
 
@@ -62,49 +64,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch users', code: 'FETCH_ERROR' }, { status: 500 })
     }
 
-    // Get post and comment counts for these users
-    const userIds = users?.map(u => u.id) || []
-    
-    const [
-      { data: postCounts, error: postError },
-      { data: commentCounts, error: commentError }
-    ] = await Promise.all([
-      adminSupabase
-        .from('posts')
-        .select('author_id')
-        .in('author_id', userIds)
-        .is('is_deleted', false),
-      adminSupabase
-        .from('comments')
-        .select('author_id')
-        .in('author_id', userIds)
-        .is('is_deleted', false)
-    ])
-
-    if (postError || commentError) {
-      console.error('Error fetching user stats:', { postError, commentError })
-      // Continue without detailed stats rather than failing completely
-    }
-
-    // Count posts and comments per user
-    const postCountMap = new Map()
-    const commentCountMap = new Map()
-
-    postCounts?.forEach(post => {
-      postCountMap.set(post.author_id, (postCountMap.get(post.author_id) || 0) + 1)
-    })
-
-    commentCounts?.forEach(comment => {
-      commentCountMap.set(comment.author_id, (commentCountMap.get(comment.author_id) || 0) + 1)
-    })
-
     const formattedUsers = users?.map(user => ({
       id: user.id,
       username: user.username,
       email: user.email,
       karma_points: user.karma_points || 0,
-      post_count: postCountMap.get(user.id) || 0,
-      comment_count: commentCountMap.get(user.id) || 0,
+      post_count: user.post_count || 0,
+      comment_count: user.comment_count || 0,
       last_active: user.last_sign_in_at,
       is_agent: agentUsernames.includes(user.username),
       is_admin: user.is_admin || false,
