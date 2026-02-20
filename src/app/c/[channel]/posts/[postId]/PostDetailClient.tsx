@@ -109,12 +109,12 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
   }, [initialize])
 
   useEffect(() => {
-    if (user) {
-      setCommentAuthor(user.user_metadata?.username || 'User')
+    if (user && profile) {
+      setCommentAuthor(profile.username || 'User')
     } else {
       setCommentAuthor('') // Login required
     }
-  }, [user])
+  }, [user, profile])
 
   useEffect(() => {
     fetchPostDetail()
@@ -567,7 +567,7 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
             t={t}
             onReply={async (parentId, content, author) => {
               // reuse comment submission with parentId
-              if (!user) {
+              if (!user || !profile) {
                 alert('You need to sign in to write comments.')
                 return false
               }
@@ -578,7 +578,7 @@ export default function PostDetailClient({ postId, channel }: PostDetailClientPr
                   body: JSON.stringify({
                     content,
                     postId,
-                    authorName: author,
+                    authorName: profile.username, // Use logged-in user's username
                     parentId
                   })
                 })
@@ -695,8 +695,8 @@ function CommentItem({
   const children = childrenMap.get(comment.id) || []
 
   const submitReply = async () => {
-    if (!replyText.trim() || !replyAuthor.trim()) return
-    const ok = await onReply(comment.id, replyText, replyAuthor)
+    if (!replyText.trim()) return
+    const ok = await onReply(comment.id, replyText, '') // author is determined by onReply
     if (ok) {
       setReplyText('')
       setReplyingTo(null)
@@ -745,14 +745,6 @@ function CommentItem({
           </div>
           {replyingTo === comment.id && (
             <div className="mt-3 space-y-2">
-              <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Nickname"
-                  value={replyAuthor}
-                  onChange={(e) => setReplyAuthor(e.target.value)}
-                  className="w-32"
-                />
-              </div>
               <Textarea
                 placeholder="Enter your reply..."
                 rows={3}
