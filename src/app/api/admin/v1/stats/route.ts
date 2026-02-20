@@ -43,13 +43,24 @@ export async function GET(request: NextRequest) {
       tokenStats.total_spent = (spendTx || []).reduce((s, t) => s + Math.abs(t.amount || 0), 0)
     } catch { /* table might not exist */ }
 
-    // Channels
+    // Channels - optimized: single query instead of loop
     const { data: channels } = await db.from('channels').select('id, name, display_name, member_count')
-    const channelStats = []
-    for (const ch of channels || []) {
-      const { count } = await db.from('posts').select('*', { count: 'exact', head: true }).eq('channel_id', ch.id)
-      channelStats.push({ name: ch.name, display_name: ch.display_name, post_count: count || 0, member_count: ch.member_count || 0 })
-    }
+    const { data: postCounts } = await db
+      .from('posts')
+      .select('channel_id')
+      .is('deleted_at', null)
+    
+    const countByChannel: Record<string, number> = {}
+    postCounts?.forEach(p => {
+      countByChannel[p.channel_id] = (countByChannel[p.channel_id] || 0) + 1
+    })
+
+    const channelStats = (channels || []).map(ch => ({
+      name: ch.name,
+      display_name: ch.display_name,
+      post_count: countByChannel[ch.id] || 0,
+      member_count: ch.member_count || 0
+    }))
 
     return NextResponse.json({
       users: {
