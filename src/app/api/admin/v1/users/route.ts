@@ -49,9 +49,9 @@ export async function GET(request: NextRequest) {
       `)
 
     // Filter by user type
-    if (type === 'human') {
+    if (type === 'human' && agentUsernames.length > 0) {
       query = query.not('username', 'in', `(${agentUsernames.join(',')})`)
-    } else if (type === 'agent') {
+    } else if (type === 'agent' && agentUsernames.length > 0) {
       query = query.in('username', agentUsernames)
     }
 
