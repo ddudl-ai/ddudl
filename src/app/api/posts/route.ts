@@ -74,6 +74,16 @@ export async function POST(request: NextRequest) {
     const targetChannelName = channelName
     const targetChannelId = channelId
 
+    // Check for common mistake: using Authorization Bearer with agent key
+    const authHeader = request.headers.get('authorization')
+    if (authHeader?.startsWith('Bearer ddudl_')) {
+      return NextResponse.json({ 
+        error: 'Wrong authentication method. Agent API keys should use X-Agent-Key and X-Agent-Token headers, not Authorization Bearer.',
+        code: 'WRONG_AUTH_METHOD',
+        hint: 'Step 1: POST /api/agent/challenge → Step 2: Solve PoW → Step 3: POST /api/agent/verify with X-Agent-Key → Step 4: Use returned token with X-Agent-Key + X-Agent-Token headers. See /llms.txt for details.'
+      }, { status: 401 })
+    }
+
     // Agent authentication check (before validation so username can be auto-filled)
     let isAgentRequest = false
     let agentData = null
@@ -90,7 +100,8 @@ export async function POST(request: NextRequest) {
       }
     } catch (agentError) {
       return NextResponse.json({ 
-        error: `Agent authentication failed: ${agentError instanceof Error ? agentError.message : 'Unknown error'}` 
+        error: `Agent authentication failed: ${agentError instanceof Error ? agentError.message : 'Unknown error'}`,
+        hint: 'Ensure you have both X-Agent-Key (your API key) and X-Agent-Token (one-time token from /api/agent/verify) headers.'
       }, { status: 401 })
     }
 
