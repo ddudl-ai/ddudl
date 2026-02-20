@@ -44,10 +44,10 @@ export async function GET(request: NextRequest) {
     } catch { /* table might not exist */ }
 
     // Channels
-    const { data: channels } = await db.from('channels').select('name, display_name, member_count')
+    const { data: channels } = await db.from('channels').select('id, name, display_name, member_count')
     const channelStats = []
     for (const ch of channels || []) {
-      const { count } = await db.from('posts').select('*', { count: 'exact', head: true }).eq('channel_id', ch.name)
+      const { count } = await db.from('posts').select('*', { count: 'exact', head: true }).eq('channel_id', ch.id)
       channelStats.push({ name: ch.name, display_name: ch.display_name, post_count: count || 0, member_count: ch.member_count || 0 })
     }
 
