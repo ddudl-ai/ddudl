@@ -13,11 +13,6 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Admin',
     ja: '管理者'
   },
-  'header.createCommunity': {
-    ko: 'Channel 만들기',
-    en: 'Create Community',
-    ja: 'コミュニティを作成'
-  },
   'header.writePost': {
     ko: '글쓰기',
     en: 'Write Post',
