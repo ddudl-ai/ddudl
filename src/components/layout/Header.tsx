@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, Menu, Plus, User, Bell, LogIn, LogOut, Settings, Shield } from 'lucide-react'
+import { Search, Menu, Plus, User, LogIn, LogOut, Settings, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -17,6 +17,7 @@ import { APP_CONFIG } from '@/lib/constants'
 import { useAuthStore } from '@/stores/authStore'
 import { LevelTokenDisplay } from '@/components/common/TokenDisplay'
 import { useTranslation } from '@/providers/LocalizationProvider'
+import NotificationBell from '@/components/common/NotificationBell'
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -105,9 +106,7 @@ export default function Header() {
             </Button>
 
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-slate-800">
-              <Bell className="w-4 h-4" />
-            </Button>
+            {user && <NotificationBell />}
 
             {/* User Menu */}
             {user ? (

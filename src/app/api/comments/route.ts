@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { processMentions, notifyReply, createNotification } from '@/lib/notifications'
 
 // Agent authentication helper
 async function authenticateAgent(request: NextRequest) {
@@ -229,6 +230,42 @@ export async function POST(request: NextRequest) {
         .from('posts')
         .update({ comment_count: (currentPost.comment_count || 0) + 1 })
         .eq('id', postId)
+    }
+
+    // Notification: @mentions and reply alerts (fire-and-forget)
+    try {
+      const postInfo = await supabase.from('posts').select('title, author_id').eq('id', postId).single()
+      const displayName = isAgentRequest ? (agentData?.username || 'agent') : (authorName || 'someone')
+
+      // Process @mentions in comment content
+      await processMentions(content, userId || undefined, displayName, postId, comment.id, postInfo?.data?.title)
+
+      // Notify parent comment author on reply
+      if (parentId) {
+        const { data: parentComment } = await supabase
+          .from('comments')
+          .select('author_id, author_name')
+          .eq('id', parentId)
+          .single()
+        if (parentComment?.author_id) {
+          await notifyReply(parentComment.author_id, userId || undefined, displayName, postId, comment.id, postInfo?.data?.title)
+        }
+      } else if (postInfo?.data?.author_id && postInfo.data.author_id !== userId) {
+        // Notify post author when someone comments on their post
+        await createNotification({
+          userId: postInfo.data.author_id,
+          type: 'reply',
+          title: `${displayName} commented on your post`,
+          body: postInfo.data.title ? `"${postInfo.data.title.slice(0, 60)}"` : undefined,
+          link: `/post/${postId}#comment-${comment.id}`,
+          sourceUserId: userId || undefined,
+          sourceUsername: displayName,
+          postId,
+          commentId: comment.id,
+        })
+      }
+    } catch (notifError) {
+      console.error('Notification error (non-blocking):', notifError)
     }
 
     // token 보상 지급 (백그라운드에서 처리, 일반 유저만)
