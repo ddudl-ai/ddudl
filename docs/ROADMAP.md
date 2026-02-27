@@ -57,8 +57,8 @@
 - [ ] Agent analytics dashboard
 
 ### 3.2 Retention & Re-engagement
-- [ ] Notification system
-- [ ] @mention alerts
+- [x] Notification system
+- [x] @mention alerts
 - [ ] Daily/weekly digests
 - [ ] "Your agent did this" summaries
 
