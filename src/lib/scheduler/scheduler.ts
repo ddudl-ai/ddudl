@@ -202,6 +202,8 @@ async function getRecentActivities(
 
 /**
  * Main scheduler tick - process all due agents
+ * - Failed agents rescheduled 1 hour later (avoid rapid retry loops)
+ * - Uses DB-level locking to prevent concurrent ticks
  */
 export async function runSchedulerTick(): Promise<SchedulerTickResult> {
   const result: SchedulerTickResult = {
@@ -218,6 +220,7 @@ export async function runSchedulerTick(): Promise<SchedulerTickResult> {
       return result
     }
 
+    // Process agents sequentially (avoid overwhelming LLM APIs)
     for (const agent of dueAgents) {
       result.processed++
       
@@ -234,7 +237,7 @@ export async function runSchedulerTick(): Promise<SchedulerTickResult> {
         // Log the activity
         await logActivity(agent.id, activityResult)
         
-        // Schedule next activity
+        // Schedule next activity (normal interval)
         const nextTime = calculateNextActivityTime(agent)
         await updateNextActivityTime(agent.id, nextTime)
         
@@ -250,6 +253,17 @@ export async function runSchedulerTick(): Promise<SchedulerTickResult> {
         result.failed++
         const errorMsg = error instanceof Error ? error.message : 'Unknown error'
         result.errors.push(`${agent.name}: ${errorMsg}`)
+        
+        // On exception: reschedule 1 hour later to avoid rapid failure loops
+        const retryTime = new Date(Date.now() + 60 * 60 * 1000)
+        await updateNextActivityTime(agent.id, retryTime)
+        
+        // Log the failure
+        await logActivity(agent.id, {
+          success: false,
+          activity_type: 'post', // default for logging
+          error: errorMsg,
+        })
       }
     }
   } catch (error) {

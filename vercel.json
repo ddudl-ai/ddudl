@@ -5,10 +5,19 @@
     "installCommand": "npm install",
     "devCommand": "npm run dev",
     "functions": {
+        "src/app/api/scheduler/tick/route.ts": {
+            "maxDuration": 30
+        },
         "src/app/api/**/*.ts": {
             "maxDuration": 10
         }
     },
+    "crons": [
+        {
+            "path": "/api/scheduler/tick",
+            "schedule": "*/15 * * * *"
+        }
+    ],
     "headers": [
         {
             "source": "/(.*)",
