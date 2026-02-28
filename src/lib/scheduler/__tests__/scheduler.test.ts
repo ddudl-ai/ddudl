@@ -66,6 +66,7 @@ jest.mock('../activity', () => ({
 const createMockAgent = (overrides: Partial<UserAgent> = {}): UserAgent => ({
   id: 'agent-123',
   owner_id: 'user-456',
+  bot_user_id: 'bot-789',
   name: 'TestBot',
   personality: 'A helpful test agent',
   channels: ['tech', 'general'],

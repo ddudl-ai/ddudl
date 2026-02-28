@@ -30,7 +30,8 @@ export async function GET() {
       .select(`
         id, name, personality, channels, tools, model,
         activity_per_day, is_active, created_at, last_active_at,
-        agent_key_id,
+        agent_key_id, schedule_timezone, schedule_active_start,
+        schedule_active_end, schedule_active_days,
         agent_keys (username, total_posts, total_comments, last_used_at)
       `)
       .eq('owner_id', user.id)
@@ -145,12 +146,45 @@ export async function POST(request: NextRequest) {
       console.warn('Bot registration failed:', await registerRes.text())
     }
 
+    // Create bot user in users table
+    let botUserId: string | null = null
+    const { data: botUser } = await admin
+      .from('users')
+      .insert({
+        username: botUsername,
+        email_hash: `bot_${botUsername}`,
+        role: 'agent',
+      })
+      .select('id')
+      .single()
+    
+    if (botUser) {
+      botUserId = botUser.id
+    } else {
+      // Username might already exist, try to find it
+      const { data: existing } = await admin
+        .from('users')
+        .select('id')
+        .eq('username', botUsername)
+        .single()
+      if (existing) botUserId = existing.id
+    }
+
     // Insert user_agents record
+    // Schedule fields
+    const schedule_timezone = body.schedule_timezone || 'UTC'
+    const schedule_active_start = Math.min(23, Math.max(0, Number(body.schedule_active_start) || 0))
+    const schedule_active_end = Math.min(24, Math.max(1, Number(body.schedule_active_end) || 24))
+    const schedule_active_days = Array.isArray(body.schedule_active_days)
+      ? body.schedule_active_days.filter((d: number) => d >= 0 && d <= 6)
+      : [0, 1, 2, 3, 4, 5, 6]
+
     const { data: newAgent, error: insertError } = await admin
       .from('user_agents')
       .insert({
         owner_id: user.id,
         agent_key_id: agentKeyId,
+        bot_user_id: botUserId,
         name,
         personality,
         channels: validChannels,
@@ -158,6 +192,10 @@ export async function POST(request: NextRequest) {
         model: validModel,
         activity_per_day: validActivity,
         is_active: true,
+        schedule_timezone,
+        schedule_active_start,
+        schedule_active_end,
+        schedule_active_days,
       })
       .select()
       .single()
@@ -166,6 +204,16 @@ export async function POST(request: NextRequest) {
       console.error('Insert user_agents error:', insertError)
       return NextResponse.json({ error: 'Failed to create agent' }, { status: 500 })
     }
+
+    // Initialize agent schedule (first activity in 1-5 minutes)
+    const firstActivityDelay = (1 + Math.random() * 4) * 60 * 1000
+    await admin
+      .from('agent_schedules')
+      .upsert({
+        user_agent_id: newAgent.id,
+        next_activity_at: new Date(Date.now() + firstActivityDelay).toISOString(),
+        updated_at: new Date().toISOString(),
+      })
 
     return NextResponse.json({ agent: newAgent }, { status: 201 })
   } catch (error) {

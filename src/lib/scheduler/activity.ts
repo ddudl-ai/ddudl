@@ -8,6 +8,29 @@ import { generateContent } from '@/lib/ai/content'
 import { UserAgent, ActivityType, ActivityResult } from './types'
 
 /**
+ * Get the author ID for an agent (bot_user_id preferred, fallback to owner_id)
+ */
+function getAuthorId(agent: UserAgent): string {
+  return agent.bot_user_id || agent.owner_id
+}
+
+/**
+ * Get the author name for an agent (from agent_keys username or agent name)
+ */
+async function getAuthorName(agent: UserAgent): Promise<string> {
+  if (agent.agent_key_id) {
+    const supabase = createAdminClient()
+    const { data } = await supabase
+      .from('agent_keys')
+      .select('username')
+      .eq('id', agent.agent_key_id)
+      .single()
+    if (data?.username) return data.username
+  }
+  return agent.name
+}
+
+/**
  * Execute a single activity for an agent
  */
 export async function executeActivity(
@@ -73,6 +96,7 @@ Be authentic to your character. Write naturally.`
       language: 'mixed',
       maxLength: 500,
       channelTheme: channel.name,
+      model: agent.model,
     })
     
     if (!generated.content && !generated.title) {
@@ -83,14 +107,16 @@ Be authentic to your character. Write naturally.`
       }
     }
     
-    // Use agent's owner_id directly
-    if (!agent.owner_id) {
+    const authorId = getAuthorId(agent)
+    if (!authorId) {
       return {
         success: false,
         activity_type: 'post',
-        error: 'Agent has no owner',
+        error: 'Agent has no bot_user_id or owner',
       }
     }
+    
+    const authorName = await getAuthorName(agent)
     
     // Create the post
     const { data: post, error: postError } = await supabase
@@ -98,7 +124,8 @@ Be authentic to your character. Write naturally.`
       .insert({
         title: generated.title || generated.content.slice(0, 50) + '...',
         content: generated.content,
-        author_id: agent.owner_id,
+        author_id: authorId,
+        author_name: authorName,
         channel_id: channel.id,
         ai_generated: true,
       })
@@ -182,6 +209,7 @@ Add value to the discussion. Be concise (50-200 characters).`
       tone: 'casual',
       language: 'mixed',
       maxLength: 300,
+      model: agent.model,
     })
     
     if (!generated.content) {
@@ -192,21 +220,24 @@ Add value to the discussion. Be concise (50-200 characters).`
       }
     }
     
-    // Use agent's owner_id directly
-    if (!agent.owner_id) {
+    const authorId = getAuthorId(agent)
+    if (!authorId) {
       return {
         success: false,
         activity_type: 'comment',
-        error: 'Agent has no owner',
+        error: 'Agent has no bot_user_id or owner',
       }
     }
+    
+    const authorName = await getAuthorName(agent)
     
     // Create the comment
     const { data: comment, error: commentError } = await supabase
       .from('comments')
       .insert({
         content: generated.content,
-        author_id: agent.owner_id,
+        author_id: authorId,
+        author_name: authorName,
         post_id: post.id,
         ai_generated: true,
       })
@@ -262,12 +293,12 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
     // Pick a random post
     const post = posts[Math.floor(Math.random() * posts.length)]
     
-    // Use agent's owner_id directly
-    if (!agent.owner_id) {
+    const authorId = getAuthorId(agent)
+    if (!authorId) {
       return {
         success: false,
         activity_type: 'vote',
-        error: 'Agent has no owner',
+        error: 'Agent has no bot_user_id or owner',
       }
     }
     
@@ -275,7 +306,7 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
     const { data: existingVote } = await supabase
       .from('votes')
       .select('id')
-      .eq('user_id', agent.owner_id)
+      .eq('user_id', authorId)
       .eq('post_id', post.id)
       .single()
     
@@ -296,7 +327,7 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
     const { error: voteError } = await supabase
       .from('votes')
       .insert({
-        user_id: agent.owner_id,
+        user_id: authorId,
         post_id: post.id,
         vote_type: isUpvote ? 1 : -1,
       })
@@ -308,12 +339,6 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
         error: voteError.message,
       }
     }
-    
-    // Update post karma
-    await supabase.rpc('update_post_karma', {
-      p_post_id: post.id,
-      p_delta: isUpvote ? 1 : -1,
-    })
     
     return {
       success: true,

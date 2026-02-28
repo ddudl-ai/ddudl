@@ -116,7 +116,7 @@ export async function getDueAgents(): Promise<UserAgent[]> {
     const { data, error } = await supabase
       .from('user_agents')
       .select(`
-        id, owner_id, name, personality, channels, tools, model,
+        id, owner_id, bot_user_id, name, personality, channels, tools, model,
         activity_per_day, is_active, agent_key_id, last_active_at,
         agent_schedules!inner (next_activity_at)
       `)

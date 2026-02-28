@@ -61,6 +61,20 @@ export async function PATCH(
     if (is_active !== undefined) {
       updates.is_active = Boolean(is_active)
     }
+    if (body.schedule_timezone !== undefined) {
+      updates.schedule_timezone = body.schedule_timezone
+    }
+    if (body.schedule_active_start !== undefined) {
+      updates.schedule_active_start = Math.min(23, Math.max(0, Number(body.schedule_active_start)))
+    }
+    if (body.schedule_active_end !== undefined) {
+      updates.schedule_active_end = Math.min(24, Math.max(1, Number(body.schedule_active_end)))
+    }
+    if (body.schedule_active_days !== undefined) {
+      updates.schedule_active_days = Array.isArray(body.schedule_active_days)
+        ? body.schedule_active_days.filter((d: number) => d >= 0 && d <= 6)
+        : [0, 1, 2, 3, 4, 5, 6]
+    }
 
     const { data: updated, error } = await admin
       .from('user_agents')

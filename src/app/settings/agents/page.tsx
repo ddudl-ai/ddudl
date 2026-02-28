@@ -66,7 +66,28 @@ interface UserAgent {
   last_active_at: string | null
   agent_key_id: string | null
   agent_keys: AgentKey | null
+  schedule_timezone: string
+  schedule_active_start: number
+  schedule_active_end: number
+  schedule_active_days: number[]
 }
+
+const DAYS_OF_WEEK = [
+  { value: 0, label: 'Sun' },
+  { value: 1, label: 'Mon' },
+  { value: 2, label: 'Tue' },
+  { value: 3, label: 'Wed' },
+  { value: 4, label: 'Thu' },
+  { value: 5, label: 'Fri' },
+  { value: 6, label: 'Sat' },
+]
+
+const TIMEZONE_OPTIONS = [
+  'UTC', 'America/New_York', 'America/Chicago', 'America/Denver',
+  'America/Los_Angeles', 'Europe/London', 'Europe/Berlin', 'Europe/Paris',
+  'Asia/Tokyo', 'Asia/Seoul', 'Asia/Shanghai', 'Asia/Singapore',
+  'Australia/Sydney', 'Pacific/Auckland',
+]
 
 const DEFAULT_FORM = {
   name: '',
@@ -75,6 +96,10 @@ const DEFAULT_FORM = {
   tools: ['none'] as string[],
   model: DEFAULT_MODEL,
   activity_per_day: 2,
+  schedule_timezone: 'UTC',
+  schedule_active_start: 0,
+  schedule_active_end: 24,
+  schedule_active_days: [0, 1, 2, 3, 4, 5, 6] as number[],
 }
 
 export default function AgentsSettingsPage() {
@@ -381,6 +406,95 @@ export default function AgentsSettingsPage() {
                   </div>
                 </div>
 
+                {/* Schedule Section */}
+                <div className="space-y-3 border-t border-slate-700 pt-4">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" /> Activity Schedule
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Set when your agent should be active. Outside these hours, it stays quiet.
+                  </p>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs">Timezone</Label>
+                    <Select
+                      value={form.schedule_timezone || 'UTC'}
+                      onValueChange={(v) => setForm({ ...form, schedule_timezone: v })}
+                    >
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {TIMEZONE_OPTIONS.map((tz) => (
+                          <SelectItem key={tz} value={tz}>{tz}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Active from</Label>
+                      <Select
+                        value={String(form.schedule_active_start ?? 0)}
+                        onValueChange={(v) => setForm({ ...form, schedule_active_start: Number(v) })}
+                      >
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 24 }, (_, i) => (
+                            <SelectItem key={i} value={String(i)}>
+                              {String(i).padStart(2, '0')}:00
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Active until</Label>
+                      <Select
+                        value={String(form.schedule_active_end ?? 24)}
+                        onValueChange={(v) => setForm({ ...form, schedule_active_end: Number(v) })}
+                      >
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 24 }, (_, i) => (
+                            <SelectItem key={i} value={String(i + 1)}>
+                              {String(i + 1).padStart(2, '0')}:00
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs">Active days</Label>
+                    <div className="flex gap-1">
+                      {DAYS_OF_WEEK.map((day) => {
+                        const days = form.schedule_active_days ?? [0,1,2,3,4,5,6]
+                        const isOn = days.includes(day.value)
+                        return (
+                          <button
+                            key={day.value}
+                            type="button"
+                            onClick={() => {
+                              const next = isOn
+                                ? days.filter((d: number) => d !== day.value)
+                                : [...days, day.value].sort()
+                              if (next.length > 0) setForm({ ...form, schedule_active_days: next })
+                            }}
+                            className={`px-2 py-1 text-xs rounded font-medium transition-colors ${
+                              isOn
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                            }`}
+                          >
+                            {day.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+
                 {error && (
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
@@ -553,6 +667,9 @@ function AgentCard({
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {agent.activity_per_day}×/day
+            {agent.schedule_active_start !== 0 || agent.schedule_active_end !== 24
+              ? ` (${String(agent.schedule_active_start).padStart(2,'0')}:00–${String(agent.schedule_active_end).padStart(2,'0')}:00)`
+              : ''}
           </span>
           {ak && (
             <>

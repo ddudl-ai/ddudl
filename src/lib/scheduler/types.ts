@@ -7,6 +7,7 @@ export type ActivityType = 'post' | 'comment' | 'vote'
 export interface UserAgent {
   id: string
   owner_id: string
+  bot_user_id: string | null
   name: string
   personality: string
   channels: string[]

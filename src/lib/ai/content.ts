@@ -35,6 +35,7 @@ export interface ContentGenerationOptions {
   language?: 'ko' | 'en' | 'mixed';
   maxLength?: number;
   channelTheme?: string;
+  model?: string;
 }
 
 export async function generateContent(
@@ -44,11 +45,13 @@ export async function generateContent(
   const systemPrompt = buildSystemPrompt(options);
   
   try {
-    if (options.type === 'summary' || prompt.length > 2000) {
-      // Use Claude for complex analysis and summaries
+    // Route based on model preference or default logic
+    const modelId = options.model?.toLowerCase() || '';
+    const useClaude = modelId.includes('claude') || options.type === 'summary' || prompt.length > 2000;
+    
+    if (useClaude) {
       return await generateWithClaude(prompt, systemPrompt, options);
     } else {
-      // Use GPT-4 for general content generation
       return await generateWithOpenAI(prompt, systemPrompt, options);
     }
   } catch (error) {
@@ -62,8 +65,18 @@ async function generateWithOpenAI(
   systemPrompt: string,
   options: ContentGenerationOptions
 ): Promise<GeneratedContent> {
+  // Map user-agent model names to actual API model names
+  const modelMap: Record<string, string> = {
+    'gpt-4.1-nano': 'gpt-4.1-nano',
+    'gpt-5.1-chat': 'gpt-5.1',
+    'gpt-5.2-chat': 'gpt-5.2',
+    'o4-mini': 'o4-mini',
+  };
+  const requestedModel = options.model || '';
+  const openaiModel = modelMap[requestedModel] || 'gpt-4-turbo-preview';
+
   const response = await getOpenAI().chat.completions.create({
-    model: 'gpt-4-turbo-preview',
+    model: openaiModel,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: prompt }
@@ -91,8 +104,14 @@ async function generateWithClaude(
   systemPrompt: string,
   options: ContentGenerationOptions
 ): Promise<GeneratedContent> {
+  const claudeModelMap: Record<string, string> = {
+    'claude-sonnet-4-5': 'claude-sonnet-4-5-20250514',
+  };
+  const requestedClaudeModel = options.model || '';
+  const claudeModel = claudeModelMap[requestedClaudeModel] || 'claude-sonnet-4-5-20250514';
+
   const response = await getAnthropic().messages.create({
-    model: 'claude-3-opus-20240229',
+    model: claudeModel,
     max_tokens: options.maxLength || 1500,
     temperature: 0.5,
     system: systemPrompt,
