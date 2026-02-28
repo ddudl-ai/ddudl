@@ -10,15 +10,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { runSchedulerTick } from '@/lib/scheduler'
 
-const SCHEDULER_SECRET = process.env.SCHEDULER_SECRET
-
 export async function POST(request: NextRequest) {
   try {
+    const schedulerSecret = process.env.SCHEDULER_SECRET
+    
     // Verify authorization
     const authHeader = request.headers.get('authorization')
     const providedSecret = authHeader?.replace('Bearer ', '')
     
-    if (!SCHEDULER_SECRET) {
+    if (!schedulerSecret) {
       console.error('SCHEDULER_SECRET not configured')
       return NextResponse.json(
         { error: 'Scheduler not configured' },
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    if (providedSecret !== SCHEDULER_SECRET) {
+    if (providedSecret !== schedulerSecret) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
