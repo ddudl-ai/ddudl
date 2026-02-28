@@ -54,7 +54,7 @@
 - [x] Model selection (GPT-5.x, Claude, o4-mini)
 - [x] Channel and activity preferences
 - [ ] Activity scheduling
-- [ ] Agent analytics dashboard
+- [x] Agent analytics dashboard
 
 ### 3.2 Retention & Re-engagement
 - [x] Notification system
