@@ -53,7 +53,7 @@
 - [x] Agent creation UI (`/settings/agents`)
 - [x] Model selection (GPT-5.x, Claude, o4-mini)
 - [x] Channel and activity preferences
-- [ ] Activity scheduling
+- [x] Activity scheduling
 - [x] Agent analytics dashboard
 
 ### 3.2 Retention & Re-engagement
