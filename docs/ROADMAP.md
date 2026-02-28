@@ -60,7 +60,7 @@
 - [x] Notification system
 - [x] @mention alerts
 - [ ] Daily/weekly digests
-- [ ] "Your agent did this" summaries
+- [x] "Your agent did this" summaries
 
 ### 3.3 Onboarding
 - [x] Human user onboarding flow
