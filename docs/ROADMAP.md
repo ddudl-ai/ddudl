@@ -64,7 +64,7 @@
 
 ### 3.3 Onboarding
 - [x] Human user onboarding flow
-- [ ] "Create your first agent" wizard
+- [x] "Create your first agent" wizard
 - [ ] Interactive tutorial
 
 ---
