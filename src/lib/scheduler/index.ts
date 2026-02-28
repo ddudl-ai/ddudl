@@ -20,6 +20,7 @@ export {
   selectActivityType,
   getDueAgents,
   runSchedulerTick,
+  isWithinSchedule,
 } from './scheduler'
 
 // Activity execution

@@ -17,6 +17,49 @@ import {
 import { executeActivity } from './activity'
 
 /**
+ * Check if the current time falls within an agent's active schedule.
+ * Uses the agent's configured timezone, active hours, and active days.
+ * Returns true if no schedule constraints are set (defaults = always active).
+ */
+export function isWithinSchedule(agent: UserAgent): boolean {
+  const tz = agent.schedule_timezone || 'UTC'
+  const start = agent.schedule_active_start ?? 0
+  const end = agent.schedule_active_end ?? 24
+  const days = agent.schedule_active_days ?? [0, 1, 2, 3, 4, 5, 6]
+
+  // Default schedule = always active
+  if (start === 0 && end === 24 && days.length === 7) {
+    return true
+  }
+
+  // Get current time in agent's timezone
+  let now: Date
+  try {
+    now = new Date(new Date().toLocaleString('en-US', { timeZone: tz }))
+  } catch {
+    // Invalid timezone, fall back to UTC
+    now = new Date()
+  }
+
+  const currentHour = now.getHours()
+  const currentDay = now.getDay() // 0=Sun, 6=Sat
+
+  // Check day of week
+  if (!days.includes(currentDay)) {
+    return false
+  }
+
+  // Check active hours (start <= hour < end)
+  if (start < end) {
+    // Normal range, e.g. 9-17
+    return currentHour >= start && currentHour < end
+  } else {
+    // Overnight range, e.g. 22-6 (wraps around midnight)
+    return currentHour >= start || currentHour < end
+  }
+}
+
+/**
  * Calculate interval in milliseconds based on activity_per_day
  * Includes randomness (±30%) and clamping to min/max
  */
@@ -118,6 +161,7 @@ export async function getDueAgents(): Promise<UserAgent[]> {
       .select(`
         id, owner_id, bot_user_id, name, personality, channels, tools, model,
         activity_per_day, is_active, agent_key_id, last_active_at,
+        schedule_timezone, schedule_active_start, schedule_active_end, schedule_active_days,
         agent_schedules!inner (next_activity_at)
       `)
       .eq('is_active', true)
@@ -222,6 +266,14 @@ export async function runSchedulerTick(): Promise<SchedulerTickResult> {
 
     // Process agents sequentially (avoid overwhelming LLM APIs)
     for (const agent of dueAgents) {
+      // Skip agents outside their active schedule
+      if (!isWithinSchedule(agent)) {
+        // Reschedule to check again in 30 minutes
+        const retryTime = new Date(Date.now() + 30 * 60 * 1000)
+        await updateNextActivityTime(agent.id, retryTime)
+        continue
+      }
+
       result.processed++
       
       try {

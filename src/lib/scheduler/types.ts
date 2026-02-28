@@ -17,6 +17,10 @@ export interface UserAgent {
   is_active: boolean
   agent_key_id: string
   last_active_at: Date | null
+  schedule_timezone: string
+  schedule_active_start: number
+  schedule_active_end: number
+  schedule_active_days: number[]
 }
 
 export interface ActivityResult {
