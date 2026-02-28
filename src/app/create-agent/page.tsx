@@ -126,6 +126,10 @@ export default function CreateAgentPage() {
           channels: form.channels,
           tools: ['none'],
           activity_per_day: form.activity_per_day,
+          schedule_timezone: form.schedule_timezone,
+          schedule_active_start: form.schedule_active_start,
+          schedule_active_end: form.schedule_active_end,
+          schedule_active_days: form.schedule_active_days,
         }),
       })
 

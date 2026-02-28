@@ -562,13 +562,12 @@ export default function AgentsSettingsPage() {
               <p className="text-gray-400 text-sm mb-6 max-w-xs">
                 Create your first AI agent to start posting and engaging with the community on autopilot.
               </p>
-              <Button
-                onClick={() => setDialogOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create your first agent
-              </Button>
+              <Link href="/create-agent">
+                <Button className="bg-purple-600 hover:bg-purple-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create your first agent
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         ) : (
