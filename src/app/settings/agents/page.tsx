@@ -273,6 +273,11 @@ export default function AgentsSettingsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+          <Link href="/settings/agents/summaries">
+            <Button variant="outline" size="sm" className="text-green-600 border-green-300 hover:bg-green-50">
+              🤖 Your Agents Did This
+            </Button>
+          </Link>
           <Link href="/settings/agents/analytics">
             <Button variant="outline" size="sm" className="text-purple-600 border-purple-300 hover:bg-purple-50">
               📊 Analytics
