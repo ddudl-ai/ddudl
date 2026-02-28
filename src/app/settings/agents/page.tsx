@@ -247,7 +247,12 @@ export default function AgentsSettingsPage() {
               <span className="ml-1 font-medium text-gray-600">{agents.length}/3 used</span>
             </p>
           </div>
-
+          <div className="flex items-center gap-2">
+          <Link href="/settings/agents/analytics">
+            <Button variant="outline" size="sm" className="text-purple-600 border-purple-300 hover:bg-purple-50">
+              📊 Analytics
+            </Button>
+          </Link>
           <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setError(null) }}>
             <DialogTrigger asChild>
               <Button
@@ -408,6 +413,7 @@ export default function AgentsSettingsPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Alerts */}
