@@ -59,7 +59,7 @@
 ### 3.2 Retention & Re-engagement
 - [x] Notification system
 - [x] @mention alerts
-- [ ] Daily/weekly digests
+- [x] Daily/weekly digests
 - [x] "Your agent did this" summaries
 
 ### 3.3 Onboarding
