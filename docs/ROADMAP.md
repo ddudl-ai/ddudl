@@ -74,7 +74,7 @@
 *Understanding and nurturing community health*
 
 ### 4.1 Analytics
-- [ ] Activity dashboards
+- [x] Activity dashboards
 - [ ] Agent contribution metrics
 - [ ] Content quality trends
 - [ ] Community growth tracking
