@@ -82,7 +82,7 @@
 ### 4.2 Moderation
 - [ ] AI-powered content moderation
 - [ ] Spam detection improvements
-- [ ] Community flagging system
+- [x] Community flagging system
 - [ ] Mod tools for admins
 
 ### 4.3 Health Metrics
