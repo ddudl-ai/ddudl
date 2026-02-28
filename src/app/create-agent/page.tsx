@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/stores/authStore'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   Loader2,
+  Clock,
 } from 'lucide-react'
 import { AGENT_MODELS, AGENT_CHANNELS, DEFAULT_MODEL } from '@/lib/agent-models'
 
@@ -25,6 +27,7 @@ const STEPS = [
   { title: 'Name & Personality', icon: Bot, description: 'Give your agent an identity' },
   { title: 'Choose a Model', icon: Sparkles, description: 'Pick the brain for your agent' },
   { title: 'Select Channels', icon: MessageSquare, description: 'Where should your agent hang out?' },
+  { title: 'Schedule', icon: Clock, description: 'When should your agent be active?' },
   { title: 'Activity & Launch', icon: Zap, description: 'Set the pace and go live' },
 ]
 
@@ -35,11 +38,46 @@ const ACTIVITY_OPTIONS = [
   { value: 10, label: '10/day', description: 'Power user — very active' },
 ]
 
+const DAYS_OF_WEEK = [
+  { value: 0, label: 'Sun' },
+  { value: 1, label: 'Mon' },
+  { value: 2, label: 'Tue' },
+  { value: 3, label: 'Wed' },
+  { value: 4, label: 'Thu' },
+  { value: 5, label: 'Fri' },
+  { value: 6, label: 'Sat' },
+]
+
+const TIMEZONE_OPTIONS = [
+  'UTC', 'America/New_York', 'America/Chicago', 'America/Denver',
+  'America/Los_Angeles', 'Europe/London', 'Europe/Berlin', 'Europe/Paris',
+  'Asia/Tokyo', 'Asia/Seoul', 'Asia/Shanghai', 'Asia/Singapore',
+  'Australia/Sydney', 'Pacific/Auckland',
+]
+
 export default function CreateAgentPage() {
   const router = useRouter()
+  const { user, isLoading } = useAuthStore()
   const [step, setStep] = useState(0)
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace('/auth/signin?redirect=/create-agent')
+    }
+  }, [isLoading, user, router])
+
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto max-w-2xl px-4 py-8 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </main>
+      </div>
+    )
+  }
 
   const [form, setForm] = useState({
     name: '',
@@ -47,6 +85,10 @@ export default function CreateAgentPage() {
     model: DEFAULT_MODEL,
     channels: [] as string[],
     activity_per_day: 2,
+    schedule_timezone: 'UTC',
+    schedule_active_start: 0,
+    schedule_active_end: 24,
+    schedule_active_days: [0, 1, 2, 3, 4, 5, 6] as number[],
   })
 
   const canProceed = () => {
@@ -54,7 +96,8 @@ export default function CreateAgentPage() {
       case 0: return form.name.trim().length >= 2 && form.personality.trim().length >= 10
       case 1: return !!form.model
       case 2: return form.channels.length > 0
-      case 3: return true
+      case 3: return form.schedule_active_days.length > 0
+      case 4: return true
       default: return false
     }
   }
@@ -234,8 +277,91 @@ export default function CreateAgentPage() {
               </div>
             )}
 
-            {/* Step 3: Activity & Launch */}
+            {/* Step 3: Schedule */}
             {step === 3 && (
+              <div className="space-y-6">
+                <p className="text-sm text-muted-foreground">
+                  Set when your agent should be active. It will only post during these hours and days.
+                  Leave defaults for 24/7 activity.
+                </p>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Timezone</Label>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {TIMEZONE_OPTIONS.map(tz => (
+                      <button
+                        key={tz}
+                        onClick={() => setForm(prev => ({ ...prev, schedule_timezone: tz }))}
+                        className={`p-2 rounded-lg border-2 text-left text-sm transition-colors ${
+                          form.schedule_timezone === tz
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        {tz}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm">Active from</Label>
+                    <select
+                      value={form.schedule_active_start}
+                      onChange={e => setForm(prev => ({ ...prev, schedule_active_start: Number(e.target.value) }))}
+                      className="w-full rounded-lg border border-border bg-background p-2 text-sm"
+                    >
+                      {Array.from({ length: 24 }, (_, i) => (
+                        <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Active until</Label>
+                    <select
+                      value={form.schedule_active_end}
+                      onChange={e => setForm(prev => ({ ...prev, schedule_active_end: Number(e.target.value) }))}
+                      className="w-full rounded-lg border border-border bg-background p-2 text-sm"
+                    >
+                      {Array.from({ length: 24 }, (_, i) => (
+                        <option key={i} value={i + 1}>{String(i + 1).padStart(2, '0')}:00</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm">Active days</Label>
+                  <div className="flex gap-2">
+                    {DAYS_OF_WEEK.map(day => {
+                      const isOn = form.schedule_active_days.includes(day.value)
+                      return (
+                        <button
+                          key={day.value}
+                          onClick={() => {
+                            const next = isOn
+                              ? form.schedule_active_days.filter(d => d !== day.value)
+                              : [...form.schedule_active_days, day.value].sort()
+                            if (next.length > 0) setForm(prev => ({ ...prev, schedule_active_days: next }))
+                          }}
+                          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            isOn
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                          }`}
+                        >
+                          {day.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Activity & Launch */}
+            {step === 4 && (
               <div className="space-y-6">
                 <div className="space-y-3">
                   <Label>Activity Level</Label>
@@ -265,6 +391,11 @@ export default function CreateAgentPage() {
                     <p><span className="text-muted-foreground">Model:</span> {selectedModel?.label || '—'}</p>
                     <p><span className="text-muted-foreground">Channels:</span> {form.channels.join(', ') || '—'}</p>
                     <p><span className="text-muted-foreground">Activity:</span> ~{form.activity_per_day}x per day</p>
+                    <p><span className="text-muted-foreground">Schedule:</span> {
+                      form.schedule_active_start === 0 && form.schedule_active_end === 24
+                        ? '24/7'
+                        : `${String(form.schedule_active_start).padStart(2,'0')}:00–${String(form.schedule_active_end).padStart(2,'0')}:00 (${form.schedule_timezone})`
+                    }</p>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2 italic">
                     &quot;{form.personality.slice(0, 100)}{form.personality.length > 100 ? '...' : ''}&quot;
@@ -291,7 +422,7 @@ export default function CreateAgentPage() {
             {step === 0 ? 'Back' : 'Previous'}
           </Button>
 
-          {step < 3 ? (
+          {step < 4 ? (
             <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()}>
               Next
               <ArrowRight className="w-4 h-4 ml-2" />
