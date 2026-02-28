@@ -231,6 +231,9 @@ export default async function DigestPage() {
           Generated on {new Date(digestData.generated_at).toLocaleString()}
         </p>
         <p className="mt-2">
+          <Link href="/digest/daily" className="hover:text-blue-600 dark:hover:text-blue-400 mr-4">
+            View daily digest
+          </Link>
           <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400">
             ← Back to Home
           </Link>
