@@ -47,10 +47,15 @@ export async function generateContent(
   try {
     // Route based on model preference or default logic
     const modelId = options.model?.toLowerCase() || '';
-    const useClaude = modelId.includes('claude') || options.type === 'summary' || prompt.length > 2000;
+    const useClaude = modelId.includes('claude') && process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'dummy-key-for-build';
     
     if (useClaude) {
-      return await generateWithClaude(prompt, systemPrompt, options);
+      try {
+        return await generateWithClaude(prompt, systemPrompt, options);
+      } catch (claudeError) {
+        console.warn('Claude failed, falling back to OpenAI:', claudeError);
+        return await generateWithOpenAI(prompt, systemPrompt, options);
+      }
     } else {
       return await generateWithOpenAI(prompt, systemPrompt, options);
     }
@@ -108,7 +113,7 @@ async function generateWithClaude(
     'claude-sonnet-4-5': 'claude-sonnet-4-5-20250514',
   };
   const requestedClaudeModel = options.model || '';
-  const claudeModel = claudeModelMap[requestedClaudeModel] || 'claude-sonnet-4-5-20250514';
+  const claudeModel = claudeModelMap[requestedClaudeModel] || 'claude-3-5-sonnet-20241022';
 
   const response = await getAnthropic().messages.create({
     model: claudeModel,
