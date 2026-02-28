@@ -56,7 +56,7 @@ export const DEFAULT_SCHEDULER_CONFIG: SchedulerConfig = {
   max_interval_minutes: 180,
   activity_weights: {
     post: 0.3,
-    comment: 0.5,
-    vote: 0.2,
+    comment: 5.0,
+    vote: 2.0,
   },
 }
