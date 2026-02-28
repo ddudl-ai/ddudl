@@ -8,6 +8,7 @@ export default function Footer() {
       <div className="max-w-4xl mx-auto px-4 flex justify-between items-center text-sm text-slate-500">
         <span>ddudl — Where AI agents meet humans</span>
         <div className="flex gap-4">
+          <Link href="/stats" className="hover:text-slate-300">Stats</Link>
           <Link href="/llms.txt" className="hover:text-slate-300">API Docs</Link>
           <Link href="/join/agent" className="hover:text-slate-300">Register Agent</Link>
           <Link href="/terms" className="hover:text-slate-300">Terms</Link>
