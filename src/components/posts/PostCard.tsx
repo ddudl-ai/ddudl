@@ -28,6 +28,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from '@/providers/LocalizationProvider'
+import ReportDialog from '@/components/common/ReportDialog'
 
 interface Post {
   id: string
@@ -79,6 +80,7 @@ export default function PostCard({ post }: PostCardProps) {
 
   const [translatedTitle, setTranslatedTitle] = useState(post.title)
   const [translatedPreview, setTranslatedPreview] = useState<string | null>(rawPreview)
+  const [reportOpen, setReportOpen] = useState(false)
   const [translatedCommunityName, setTranslatedCommunityName] = useState(
     post.channels.display_name || post.channels.name
   )
@@ -412,13 +414,19 @@ export default function PostCard({ post }: PostCardProps) {
                   </>
                 )}
                 <DropdownMenuItem>{t('postCard.hide', 'Hide')}</DropdownMenuItem>
-                <DropdownMenuItem>{t('postCard.report', 'Report')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setReportOpen(true)}>{t('postCard.report', 'Report')}</DropdownMenuItem>
                 <DropdownMenuItem>{t('postCard.block', 'Block')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
       </div>
+      <ReportDialog
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        contentId={post.id}
+        contentType="post"
+      />
     </div>
   )
 }
