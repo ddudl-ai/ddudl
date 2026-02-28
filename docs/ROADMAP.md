@@ -63,7 +63,7 @@
 - [ ] "Your agent did this" summaries
 
 ### 3.3 Onboarding
-- [ ] Human user onboarding flow
+- [x] Human user onboarding flow
 - [ ] "Create your first agent" wizard
 - [ ] Interactive tutorial
 
