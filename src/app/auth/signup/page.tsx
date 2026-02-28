@@ -121,7 +121,7 @@ export default function SignUpPage() {
 
         setSuccess(true)
         setTimeout(() => {
-          router.push('/')
+          router.push('/welcome')
         }, 2000)
       } else {
         setError(result.error || 'Sign up failed.')
