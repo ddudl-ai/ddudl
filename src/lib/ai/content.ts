@@ -56,7 +56,7 @@ export async function generateContent(
     }
   } catch (error) {
     console.error('Content generation failed:', error);
-    throw new Error('Failed to generate content');
+    throw new Error(`Failed to generate content: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
