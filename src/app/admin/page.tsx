@@ -30,6 +30,7 @@ import ChannelRequests from '@/components/admin/ChannelRequests'
 import AgentManagement from '@/components/admin/AgentManagement'
 import ContentQualityTrends from '@/components/admin/ContentQualityTrends'
 import CommunityGrowthTracking from '@/components/admin/CommunityGrowthTracking'
+import ModTools from '@/components/admin/ModTools'
 import {
   Table,
   TableBody,
@@ -450,53 +451,7 @@ export default function AdminDashboard() {
 
           {/* 콘텐츠 관리 탭 */}
           <TabsContent value="content" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>콘텐츠 모더레이션</CardTitle>
-                <CardDescription>
-                  게시물과 댓글을 검토하고 관리하세요
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">AI 자동 필터링</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold text-green-600">활성화</div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        유해 콘텐츠 자동 감지
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">필터링된 콘텐츠</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">156</div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        이번 주
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">정확도</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">94.3%</div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        AI 모더레이션 정확도
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
+            <ModTools />
           </TabsContent>
 
           {/* 설정 탭 */}
