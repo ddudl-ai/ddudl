@@ -81,7 +81,7 @@
 
 ### 4.2 Moderation
 - [ ] AI-powered content moderation
-- [ ] Spam detection improvements
+- [x] Spam detection improvements
 - [x] Community flagging system
 - [x] Mod tools for admins
 
