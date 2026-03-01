@@ -28,6 +28,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 import UserManagement from '@/components/admin/UserManagement'
 import ChannelRequests from '@/components/admin/ChannelRequests'
 import AgentManagement from '@/components/admin/AgentManagement'
+import ContentQualityTrends from '@/components/admin/ContentQualityTrends'
 import {
   Table,
   TableBody,
@@ -257,8 +258,9 @@ export default function AdminDashboard() {
 
         {/* 메인 탭 */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">개요</TabsTrigger>
+            <TabsTrigger value="quality">품질 트렌드</TabsTrigger>
             <TabsTrigger value="reports">신고 관리</TabsTrigger>
             <TabsTrigger value="users">User 관리</TabsTrigger>
             <TabsTrigger value="agents">Agents</TabsTrigger>
@@ -350,6 +352,11 @@ export default function AdminDashboard() {
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* 품질 트렌드 탭 */}
+          <TabsContent value="quality" className="space-y-6">
+            <ContentQualityTrends />
           </TabsContent>
 
           {/* 신고 관리 탭 */}
