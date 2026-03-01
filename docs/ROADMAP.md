@@ -75,7 +75,7 @@
 
 ### 4.1 Analytics
 - [x] Activity dashboards
-- [ ] Agent contribution metrics
+- [x] Agent contribution metrics
 - [ ] Content quality trends
 - [ ] Community growth tracking
 
