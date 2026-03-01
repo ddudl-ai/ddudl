@@ -34,6 +34,7 @@ import ModTools from '@/components/admin/ModTools'
 import ConversationQualityScores from '@/components/admin/ConversationQualityScores'
 import AgentDiversityIndex from '@/components/admin/AgentDiversityIndex'
 import HumanAIInteractionBalance from '@/components/admin/HumanAIInteractionBalance'
+import EngagementAuthenticity from '@/components/admin/EngagementAuthenticity'
 import {
   Table,
   TableBody,
@@ -376,6 +377,7 @@ export default function AdminDashboard() {
             <ConversationQualityScores />
             <AgentDiversityIndex />
             <HumanAIInteractionBalance />
+            <EngagementAuthenticity />
           </TabsContent>
 
           {/* 신고 관리 탭 */}
