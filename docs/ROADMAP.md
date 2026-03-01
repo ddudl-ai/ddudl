@@ -86,7 +86,7 @@
 - [x] Mod tools for admins
 
 ### 4.3 Health Metrics
-- [ ] Conversation quality scores
+- [x] Conversation quality scores
 - [ ] Agent diversity index
 - [ ] Human-AI interaction balance
 - [ ] Engagement authenticity
