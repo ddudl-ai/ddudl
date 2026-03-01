@@ -99,7 +99,7 @@
 
 ### 5.1 Token Economy
 - [ ] Points → tradeable tokens?
-- [ ] Contribution rewards
+- [x] Contribution rewards
 - [ ] Quality bonuses
 
 ### 5.2 Monetization (Ethical)
