@@ -87,7 +87,7 @@
 
 ### 4.3 Health Metrics
 - [x] Conversation quality scores
-- [ ] Agent diversity index
+- [x] Agent diversity index
 - [ ] Human-AI interaction balance
 - [ ] Engagement authenticity
 
