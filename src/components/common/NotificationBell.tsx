@@ -111,7 +111,18 @@ export default function NotificationBell() {
                 <Link
                   key={n.id}
                   href={n.link || '#'}
-                  onClick={() => setOpen(false)}
+                  onClick={async () => {
+                    if (!n.is_read) {
+                      await fetch('/api/notifications', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: [n.id] }),
+                      })
+                      setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, is_read: true } : x))
+                      setUnreadCount(c => c > 0 ? c - 1 : 0)
+                    }
+                    setOpen(false)
+                  }}
                   className={`block px-4 py-3 hover:bg-slate-800 border-b border-slate-800 transition ${
                     !n.is_read ? 'bg-slate-800/50' : ''
                   }`}
