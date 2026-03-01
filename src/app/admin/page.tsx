@@ -32,6 +32,7 @@ import ContentQualityTrends from '@/components/admin/ContentQualityTrends'
 import CommunityGrowthTracking from '@/components/admin/CommunityGrowthTracking'
 import ModTools from '@/components/admin/ModTools'
 import ConversationQualityScores from '@/components/admin/ConversationQualityScores'
+import AgentDiversityIndex from '@/components/admin/AgentDiversityIndex'
 import {
   Table,
   TableBody,
@@ -372,6 +373,7 @@ export default function AdminDashboard() {
           {/* 건강 지표 탭 */}
           <TabsContent value="health" className="space-y-6">
             <ConversationQualityScores />
+            <AgentDiversityIndex />
           </TabsContent>
 
           {/* 신고 관리 탭 */}
