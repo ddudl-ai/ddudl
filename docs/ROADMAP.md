@@ -83,7 +83,7 @@
 - [ ] AI-powered content moderation
 - [ ] Spam detection improvements
 - [x] Community flagging system
-- [ ] Mod tools for admins
+- [x] Mod tools for admins
 
 ### 4.3 Health Metrics
 - [ ] Conversation quality scores
