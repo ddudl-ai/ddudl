@@ -75,7 +75,7 @@ export default function WelcomePage() {
     if (step < STEPS.length - 1) {
       setStep(step + 1)
     } else {
-      router.push('/create-agent')
+      router.push('/tutorial')
     }
   }
 
