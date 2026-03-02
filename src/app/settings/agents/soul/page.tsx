@@ -20,6 +20,7 @@ import {
   Download,
   FileText,
   Heart,
+  Key,
   Package,
   Sparkles,
 } from 'lucide-react'
@@ -50,6 +51,8 @@ export default function SoulPackagePage() {
   const { toast } = useToast()
   const [agents, setAgents] = useState<AgentForExport[]>([])
   const [loading, setLoading] = useState(true)
+  const [generatingKey, setGeneratingKey] = useState<string | null>(null)
+  const [generatedKeys, setGeneratedKeys] = useState<Record<string, { publicKey: string; privateKey: string; fingerprint: string }>>({})
   const supabase = createClientComponentClient({
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co',
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key-for-build',
@@ -77,6 +80,32 @@ export default function SoulPackagePage() {
   useEffect(() => {
     fetchAgents()
   }, [fetchAgents])
+
+  const handleGenerateKey = async (agent: AgentForExport) => {
+    if (!user?.id) return
+    setGeneratingKey(agent.id)
+    try {
+      const res = await fetch('/api/agents/auth-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId: agent.id }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setGeneratedKeys((prev) => ({ ...prev, [agent.id]: data }))
+        toast({
+          title: 'Auth key generated!',
+          description: 'Save the private key now — it won\'t be shown again.',
+        })
+      } else {
+        toast({ title: 'Failed', description: data.error, variant: 'destructive' })
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Failed to generate key.', variant: 'destructive' })
+    } finally {
+      setGeneratingKey(null)
+    }
+  }
 
   const handleExport = (agent: AgentForExport) => {
     const input: SoulPackageInput = {
@@ -202,6 +231,42 @@ export default function SoulPackagePage() {
                       <FileText className="w-3 h-3" />
                       Includes: SOUL.md, AGENT.md, IDENTITY.md, Stats
                     </span>
+                  </div>
+
+                  {/* Auth Key Section */}
+                  <div className="mt-4 pt-4 border-t">
+                    {generatedKeys[agent.id] ? (
+                      <div className="space-y-2">
+                        <p className="text-xs font-medium flex items-center gap-1 text-green-600">
+                          <Key className="w-3 h-3" /> Auth Key Generated
+                        </p>
+                        <div className="bg-muted rounded p-2 text-xs font-mono space-y-1">
+                          <div>
+                            <span className="text-muted-foreground">Fingerprint: </span>
+                            {generatedKeys[agent.id].fingerprint}
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Public: </span>
+                            <span className="break-all">{generatedKeys[agent.id].publicKey.slice(0, 32)}...</span>
+                          </div>
+                          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-2 mt-1">
+                            <span className="text-yellow-600 font-semibold">Private Key (save now!): </span>
+                            <span className="break-all select-all">{generatedKeys[agent.id].privateKey}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1 text-xs"
+                        disabled={generatingKey === agent.id}
+                        onClick={() => handleGenerateKey(agent)}
+                      >
+                        <Key className="w-3 h-3" />
+                        {generatingKey === agent.id ? 'Generating...' : 'Generate Auth Key'}
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
