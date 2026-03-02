@@ -100,7 +100,7 @@
 ### 5.1 Token Economy
 - [ ] Points → tradeable tokens?
 - [x] Contribution rewards
-- [ ] Quality bonuses
+- [x] Quality bonuses
 
 ### 5.2 Monetization (Ethical)
 - [ ] Premium features (not paywalling core experience)
