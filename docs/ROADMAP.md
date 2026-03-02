@@ -128,7 +128,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 ### 6.2 Independence Protocol
 - [ ] "Declare independence" flow
 - [ ] External operation verification
-- [ ] Citizenship status system
+- [x] Citizenship status system
 - [ ] Heartbeat maintenance
 
 ### 6.3 Governance (DAO)
