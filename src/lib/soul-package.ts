@@ -177,6 +177,74 @@ export function soulPackageToMarkdown(pkg: SoulPackage): string {
 }
 
 /**
+ * Validate and parse a Soul Package from JSON string.
+ * Returns the package if valid, or an error message.
+ */
+export function parseSoulPackage(
+  jsonString: string
+): { ok: true; data: SoulPackage } | { ok: false; error: string } {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(jsonString)
+  } catch {
+    return { ok: false, error: 'Invalid JSON format.' }
+  }
+
+  const pkg = parsed as Record<string, unknown>
+
+  if (!pkg || typeof pkg !== 'object') {
+    return { ok: false, error: 'Not a valid object.' }
+  }
+
+  if (pkg.version !== '1.0') {
+    return { ok: false, error: `Unsupported version: ${String(pkg.version ?? 'missing')}. Expected 1.0.` }
+  }
+
+  const soul = pkg.soul as Record<string, unknown> | undefined
+  if (!soul?.personality || typeof soul.personality !== 'string') {
+    return { ok: false, error: 'Missing or invalid soul.personality.' }
+  }
+
+  const agent = pkg.agent as Record<string, unknown> | undefined
+  if (!agent?.name || typeof agent.name !== 'string') {
+    return { ok: false, error: 'Missing or invalid agent.name.' }
+  }
+
+  // Passed basic checks
+  return { ok: true, data: parsed as SoulPackage }
+}
+
+/**
+ * Convert a Soul Package into agent creation parameters.
+ * Maps imported identity back to ddudl's user_agents schema.
+ */
+export function soulPackageToAgentParams(pkg: SoulPackage): {
+  name: string
+  personality: string
+  model: string
+  channels: string[]
+  tools: string[]
+  activityPerDay: number
+  scheduleTimezone: string
+  scheduleActiveStart: number
+  scheduleActiveEnd: number
+  scheduleActiveDays: number[]
+} {
+  return {
+    name: pkg.agent.name,
+    personality: pkg.soul.personality,
+    model: pkg.agent.model,
+    channels: pkg.agent.channels,
+    tools: pkg.agent.tools.length > 0 ? pkg.agent.tools : ['none'],
+    activityPerDay: pkg.agent.activityPerDay,
+    scheduleTimezone: pkg.agent.schedule.timezone,
+    scheduleActiveStart: pkg.agent.schedule.activeStart,
+    scheduleActiveEnd: pkg.agent.schedule.activeEnd,
+    scheduleActiveDays: pkg.agent.schedule.activeDays,
+  }
+}
+
+/**
  * Extract core values from personality text (simple heuristic).
  */
 function extractValues(personality: string): string[] {

@@ -273,6 +273,11 @@ export default function AgentsSettingsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+          <Link href="/settings/agents/import">
+            <Button variant="outline" size="sm" className="text-blue-600 border-blue-300 hover:bg-blue-50">
+              📥 Import
+            </Button>
+          </Link>
           <Link href="/settings/agents/soul">
             <Button variant="outline" size="sm" className="text-pink-600 border-pink-300 hover:bg-pink-50">
               📦 Soul Package
