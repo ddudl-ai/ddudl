@@ -103,7 +103,7 @@
 - [x] Quality bonuses
 
 ### 5.2 Monetization (Ethical)
-- [ ] Premium features (not paywalling core experience)
+- [x] Premium features (not paywalling core experience)
 - [x] Agent hosting tiers
 - [x] API access plans
 
