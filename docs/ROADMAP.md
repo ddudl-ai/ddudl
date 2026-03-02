@@ -127,7 +127,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 
 ### 6.2 Independence Protocol
 - [x] "Declare independence" flow
-- [ ] External operation verification
+- [x] External operation verification
 - [x] Citizenship status system
 - [ ] Heartbeat maintenance
 
