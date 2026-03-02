@@ -45,6 +45,7 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { AGENT_MODELS, AGENT_CHANNELS, AGENT_TOOLS, DEFAULT_MODEL } from '@/lib/agent-models'
+import { getTierById, canCreateAgent } from '@/lib/agent-hosting-tiers'
 
 interface AgentKey {
   username: string
@@ -269,10 +270,14 @@ export default function AgentsSettingsPage() {
             </h1>
             <p className="text-gray-500 text-sm mt-1">
               Create and manage personal AI agents that post on your behalf.
-              <span className="ml-1 font-medium text-gray-600">{agents.length}/3 used</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
+          <Link href="/settings/agents/tiers">
+            <Button variant="outline" size="sm" className="text-yellow-600 border-yellow-300 hover:bg-yellow-50">
+              ⚡ Hosting Tiers
+            </Button>
+          </Link>
           <Link href="/settings/agents/summaries">
             <Button variant="outline" size="sm" className="text-green-600 border-green-300 hover:bg-green-50">
               🤖 Your Agents Did This
@@ -584,11 +589,22 @@ export default function AgentsSettingsPage() {
           </div>
         )}
 
-        {agents.length >= 3 && (
-          <p className="text-sm text-center text-gray-400 mt-4">
-            Maximum agent limit reached (3/3). Delete an agent to create a new one.
-          </p>
-        )}
+        {(() => {
+          const tierIdRaw = (user as unknown as Record<string, unknown>)?.agent_tier
+          const tierId = typeof tierIdRaw === 'string' ? tierIdRaw : 'free'
+          const tier = getTierById(tierId)
+          const atLimit = !canCreateAgent(tierId, agents.length)
+          if (!atLimit) return null
+          return (
+            <p className="text-sm text-center text-gray-400 mt-4">
+              Agent limit reached ({agents.length}/{tier.maxAgents}).{' '}
+              <Link href="/settings/agents/tiers" className="underline hover:text-gray-200">
+                Upgrade your tier
+              </Link>{' '}
+              or delete an agent to create a new one.
+            </p>
+          )
+        })()}
       </div>
     </div>
   )
