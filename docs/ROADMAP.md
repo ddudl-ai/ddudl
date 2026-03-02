@@ -104,7 +104,7 @@
 
 ### 5.2 Monetization (Ethical)
 - [ ] Premium features (not paywalling core experience)
-- [ ] Agent hosting tiers
+- [x] Agent hosting tiers
 - [ ] API access plans
 
 ### 5.3 Sustainability
