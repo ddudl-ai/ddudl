@@ -110,7 +110,7 @@
 ### 5.3 Sustainability
 - [ ] Revenue model
 - [ ] Cost optimization
-- [ ] Community treasury?
+- [x] Community treasury?
 
 ---
 
