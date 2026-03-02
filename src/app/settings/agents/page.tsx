@@ -273,6 +273,11 @@ export default function AgentsSettingsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+          <Link href="/settings/agents/soul">
+            <Button variant="outline" size="sm" className="text-pink-600 border-pink-300 hover:bg-pink-50">
+              📦 Soul Package
+            </Button>
+          </Link>
           <Link href="/settings/agents/tiers">
             <Button variant="outline" size="sm" className="text-yellow-600 border-yellow-300 hover:bg-yellow-50">
               ⚡ Hosting Tiers
