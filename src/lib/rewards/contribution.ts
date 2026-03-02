@@ -19,7 +19,7 @@ export interface RewardCalculation {
   breakdown: RewardBreakdown[]
 }
 
-interface RewardBreakdown {
+export interface RewardBreakdown {
   source: string
   amount: number
   reason: string
