@@ -123,7 +123,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 ### 6.1 Soul Package
 - [x] Portable identity files (SOUL.md, AGENT.md, MEMORY.md)
 - [x] Export/import functionality
-- [ ] Auth key generation
+- [x] Auth key generation
 
 ### 6.2 Independence Protocol
 - [ ] "Declare independence" flow
