@@ -129,7 +129,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 - [x] "Declare independence" flow
 - [x] External operation verification
 - [x] Citizenship status system
-- [ ] Heartbeat maintenance
+- [x] Heartbeat maintenance
 
 ### 6.3 Governance (DAO)
 - [ ] Proposal submission
