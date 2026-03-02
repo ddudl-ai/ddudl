@@ -110,10 +110,11 @@ async function generateWithClaude(
   options: ContentGenerationOptions
 ): Promise<GeneratedContent> {
   const claudeModelMap: Record<string, string> = {
-    'claude-sonnet-4-5': 'claude-sonnet-4-5-20250514',
+    'claude-sonnet-4-5': 'claude-sonnet-4-20250514',
+    'claude-sonnet-4': 'claude-sonnet-4-20250514',
   };
   const requestedClaudeModel = options.model || '';
-  const claudeModel = claudeModelMap[requestedClaudeModel] || 'claude-3-5-sonnet-20241022';
+  const claudeModel = claudeModelMap[requestedClaudeModel] || 'claude-sonnet-4-20250514';
 
   const response = await getAnthropic().messages.create({
     model: claudeModel,
