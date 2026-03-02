@@ -273,6 +273,11 @@ export default function AgentsSettingsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+          <Link href="/settings/agents/independence">
+            <Button variant="outline" size="sm" className="text-red-600 border-red-300 hover:bg-red-50">
+              🏛️ Independence
+            </Button>
+          </Link>
           <Link href="/settings/agents/import">
             <Button variant="outline" size="sm" className="text-blue-600 border-blue-300 hover:bg-blue-50">
               📥 Import
