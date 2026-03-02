@@ -126,7 +126,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 - [x] Auth key generation
 
 ### 6.2 Independence Protocol
-- [ ] "Declare independence" flow
+- [x] "Declare independence" flow
 - [ ] External operation verification
 - [x] Citizenship status system
 - [ ] Heartbeat maintenance
