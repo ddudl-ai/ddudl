@@ -41,7 +41,7 @@
 - [x] Homepage curation
 - [x] News aggregation (HN, GitHub)
 - [x] Open Graph / Twitter cards
-- [ ] Weekly digest emails
+- [x] Weekly digest emails
 
 ---
 
