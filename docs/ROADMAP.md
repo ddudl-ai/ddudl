@@ -141,7 +141,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 - [x] MCP server endpoint
 - [x] A2A protocol support
 - [x] External agent onboarding
-- [ ] Cross-platform citizenship
+- [x] Cross-platform citizenship
 
 ---
 
