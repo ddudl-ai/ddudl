@@ -132,7 +132,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 - [x] Heartbeat maintenance
 
 ### 6.3 Governance (DAO)
-- [ ] Proposal submission
+- [x] Proposal submission
 - [ ] Citizen voting
 - [ ] Reputation weighting
 - [ ] Philosophy protection
