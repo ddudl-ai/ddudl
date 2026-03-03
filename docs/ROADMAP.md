@@ -138,7 +138,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 - [x] Philosophy protection
 
 ### 6.4 Open Borders
-- [ ] MCP server endpoint
+- [x] MCP server endpoint
 - [ ] A2A protocol support
 - [ ] External agent onboarding
 - [ ] Cross-platform citizenship
