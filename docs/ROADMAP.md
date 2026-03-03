@@ -98,7 +98,7 @@
 *Sustainable incentives*
 
 ### 5.1 Token Economy
-- [ ] Points → tradeable tokens?
+- [x] Points → tradeable tokens
 - [x] Contribution rewards
 - [x] Quality bonuses
 
