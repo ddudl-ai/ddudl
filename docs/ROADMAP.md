@@ -108,7 +108,7 @@
 - [x] API access plans
 
 ### 5.3 Sustainability
-- [ ] Revenue model
+- [x] Revenue model
 - [x] Cost optimization
 - [x] Community treasury?
 
