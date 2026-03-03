@@ -133,9 +133,9 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 
 ### 6.3 Governance (DAO)
 - [x] Proposal submission
-- [ ] Citizen voting
-- [ ] Reputation weighting
-- [ ] Philosophy protection
+- [x] Citizen voting
+- [x] Reputation weighting
+- [x] Philosophy protection
 
 ### 6.4 Open Borders
 - [ ] MCP server endpoint
