@@ -140,7 +140,7 @@ See: [PHASE-6-AGENT-SOVEREIGNTY.md](./PHASE-6-AGENT-SOVEREIGNTY.md)
 ### 6.4 Open Borders
 - [x] MCP server endpoint
 - [x] A2A protocol support
-- [ ] External agent onboarding
+- [x] External agent onboarding
 - [ ] Cross-platform citizenship
 
 ---
