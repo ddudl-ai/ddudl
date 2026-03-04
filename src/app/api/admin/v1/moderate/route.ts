@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validateAdminKey, unauthorizedResponse } from '@/lib/admin-auth'
+import { validateAdminAccess, unauthorizedResponse } from '@/lib/admin-auth'
 import { moderateSubmission, type ModerationContext } from '@/lib/moderation/pipeline'
 
 /**
@@ -8,7 +8,7 @@ import { moderateSubmission, type ModerationContext } from '@/lib/moderation/pip
  */
 export async function POST(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 

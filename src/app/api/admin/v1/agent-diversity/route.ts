@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { validateAdminKey, unauthorizedResponse } from '@/lib/admin-auth'
+import { validateAdminAccess, unauthorizedResponse } from '@/lib/admin-auth'
 
 // Shannon diversity index: H = -Σ(pi * ln(pi))
 // Normalized to 0-1: H / ln(S) where S = number of categories
@@ -20,7 +20,7 @@ function shannonDiversity(counts: number[]): { raw: number; normalized: number; 
 
 export async function GET(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 

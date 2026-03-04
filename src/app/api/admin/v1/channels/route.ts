@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { validateAdminKey, unauthorizedResponse } from '@/lib/admin-auth'
+import { validateAdminAccess, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function GET(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 

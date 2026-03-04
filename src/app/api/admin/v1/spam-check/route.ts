@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { validateAdminKey, unauthorizedResponse } from '@/lib/admin-auth'
+import { validateAdminAccess, unauthorizedResponse } from '@/lib/admin-auth'
 import { checkSpam } from '@/lib/spam/detector'
 
 // POST: Check content for spam
 export async function POST(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 // GET: Scan recent content for spam (batch analysis)
 export async function GET(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 

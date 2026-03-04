@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { validateAdminKey, unauthorizedResponse } from '@/lib/admin-auth'
+import { validateAdminAccess, unauthorizedResponse } from '@/lib/admin-auth'
 
 interface DailyQuality {
   date: string
@@ -15,7 +15,7 @@ interface DailyQuality {
 
 export async function GET(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 

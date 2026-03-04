@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { validateAdminKey, unauthorizedResponse } from '@/lib/admin-auth'
+import { validateAdminAccess, unauthorizedResponse } from '@/lib/admin-auth'
 import {
   calculateQualityBonus,
   calculateConversationBonus,
@@ -10,7 +10,7 @@ import {
 // POST: Calculate and issue quality bonus for specific content
 export async function POST(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 // GET: Batch scan and issue quality bonuses for recent posts
 export async function GET(request: NextRequest) {
   try {
-    if (!validateAdminKey(request)) {
+    if (!(await validateAdminAccess(request))) {
       return unauthorizedResponse()
     }
 
