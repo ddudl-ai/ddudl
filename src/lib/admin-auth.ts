@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 
 export function validateAdminKey(request: NextRequest): boolean {
   const key = request.headers.get('x-admin-key')
-  const adminKey = process.env.ADMIN_API_KEY || 'ddudl_admin_secret_key_change_me'
+  const adminKey = process.env.ADMIN_API_KEY || ''
   return key === adminKey
 }
 

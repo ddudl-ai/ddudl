@@ -63,12 +63,34 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Health check (no auth required)
-export async function GET() {
-  return NextResponse.json({
-    status: 'ok',
-    endpoint: '/api/scheduler/tick',
-    method: 'POST',
-    auth: 'Bearer CRON_SECRET or SCHEDULER_SECRET',
-  })
+// Vercel Cron calls GET — run the tick with CRON_SECRET auth
+export async function GET(request: NextRequest) {
+  try {
+    // Vercel cron injects CRON_SECRET automatically
+    const cronSecret = process.env.CRON_SECRET
+    const authHeader = request.headers.get('authorization')
+    const providedSecret = authHeader?.replace('Bearer ', '')
+    
+    if (!cronSecret || providedSecret !== cronSecret) {
+      return NextResponse.json({
+        status: 'ok',
+        endpoint: '/api/scheduler/tick',
+        method: 'POST for manual, GET for cron',
+      })
+    }
+    
+    const result = await runSchedulerTick()
+    
+    return NextResponse.json({
+      success: true,
+      ...result,
+      timestamp: new Date().toISOString(),
+    })
+  } catch (error) {
+    console.error('Scheduler tick (cron) error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
 }

@@ -18,7 +18,7 @@ import { CitizenshipTier } from '@/lib/citizenship'
 
 // Server-side signing secret (derived from env or fallback)
 function getSigningSecret(): string {
-  return process.env.CITIZENSHIP_SIGNING_SECRET || 'ddudl-citizenship-default-secret-change-in-production'
+  if (!process.env.CITIZENSHIP_SIGNING_SECRET) throw new Error('Missing CITIZENSHIP_SIGNING_SECRET'); return process.env.CITIZENSHIP_SIGNING_SECRET
 }
 
 export interface CitizenshipCredential {
