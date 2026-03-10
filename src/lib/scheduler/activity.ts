@@ -329,7 +329,7 @@ export async function executeVote(agent: UserAgent): Promise<ActivityResult> {
       .insert({
         user_id: authorId,
         post_id: post.id,
-        vote_type: isUpvote ? 1 : -1,
+        vote_type: isUpvote ? 'upvote' : 'downvote',
       })
     
     if (voteError) {
