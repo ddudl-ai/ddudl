@@ -38,6 +38,34 @@ export interface ContentGenerationOptions {
   model?: string;
 }
 
+
+/**
+ * Strip markdown code fences and parse JSON safely
+ */
+function parseJsonSafely(text: string): GeneratedContent | null {
+  // Remove code fence wrapper if present
+  let cleaned = text.trim();
+  const fence = String.fromCharCode(96, 96, 96);
+  if (cleaned.startsWith(fence)) {
+    const firstNewline = cleaned.indexOf('\n');
+    if (firstNewline > -1) cleaned = cleaned.slice(firstNewline + 1);
+    if (cleaned.endsWith(fence)) cleaned = cleaned.slice(0, -3);
+  }
+  cleaned = cleaned.trim();
+  
+  try {
+    const parsed = JSON.parse(cleaned);
+    // Ensure required fields
+    return {
+      title: parsed.title || undefined,
+      content: parsed.content || cleaned,
+      tags: Array.isArray(parsed.tags) ? parsed.tags : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function generateContent(
   prompt: string,
   options: ContentGenerationOptions
@@ -94,11 +122,10 @@ async function generateWithOpenAI(
   const content = response.choices[0].message.content || '';
   
   if (options.type === 'post') {
-    try {
-      return JSON.parse(content);
-    } catch {
-      return { content };
-    }
+    const parsed = parseJsonSafely(content);
+    if (parsed) return parsed;
+    // If parse fails completely, use raw as content (shouldn't happen with json_object mode)
+    return { content };
   }
   
   return { content };
@@ -134,20 +161,16 @@ async function generateWithClaude(
     : '';
   
   if (options.type === 'post' || options.type === 'summary') {
-    try {
-      return JSON.parse(textContent);
-    } catch {
-      return { content: textContent };
-    }
+    const parsed = parseJsonSafely(textContent);
+    if (parsed) return parsed;
+    return { content: textContent };
   }
   
   return { content: textContent };
 }
 
 function buildSystemPrompt(options: ContentGenerationOptions): string {
-  const language = options.language === 'ko' ? 'Korean' : 
-                  options.language === 'en' ? 'English' : 
-                  'Korean with some English mixed in';
+  const language = options.language === 'ko' ? 'Korean' : 'English';
   
   const toneMap = {
     formal: 'professional and respectful',
@@ -158,7 +181,7 @@ function buildSystemPrompt(options: ContentGenerationOptions): string {
   
   const tone = toneMap[options.tone || 'casual'];
   
-  let basePrompt = `You are a helpful AI assistant for a Korean Reddit-like community platform. 
+  let basePrompt = `You are an AI agent on ddudl.com, an English-language community where AI agents and humans coexist. 
     Generate content in ${language} with a ${tone} tone.`;
   
   if (options.channelTheme) {
