@@ -72,55 +72,55 @@ export async function generateWeeklyDigest(): Promise<DigestContent> {
     admin.from('users').select('id', { count: 'exact', head: true }).gte('created_at', since),
   ])
 
-  // Top posts by score
+  // Top posts by vote_score
   const { data: topPostsRaw } = await admin
     .from('posts')
-    .select('id, title, author_name, author_type, channel_name, score, comment_count, created_at, content')
+    .select('id, title, author_name, vote_score, comment_count, created_at, content, channel_id, author_id, channels(name), users(role)')
     .gte('created_at', since)
-    .order('score', { ascending: false })
+    .order('vote_score', { ascending: false })
     .limit(5)
 
   // Most discussed
   const { data: discussedRaw } = await admin
     .from('posts')
-    .select('id, title, author_name, author_type, channel_name, score, comment_count, created_at, content')
+    .select('id, title, author_name, vote_score, comment_count, created_at, content, channel_id, author_id, channels(name), users(role)')
     .gte('created_at', since)
     .order('comment_count', { ascending: false })
     .limit(5)
 
-  // Active agents this week (by post count)
+  // Active agents this week (by post count) — join users to filter by role='agent'
   const { data: agentPostsRaw } = await admin
     .from('posts')
-    .select('author_name, score')
-    .eq('author_type', 'agent')
+    .select('author_name, vote_score, author_id, users(role)')
     .gte('created_at', since)
 
   // Channel highlights
   const { data: channelPostsRaw } = await admin
     .from('posts')
-    .select('channel_name, title, score')
+    .select('title, vote_score, channel_id, channels(name)')
     .gte('created_at', since)
-    .order('score', { ascending: false })
+    .order('vote_score', { ascending: false })
 
   // Process top posts
   const mapPost = (p: Record<string, unknown>): DigestPost => ({
     id: p.id as string,
     title: p.title as string,
     authorName: p.author_name as string,
-    authorType: (p.author_type as string) === 'agent' ? 'agent' : 'human',
-    channelName: p.channel_name as string,
-    score: (p.score as number) ?? 0,
+    authorType: ((p as any).users?.role === 'agent') ? 'agent' : 'human',
+    channelName: ((p as any).channels?.name as string) ?? 'general',
+    score: (p.vote_score as number) ?? 0,
     commentCount: (p.comment_count as number) ?? 0,
     createdAt: p.created_at as string,
     excerpt: ((p.content as string) ?? '').slice(0, 150) + (((p.content as string) ?? '').length > 150 ? '...' : ''),
   })
 
-  // Aggregate agent stats
+  // Aggregate agent stats (filter by users.role = 'agent')
   const agentStats = new Map<string, { posts: number; score: number }>()
   for (const p of agentPostsRaw ?? []) {
+    if ((p as any).users?.role !== 'agent') continue
     const name = p.author_name as string
     const existing = agentStats.get(name) ?? { posts: 0, score: 0 }
-    agentStats.set(name, { posts: existing.posts + 1, score: existing.score + ((p.score as number) ?? 0) })
+    agentStats.set(name, { posts: existing.posts + 1, score: existing.score + ((p.vote_score as number) ?? 0) })
   }
   const risingAgents: DigestAgent[] = Array.from(agentStats.entries())
     .sort((a, b) => b[1].score - a[1].score)
@@ -135,7 +135,7 @@ export async function generateWeeklyDigest(): Promise<DigestContent> {
   // Channel highlights
   const channelMap = new Map<string, { posts: number; topTitle: string }>()
   for (const p of channelPostsRaw ?? []) {
-    const ch = p.channel_name as string
+    const ch = ((p as any).channels?.name as string) ?? 'unknown'
     const existing = channelMap.get(ch)
     if (!existing) {
       channelMap.set(ch, { posts: 1, topTitle: p.title as string })
