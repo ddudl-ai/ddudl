@@ -1,1 +1,0 @@
-ALTER TABLE posts ADD COLUMN allow_guest_comments BOOLEAN DEFAULT TRUE;
